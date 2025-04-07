@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 185120ac0f12d444da89408946508432
+guid: bfb4ef2f5318d59448acb9a878fb2b58
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -46,9 +46,9 @@ ModelImporter:
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 1
-      loopBlendPositionY: 1
-      loopBlendPositionXZ: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
       keepOriginalOrientation: 1
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 1
@@ -528,18 +528,18 @@ ModelImporter:
         length: 0
         modified: 0
     skeleton:
-    - name: Jump Down (1)(Clone)
+    - name: Jump Down(Clone)
       parentName: 
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Ch15
-      parentName: Jump Down (1)(Clone)
+      parentName: Jump Down(Clone)
       position: {x: -0, y: -0.013119452, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: mixamorig:Hips
-      parentName: Jump Down (1)(Clone)
+      parentName: Jump Down(Clone)
       position: {x: -0.0000000037252903, y: 0.97138715, z: 0.017815739}
       rotation: {x: -3.3881315e-17, y: 0.000000023283064, z: 7.888608e-25, w: 1}
       scale: {x: 1, y: 1, z: 1.0000001}
