@@ -1,3 +1,7 @@
+<<<<<<< HEAD
 *.onnx filter=lfs diff=lfs merge=lfs -text
 C:/Users/ljm/Desktop/University/졸프/EchoSquad/Assets/Whisper/decoder_model.onnx filter=lfs diff=lfs merge=lfs -text
 C:/Users/ljm/Desktop/University/졸프/EchoSquad/Assets/Whisper/decoder_with_past_model.onnx filter=lfs diff=lfs merge=lfs -text
+=======
+*.fbx filter=lfs diff=lfs merge=lfs -text
+>>>>>>> origin/main
