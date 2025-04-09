@@ -11,7 +11,7 @@ namespace Samples.Whisper
         [SerializeField] private Text message;
         [SerializeField] private Dropdown dropdown;
         
-        private readonly string fileName = "C:/Users/ljm/Desktop/University/졸프/EchoSquad/Assets/Whisper/output";
+        private readonly string fileName = "Whisper/output";
         private readonly int duration = 5;
         
         private AudioClip clip;
@@ -50,7 +50,7 @@ namespace Samples.Whisper
             var index = PlayerPrefs.GetInt("user-mic-device-index");
             
             #if !UNITY_WEBGL
-            clip = Microphone.Start(dropdown.options[index].text, false, duration, 44100);
+            clip = Microphone.Start(dropdown.options[index].text, false, duration, 16000);
             #endif
         }
 
