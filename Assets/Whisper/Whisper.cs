@@ -62,7 +62,9 @@ namespace Samples.Whisper
             Microphone.End(null);
             #endif
             
-            SaveWav.Save(fileName, clip);
+            //녹음된 파일 저장
+            //SaveWav.Save(fileName, clip);
+            
             /*
             var req = new CreateAudioTranscriptionsRequest
             {
