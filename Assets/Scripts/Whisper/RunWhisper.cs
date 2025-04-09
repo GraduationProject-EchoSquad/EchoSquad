@@ -3,8 +3,8 @@ using UnityEngine;
 using Unity.Sentis;
 using System.Text;
 using Cysharp.Threading.Tasks;
-using Newtonsoft.Json;
 using Unity.Collections;
+using UnityEngine.Animations.Rigging;
 
 public class RunWhisper : MonoBehaviour
 {
@@ -88,10 +88,11 @@ public class RunWhisper : MonoBehaviour
         while (true)
         {
             if (!transcribe || tokenCount >= (outputTokens.Length - 1))
-                return;
+                return; 
             await InferenceStep();
         }
     }
+    Awaitable m_Awaitable;
 
     NativeArray<int> lastToken;
     Tensor<int> lastTokenTensor;
@@ -114,53 +115,7 @@ public class RunWhisper : MonoBehaviour
         encoder.Schedule(logmel);
         encodedAudio = encoder.PeekOutput() as Tensor<float>;
     }
-
-    public async UniTask DoTest()
-    {
-        SetupWhiteSpaceShifts();
-        GetTokens();
-
-        decoder1 = new Worker(ModelLoader.Load(audioDecoder1), BackendType.GPUCompute);
-        decoder2 = new Worker(ModelLoader.Load(audioDecoder2), BackendType.GPUCompute);
-
-        FunctionalGraph graph = new FunctionalGraph();
-        var input = graph.AddInput(DataType.Float, new DynamicTensorShape(1, 1, 51865));
-        var amax = Functional.ArgMax(input, -1, false);
-        var selectTokenModel = graph.Compile(amax);
-        argmax = new Worker(selectTokenModel, BackendType.GPUCompute);
-
-        encoder = new Worker(ModelLoader.Load(audioEncoder), BackendType.GPUCompute);
-        spectrogram = new Worker(ModelLoader.Load(logMelSpectro), BackendType.GPUCompute);
-
-        outputTokens = new NativeArray<int>(maxTokens, Allocator.Persistent);
-
-        outputTokens[0] = START_OF_TRANSCRIPT;
-        outputTokens[1] = ENGLISH;// GERMAN;//FRENCH;//
-        outputTokens[2] = TRANSCRIBE; //TRANSLATE;//
-        //outputTokens[3] = NO_TIME_STAMPS;// START_TIME;//
-        tokenCount = 3;
-
-        LoadAudio();
-        EncodeAudio();
-        transcribe = true;
-
-        tokensTensor = new Tensor<int>(new TensorShape(1, maxTokens));
-        ComputeTensorData.Pin(tokensTensor);
-        tokensTensor.Reshape(new TensorShape(1, tokenCount));
-        tokensTensor.dataOnBackend.Upload<int>(outputTokens, tokenCount);
-
-        lastToken = new NativeArray<int>(1, Allocator.Persistent); lastToken[0] = NO_TIME_STAMPS;
-        lastTokenTensor = new Tensor<int>(new TensorShape(1, 1), new[] { NO_TIME_STAMPS });
-
-        while (true)
-        {
-            if (!transcribe || tokenCount >= (outputTokens.Length - 1))
-                return;
-            await InferenceStep();
-        }
-    }
-    
-    async UniTask InferenceStep()
+    async UniTask<string> InferenceStep()
     {
         decoder1.SetInput("input_ids", tokensTensor);
         decoder1.SetInput("encoder_hidden_states", encodedAudio);
@@ -207,12 +162,7 @@ public class RunWhisper : MonoBehaviour
 
         var logits = decoder2.PeekOutput("logits") as Tensor<float>;
         argmax.Schedule(logits);
-        // assuming argmax is a Tensor
-        Tensor<int> t_Token = argmax.PeekOutput().ReadbackAndClone() as Tensor<int>;
-
-        // 명시적으로 Download() 호출해서 GPU에서 CPU로 데이터 복사
-        t_Token.CompleteAllPendingOperations(); // 연산 완료 대기
-        
+        using var t_Token = await argmax.PeekOutput().ReadbackAndCloneAsync() as Tensor<int>;
         int index = t_Token[0];
 
         outputTokens[tokenCount] = lastToken[0];
@@ -232,14 +182,32 @@ public class RunWhisper : MonoBehaviour
         }
 
         Debug.Log(outputString);
-        outputString = "";
+        return outputString;
+    }
+
+    public async UniTask<string> Test(AudioClip clip)
+    {
+        audioClip = clip;
+        LoadAudio();
+        EncodeAudio();
+        transcribe = true;
+        
+        string result = "";
+        while (true)
+        {
+            if (!transcribe || tokenCount >= (outputTokens.Length - 1))
+                return result;
+            result += await InferenceStep();
+        }
+
+        return result;
     }
 
     // Tokenizer
     public TextAsset jsonFile;
     void GetTokens()
     {
-        var vocab = JsonConvert.DeserializeObject<Dictionary<string, int>>(jsonFile.text);
+        var vocab = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, int>>(jsonFile.text);
         tokens = new string[vocab.Count];
         foreach (var item in vocab)
         {

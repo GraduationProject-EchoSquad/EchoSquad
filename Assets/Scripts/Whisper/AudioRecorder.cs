@@ -48,9 +48,9 @@ public class AudioRecorder : MonoBehaviour
         }
 
         Microphone.End(null);
+        
 
         whisper.audioClip = recordedClip;
-        whisper.DoTest();
         Debug.Log("녹음 종료됨");
     }
     
