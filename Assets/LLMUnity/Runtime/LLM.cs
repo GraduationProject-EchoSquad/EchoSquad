@@ -127,10 +127,6 @@ namespace LLMUnity
         public async void Awake()
         {
             if (!enabled) return;
-
-            // SetModel Relative Path
-            SetModel("LLMModels/llama-3.2-3b-instruct-q4_k_m.gguf");
-
 #if !UNITY_EDITOR
             modelSetupFailed = !await LLMManager.Setup();
 #endif
