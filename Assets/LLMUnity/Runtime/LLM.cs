@@ -114,13 +114,6 @@ namespace LLMUnity
 
         void OnValidate()
         {
-            if (string.IsNullOrEmpty(model) || model.Contains(":\\"))
-            {
-                SetModel("LLMModels/llama-3.2-3b-instruct-q4_k_m.gguf");
-                // 변경 사항을 에디터에 반영
-                EditorUtility.SetDirty(this);
-            }
-
             if (lora != loraPre || loraWeights != loraWeightsPre)
             {
                 loraManager.FromStrings(lora, loraWeights);
