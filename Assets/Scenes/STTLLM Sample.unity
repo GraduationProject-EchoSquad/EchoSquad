@@ -2050,8 +2050,8 @@ MonoBehaviour:
   dontDestroyOnLoad: 1
   contextSize: 8192
   batchSize: 512
-  model: microsoft_Phi-4-mini-instruct-Q4_K_M.gguf
-  chatTemplate: phi-4-mini
+  model: LLMModels/llama-3.2-3b-instruct-q4_k_m.gguf
+  chatTemplate: llama3 chat
   lora: 
   loraWeights: 
   flashAttention: 0
