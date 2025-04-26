@@ -2205,10 +2205,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whisper: {fileID: 474905918}
   microphoneRecord: {fileID: 1309361133}
+  functionCalling: {fileID: 1545694047}
   button: {fileID: 127668736}
   buttonText: {fileID: 1668704520}
   text: {fileID: 1866931546}
-  scroll: {fileID: 0}
 --- !u!4 &1309361135
 Transform:
   m_ObjectHideFlags: 0
