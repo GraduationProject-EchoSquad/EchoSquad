@@ -76,14 +76,19 @@ namespace LLMUnitySamples
 
         async void onInputFieldSubmit(string message)
         {
-            // 1) 시간 측정 시작
-            var sw = System.Diagnostics.Stopwatch.StartNew();
 
             playerText.interactable = false;
             llmCharacter.grammarString = "";
 
+            // 시간 측정 시작
+            float t0 = Time.realtimeSinceStartup;
+
             string json = await llmCharacter.Chat(ConstructStructuredCommandPrompt(message));
             Debug.Log($"[LLM Raw JSON] {json}");
+
+            // 측정 종료
+            float elapsedMs = (Time.realtimeSinceStartup - t0) * 1000f;
+            Debug.Log($"LLM 응답 시간: {elapsedMs:F1} ms");
 
             // 코드블럭 제거
             json = json.Trim();
@@ -118,10 +123,6 @@ namespace LLMUnitySamples
                 playerText.interactable = true;
                 return;
             }
-
-            // 3) 시간 측정 종료
-            sw.Stop();
-            Debug.Log($"LLM 처리 시간: {sw.ElapsedMilliseconds} ms");
 
             string functionName = $"{cmd.action}{cmd.location}";
             Debug.Log($"[Parsed] target = {cmd.target}, action = {cmd.action}, location = {cmd.location}");
