@@ -2,6 +2,7 @@
 using LLMUnity;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace LLMUnitySamples
 {
@@ -65,7 +66,7 @@ namespace LLMUnitySamples
         string ConstructStructuredCommandPrompt(string playerMessage)
         {
             return $"명령: \"{playerMessage}\"\n\n" +
-                   "아래 JSON 형식에 맞춰 분석하라. **다른 텍스트 없이 JSON만 출력하라.**\n\n" +
+                   "아래 JSON 형식에 맞춰 분석하라. 한글로 입력되면 영어로 다 바꿔서 알맞은 영어로 해석해서 아래에서 선택하도록 분석하라 **다른 텍스트 없이 JSON만 출력하라.**\n\n" +
                    "{\n" +
                    "  \"target\": \"<AI 이름>\",\n" +
                    "  \"action\": \"Attack | Defend | Scout | Heal\",\n" +
@@ -75,11 +76,19 @@ namespace LLMUnitySamples
 
         async void onInputFieldSubmit(string message)
         {
+
             playerText.interactable = false;
             llmCharacter.grammarString = "";
 
+            // 시간 측정 시작
+            float t0 = Time.realtimeSinceStartup;
+
             string json = await llmCharacter.Chat(ConstructStructuredCommandPrompt(message));
             Debug.Log($"[LLM Raw JSON] {json}");
+
+            // 측정 종료
+            float elapsedMs = (Time.realtimeSinceStartup - t0) * 1000f;
+            Debug.Log($"LLM 응답 시간: {elapsedMs:F1} ms");
 
             // 코드블럭 제거
             json = json.Trim();
@@ -91,6 +100,15 @@ namespace LLMUnitySamples
                 {
                     json = json.Substring(firstBrace, lastBrace - firstBrace + 1);
                 }
+            }
+
+            // 2) 중괄호 짝 맞추기
+            int openCount = json.Count(c => c == '{');
+            int closeCount = json.Count(c => c == '}');
+            while (closeCount < openCount)
+            {
+                json += "}";
+                closeCount++;
             }
 
             ParsedCommand cmd;
@@ -121,6 +139,12 @@ namespace LLMUnitySamples
                     ai.ExecuteCommand(cmd.action, cmd.location);
                     break;
                 }
+                else if (ai.teammateNameKorean == cmd.target)
+                {
+                    ai.ExecuteCommand(cmd.action, cmd.location);
+                    break;
+                }
+
             }
 
             playerText.interactable = true;

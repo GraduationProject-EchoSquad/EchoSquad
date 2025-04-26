@@ -1,3 +1,4 @@
+using System;
 using UnityEditor.VersionControl;
 using UnityEngine;
 
@@ -10,15 +11,16 @@ public class TeammateAI : MonoBehaviour
     {
         Debug.Log($"[{teammateName}] 명령 수신: {action} - {location}");
 
-        // 예시로 동작 분기
-        if (action == "Defend")
+        // 예시로 동작 분기 (대소문자 구분 없이)
+        if (string.Equals(action, "Defend", StringComparison.OrdinalIgnoreCase))
             Defend(location);
-        else if (action == "Attack")
+        else if (string.Equals(action, "Attack", StringComparison.OrdinalIgnoreCase))
             Attack(location);
-        else if (action == "Scout")
+        else if (string.Equals(action, "Scout", StringComparison.OrdinalIgnoreCase))
             Scout(location);
-        else if (action == "Heal")
+        else if (string.Equals(action, "Heal", StringComparison.OrdinalIgnoreCase))
             Heal();
+
     }
     void SendChat(string message)
     {
