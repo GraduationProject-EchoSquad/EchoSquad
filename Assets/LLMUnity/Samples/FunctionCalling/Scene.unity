@@ -496,7 +496,6 @@ MonoBehaviour:
   repeatPenalty: 1.1
   presencePenalty: 0
   frequencyPenalty: 0
-  tfsZ: 1
   typicalP: 1
   repeatLastN: 64
   penalizeNl: 1

@@ -31,7 +31,7 @@ public class PlayerController : PlayerBase
         float vertical = Input.GetAxisRaw("Vertical");
         Vector3 inputDirection = new Vector3(horizontal, 0f, vertical).normalized;
 
-        // ´Þ¸®±â Ã³¸®
+        // ë‹¬ë¦¬ê¸° ì²˜ë¦¬
         if (inputDirection.sqrMagnitude > 0.1)
         {
             if (Input.GetKey(KeyCode.LeftShift))
