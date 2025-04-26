@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerController : PlayerBase
 {
-
+    private Vector3 localInputDirection;
+    
     protected override void Start()
     {
         base.Start();
@@ -25,26 +26,36 @@ public class PlayerController : PlayerBase
 
     void HandleMovement()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        //use GetAxisRaw, not GetAxis
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
         Vector3 inputDirection = new Vector3(horizontal, 0f, vertical).normalized;
 
         // 달리기 처리
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (inputDirection.sqrMagnitude > 0.1)
         {
-            currentSpeed = Mathf.Lerp(currentSpeed, runSpeed, Time.deltaTime * 5f);
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                targetSpeed = runSpeed;
+            }
+            else
+            {
+                targetSpeed = walkSpeed;
+            }
         }
         else
         {
-            currentSpeed = Mathf.Lerp(currentSpeed, walkSpeed, Time.deltaTime * 5f);
+            targetSpeed = 0f;
         }
+
+        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * 5f);
 
         if (characterController.isGrounded)
         {
             verticalVelocity = -0.5f;
-            moveDirection = inputDirection * currentSpeed;
+            moveDirection = (inputDirection * currentSpeed).normalized;
 
-            characterAnimator?.SetFloat("Speed", inputDirection.magnitude * currentSpeed);
+            characterAnimator?.SetFloat("Speed", currentSpeed);
             characterAnimator?.SetBool("IsFalling", false);
 
             if (Input.GetButtonDown("Jump"))
@@ -56,14 +67,15 @@ public class PlayerController : PlayerBase
         {
             if (inputDirection.magnitude > 0.1f)
             {
-                Vector3 targetDir = inputDirection * currentSpeed * airControlFactor;
+                Vector3 targetDir = (inputDirection * currentSpeed).normalized;
                 moveDirection = Vector3.Lerp(moveDirection, targetDir, Time.deltaTime * airControlLerp);
             }
             characterAnimator?.SetBool("IsFalling", true);
         }
 
         // Update MoveX and MoveY based on local input direction
-        Vector3 localInputDirection = transform.InverseTransformDirection(inputDirection);
+        //use lerp
+        localInputDirection = Vector3.Lerp(localInputDirection, transform.InverseTransformDirection(inputDirection), Time.deltaTime * 5f);
         characterAnimator?.SetFloat("MoveX", localInputDirection.x);
         characterAnimator?.SetFloat("MoveY", localInputDirection.z);
     }
