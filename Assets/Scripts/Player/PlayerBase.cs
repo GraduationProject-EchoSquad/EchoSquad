@@ -6,13 +6,15 @@ public abstract class PlayerBase : MonoBehaviour
 {
     protected CharacterController characterController;
     protected CharacterAnimator characterAnimator;
+    //should be normalized
     protected Vector3 moveDirection;
     protected float currentSpeed;
+    protected float targetSpeed;
     protected float verticalVelocity;
 
     [Header("Movement Settings")]
-    public float walkSpeed = 3.0f;
-    public float runSpeed = 6.0f;
+    public float walkSpeed = 1.0f;
+    public float runSpeed = 2.0f;
     public float gravity = -15f;
     public float jumpForce = 7.0f;
 
@@ -37,7 +39,7 @@ public abstract class PlayerBase : MonoBehaviour
 
     protected void MoveCharacter()
     {
-        Vector3 finalMove = moveDirection + Vector3.up * verticalVelocity;
+        Vector3 finalMove = moveDirection * currentSpeed + Vector3.up * verticalVelocity;
         characterController.Move(finalMove * Time.deltaTime);
     }
 

@@ -633,6 +633,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1659689280409471740, guid: 492a2b9782407bd4aa70265e0817449c,
+        type: 3}
+      propertyPath: walkSpeed
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2492484610494049153, guid: 492a2b9782407bd4aa70265e0817449c,
         type: 3}
       propertyPath: m_AnchorMax.x
