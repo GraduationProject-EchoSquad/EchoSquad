@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using LLMUnity;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Serialization;
 
 namespace LLMUnitySamples
 {
@@ -10,8 +12,27 @@ namespace LLMUnitySamples
     public class ParsedCommand
     {
         public string target;
-        public string action;
-        public string location;
+        public AIActionEnum action;
+        public Parameters Parameters;
+    }
+
+    public class Parameters
+    {
+        public string destination;
+        public string follow_target;
+        public string engage_enemy;
+        public string support_target;
+        public string support_type;
+        public string area;
+        public string mode;
+    }
+
+    public enum AIActionEnum
+    {
+        Move,
+        Combat,
+        Support,
+        Scout
     }
 
     public static class Functions
@@ -62,15 +83,33 @@ namespace LLMUnitySamples
             playerText.Select();
             llmCharacter.grammarString = ""; // 자유 입력 모드
         }
+        
+        //TODO 다른곳에 정리
+        string FormatEnumOptions<T>() where T : Enum
+        {
+            return string.Join(" | ", Enum.GetNames(typeof(T)));
+        }
 
         string ConstructStructuredCommandPrompt(string playerMessage)
         {
+            string actions = FormatEnumOptions<AIActionEnum>();
             return $"명령: \"{playerMessage}\"\n\n" +
                    "아래 JSON 형식에 맞춰 분석하라. 한글로 입력되면 영어로 다 바꿔서 알맞은 영어로 해석해서 아래에서 선택하도록 분석하라 **다른 텍스트 없이 JSON만 출력하라.**\n\n" +
                    "{\n" +
                    "  \"target\": \"<AI 이름>\",\n" +
-                   "  \"action\": \"Attack | Defend | Scout | Heal\",\n" +
-                   "  \"location\": \"Left | Right | Center | Back | Forward | None\"\n" +
+                   $"  \"action\": \"{actions}\",\n" +
+                   "  \"parameters\": {\n" +
+                   "    // Move 예시\n" +
+                   "    \"destination\": \"Left | Right | Center | Back | Forward | x,y,z | AlphaUnit\",\n" +
+                   "    \"follow_target\": \"<UnitName> | null\",\n\n" +
+                   "    // Combat 예시\n" +
+                   "    \"engage_enemy\": \"Nearest | Sniper | Tank | null\",\n\n" +
+                   "    // Support 예시\n" +
+                   "    \"support_target\": \"Alpha | WoundedUnit | null\",\n" +
+                   "    \"support_type\": \"Heal | Shield | null\",\n\n" +
+                   "    // Scout 예시\n" +
+                   "    \"area\": \"Left | Right | EnemyBase | null\",\n" +
+                   "    \"mode\": \"Stealth | Quick | null\"\n" +
                    "}\n";
         }
 
@@ -124,8 +163,8 @@ namespace LLMUnitySamples
                 return;
             }
 
-            string functionName = $"{cmd.action}{cmd.location}";
-            Debug.Log($"[Parsed] target = {cmd.target}, action = {cmd.action}, location = {cmd.location}");
+            string functionName = $"{cmd.action}{cmd.Parameters}";
+            Debug.Log($"[Parsed] target = {cmd.target}, action = {cmd.action}, params = {cmd.Parameters}");
 
             // 대사 출력
             string result = Functions.GetVoiceLine(functionName);
@@ -136,12 +175,12 @@ namespace LLMUnitySamples
             {
                 if (ai.teammateName.ToLower() == cmd.target.ToLower())
                 {
-                    ai.ExecuteCommand(cmd.action, cmd.location);
+                    ai.ExecuteCommand(cmd.action, cmd.Parameters);
                     break;
                 }
                 else if (ai.teammateNameKorean == cmd.target)
                 {
-                    ai.ExecuteCommand(cmd.action, cmd.location);
+                    ai.ExecuteCommand(cmd.action, cmd.Parameters);
                     break;
                 }
 

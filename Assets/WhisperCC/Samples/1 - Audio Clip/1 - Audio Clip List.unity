@@ -580,7 +580,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.17822656, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2.4999847, y: -0.5}
+  m_AnchoredPosition: {x: -2.5, y: -0.5}
   m_SizeDelta: {x: -5, y: -3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &342221301
@@ -821,7 +821,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logLevel: 1
-  modelPath: Whisper/ggml-large-v3-turbo-q8_0.bin
+  modelPath: Whisper/ggml-tiny.bin
   isModelPathInStreamingAssets: 1
   initOnAwake: 1
   useGpu: 1
@@ -1717,10 +1717,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   manager: {fileID: 587639199}
   clips:
-  - {fileID: 8300000, guid: 26b5db140d1f1ae4188864d3bf05471b, type: 3}
-  - {fileID: 8300000, guid: cb6c31117a1caab45804b3e441944132, type: 3}
-  referenceText: "\uC774\uBD10 \uB808\uB098, \uC88C\uCE21 \uC9C4\uC601\uC73C\uB85C
-    \uBE60\uB974\uAC8C \uC9C4\uC785\uD574 \uC801 \uC0C1\uD669\uC744 \uD30C\uC545\uD574."
+  - {fileID: 8300000, guid: 63208fc0eb2834c469800dbcd99ec56e, type: 3}
+  - {fileID: 8300000, guid: 9e97fb70f9befb9448f1cdbf741d9574, type: 3}
+  - {fileID: 8300000, guid: 06e518b71079f454fb064a51cebe9671, type: 3}
+  referenceText: "\uC88B\uC544 \uC9C4, \uC6B0\uCE21 \uCE21\uBA74\uC73C\uB85C \uC774\uB3D9\uD574
+    \uC77C\uC81C \uC0AC\uACA9 \uC900\uBE44\uD574. "
   streamSegments: 1
   echoSound: 1
   printLanguage: 1
@@ -2072,6 +2073,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1522420788}
   - component: {fileID: 1522420787}
+  - component: {fileID: 1522420789}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -2159,6 +2161,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &1522420789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1522420786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1 &1535893990
 GameObject:
   m_ObjectHideFlags: 0

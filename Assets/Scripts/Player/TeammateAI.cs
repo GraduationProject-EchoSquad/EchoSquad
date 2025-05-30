@@ -1,25 +1,26 @@
 using System;
+using LLMUnitySamples;
 using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class TeammateAI : MonoBehaviour
 {
     public string teammateName = "Lena";
-    public string teammateNameKorean = "·¹³ª";
+    public string teammateNameKorean = "ë ˆë‚˜";
 
-    public void ExecuteCommand(string action, string location)
+    public void ExecuteCommand(AIActionEnum action, Parameters param)
     {
-        Debug.Log($"[{teammateName}] ¸í·É ¼ö½Å: {action} - {location}");
+        Debug.Log($"[{teammateName}] ëª…ë ¹ ìˆ˜ì‹ : {action} - {param}");
 
-        // ¿¹½Ã·Î µ¿ÀÛ ºĞ±â (´ë¼Ò¹®ÀÚ ±¸ºĞ ¾øÀÌ)
-        if (string.Equals(action, "Defend", StringComparison.OrdinalIgnoreCase))
-            Defend(location);
-        else if (string.Equals(action, "Attack", StringComparison.OrdinalIgnoreCase))
-            Attack(location);
-        else if (string.Equals(action, "Scout", StringComparison.OrdinalIgnoreCase))
-            Scout(location);
-        else if (string.Equals(action, "Heal", StringComparison.OrdinalIgnoreCase))
-            Heal();
+        // ì˜ˆì‹œë¡œ ë™ì‘ ë¶„ê¸° (ëŒ€ì†Œë¬¸ì êµ¬ë¶„ ì—†ì´)
+        if (action == AIActionEnum.Move)
+            Move(param);
+        else if (action==AIActionEnum.Combat)
+            Combat(param);
+        else if (action==AIActionEnum.Support)
+            Support(param);
+        else if (action==AIActionEnum.Scout)
+            Scout(param);
 
     }
     void SendChat(string message)
@@ -31,33 +32,33 @@ public class TeammateAI : MonoBehaviour
         }
     }
 
-    void Defend(string location)
+    void Move(Parameters param)
     {
-        string message = $"{location} À§Ä¡ ¹æ¾î Áß...";
+        string message = $"{param.destination} ìœ„ì¹˜ ë°©ì–´ ì¤‘...";
         Debug.Log($"[{teammateName}] {message}");
         SendChat(message);
     }
 
 
-    void Attack(string location)
+    void Combat(Parameters param)
     {
-        string message = $"{location} À§Ä¡·Î °ø°İ!";
+        string message = $"{param.destination} ìœ„ì¹˜ë¡œ ê³µê²©!";
         Debug.Log($"[{teammateName}] {message}");
         SendChat(message);
-        // TODO: °ø°İ ´ë»ó ÁöÁ¤, ¾Ö´Ï¸ŞÀÌ¼Ç Æ®¸®°Å µî
+        // TODO: ê³µê²© ëŒ€ìƒ ì§€ì •, ì• ë‹ˆë©”ì´ì…˜ íŠ¸ë¦¬ê±° ë“±
     }
 
-    void Scout(string location)
+    void Support(Parameters param)
     {
-        string message = $"{location} Á¤Âû Áß...";
+        string message = $"{param.destination} ì •ì°° ì¤‘...";
         Debug.Log($"[{teammateName}] {message}");
         SendChat(message);
-        // TODO: Å½»ö ·çÆ®·Î ÀÌµ¿
+        // TODO: íƒìƒ‰ ë£¨íŠ¸ë¡œ ì´ë™
     }
 
-    void Heal()
+    void Scout(Parameters param)
     {
-        string message = $"Èú ÁßÀÌ¾ß. ¾öÈ£ÇØÁà!";
+        string message = $"í ì¤‘ì´ì•¼. ì—„í˜¸í•´ì¤˜!";
         Debug.Log($"[{teammateName}] {message}");
         SendChat(message);
     }

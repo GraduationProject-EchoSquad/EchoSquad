@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -85,7 +86,7 @@ namespace Whisper.Samples
             avgRate /= clips.Count;
             avgWER /= clips.Count;
             avgCER /= clips.Count;
-            timeText.text = $"Time: {avgTime} ms\nRate: {avgRate:F1}x\nWER: {avgWER:F4}%\nCER: {avgCER:F4}%";
+            timeText.text = $"Time: {avgTime} ms\nRate: {avgRate:F1}x\nWER: {avgWER * 100}%\nCER: {avgCER * 100}%";
         }
 
         private void OnLanguageChanged(int ind)
@@ -116,9 +117,17 @@ namespace Whisper.Samples
             UiUtils.ScrollDown(scroll);
         }
 
+        // 특수문자 제거 함수
+        private static string RemovePunctuation(string input)
+        {
+            return Regex.Replace(input, @"[^\w\s가-힣]", ""); // 영어, 숫자, 한글, 공백만 남기기
+        }
+
         // WER 계산 함수
         public static float CalculateWER(string reference, string hypothesis)
         {
+            reference = RemovePunctuation(reference);
+            hypothesis = RemovePunctuation(hypothesis);
             // Reference와 Hypothesis를 공백 기준으로 나눈 단어 배열로 변환
             var referenceWords = reference.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             var hypothesisWords = hypothesis.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -149,6 +158,8 @@ namespace Whisper.Samples
         // CER 계산 함수
         public static float CalculateCER(string reference, string hypothesis)
         {
+            reference = RemovePunctuation(reference);
+            hypothesis = RemovePunctuation(hypothesis);
             // Reference와 Hypothesis를 문자 배열로 변환
             var referenceChars = reference.Replace(" ", "").ToCharArray();
             var hypothesisChars = hypothesis.Replace(" ", "").ToCharArray();
