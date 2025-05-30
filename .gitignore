@@ -71,3 +71,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 Assets/StreamingAssets/Whisper/ggml-large-v3-turbo-q8_0.bin
+Assets/StreamingAssets/Whisper/ggml-tiny.bin.meta
+Assets/StreamingAssets/Whisper/ggml-tiny.bin
