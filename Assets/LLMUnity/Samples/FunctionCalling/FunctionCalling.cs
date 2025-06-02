@@ -12,7 +12,7 @@ namespace LLMUnitySamples
     [System.Serializable]
     public class ParsedCommand
     {
-        public string target;
+        public List<string> command_units;
         public AIActionEnum action;
         public Parameters Parameters;
     }
@@ -120,43 +120,41 @@ namespace LLMUnitySamples
         string ConstructStructuredCommandPrompt(string playerMessage, TeammateAI[] AIList, string districtsName)
         {
             string actions = FormatEnumOptions<AIActionEnum>();
-            string AINames = GetAINames(AIList);
+            string unitNames = GetAINames(AIList);
 
-            return $"명령: \"{playerMessage}\"\n\n" +
-                   "주어진 명령을 분석하여 아래 JSON 형식으로 변환하라. 반드시 다음 조건을 따른다:\n" +
-                   "1. 반드시 JSON만 출력할 것. **그 외 설명 또는 텍스트는 절대 출력하지 말 것.**\n" +
-                   "2. JSON의 모든 문자열 값은 영어로 변환하여 지정된 선택지 중 하나로 작성할 것.\n" +
-                   "3. 반드시 제공된 enum 값들만 사용하여 action 및 parameters를 채울 것.\n" +
-                   "4. 명령이 해당하지 않는 parameter는 공백으로 지정할 것.\n" +
-                   "5. 목적지(destination)는 다음 중 하나여야 한다:\n" +
-                   $"   - 위치 이름: 반드시 다음 중 하나만 선택할 것 → {districtsName}\n" +
-                   "     예: \"A번 방으로 가라\" → \"A\"\n" +
-                   "     예: \"에이로 가라\" → \"A\"\n" +
-                   "   - 방향: Left, Right, Forward, Back, Center\n" +
-                   "   - 유닛 이름: 특정 AI 유닛의 이름\n" +
-                   "     예: \"Jin에게 가라\" → \"Jin\"\n" +
-                   "     예: \"진한테 가라\" → \"Jin\"\n" +
-                   "   반드시 정확한 선택지를 그대로 사용할 것. 숫자+한글 표현이 입력되면 단순화하여 변환할 것.\n" +
-                   "6. action에 따라 해당 action과 관련된 parameter만 채우고, 나머지는 모두 공백으로 둘 것.\n" +
-                   $"7. target은 다음 선택지 중 하나만 선택해서 문자열로 입력할 것: {AINames}\n" +
-                   "8. JSON 형식이 올바르게 닫히도록 주의할 것.\n\n" +
-                   "출력 형식은 다음과 같다:\n\n" +
+            return $"Command: \"{playerMessage}\"\n\n" +
+                   "Analyze the command and convert it into the following JSON structure.\n\n" +
+                   "You MUST strictly follow these rules:\n\n" +
+                   "1. Output ONLY valid JSON. Do NOT include explanations or any other text.\n\n" +
+                   "2. For the \"action\" field, use ONLY ONE enum value from:\n" +
+                   $"<One of: {actions}>\n\n" +
+                   "3. For the \"command_units\" field, output a JSON array of units involved in the command. Use ONLY values from:\n" +
+                   $"<One or more of: {unitNames}>\n\n" +
+                   "4. If the command includes 'follow me', 'come with me', or similar, map it to \"follow_target\": \"Player\"\n\n" +
+                   "5. If the command involves multiple actions or units, merge them if compatible, or ignore secondary commands.\n\n" +
+                   "6. For each parameter, use only the allowed values. If not used, set to null.\n\n" +
+                   $"   - destination      → Left | Right | Center | Back | Forward | {unitNames} | {districtsName}\n" +
+                   $"   - follow_target    → {unitNames} | Player | null\n" +
+                   "   - engage_enemy     → Nearest | Sniper | Tank | null\n" +
+                   "   - support_target   → Alpha | WoundedUnit | null\n" +
+                   "   - support_type     → Heal | Shield | null\n" +
+                   "   - area             → Left | Right | EnemyBase | null\n" +
+                   "   - mode             → Stealth | Quick | null\n\n" +
+                   "7. Example output:\n" +
                    "{\n" +
-                   $"  \"target\": \"{AINames}\",\n" +
-                   $"  \"action\": \"{actions}\",\n" +
+                   "  \"command_units\": [\"James\"],\n" +
+                   "  \"action\": \"Move\",\n" +
                    "  \"parameters\": {\n" +
-                   "    // Move 예시\n" +
-                   $"    \"destination\": \"Left | Right | Center | Back | Forward | {AINames} | {districtsName}\",\n" +
-                   "    \"follow_target\": \"<UnitName> | null\",\n\n" +
-                   "    // Combat 예시\n" +
-                   "    \"engage_enemy\": \"Nearest | Sniper | Tank | null\",\n\n" +
-                   "    // Support 예시\n" +
-                   "    \"support_target\": \"Alpha | WoundedUnit | null\",\n" +
-                   "    \"support_type\": \"Heal | Shield | null\",\n\n" +
-                   "    // Scout 예시\n" +
-                   "    \"area\": \"Left | Right | EnemyBase | null\",\n" +
-                   "    \"mode\": \"Stealth | Quick | null\"\n" +
+                   "    \"destination\": \"Left\",\n" +
+                   "    \"follow_target\": null,\n" +
+                   "    \"engage_enemy\": null,\n" +
+                   "    \"support_target\": null,\n" +
+                   "    \"support_type\": null,\n" +
+                   "    \"area\": null,\n" +
+                   "    \"mode\": null\n" +
+                   "  }\n" +
                    "}\n";
+
         }
 
         async void onInputFieldSubmit(string message)
@@ -213,26 +211,25 @@ namespace LLMUnitySamples
                 playerText.interactable = true;
                 return;
             }
-
+            string unitsText = string.Join(", ", cmd.command_units);
             string functionName = $"{cmd.action}{cmd.Parameters}";
-            Debug.Log($"[Parsed] target = {cmd.target},\n action = {cmd.action},\n params = {cmd.Parameters}");
+            Debug.Log($"[Parsed] target = {unitsText},\n action = {cmd.action},\n params = {cmd.Parameters}");
 
             // 대사 출력
             string result = Functions.GetVoiceLine(functionName);
-            AIText.text = $"[To {cmd.target}] {result}";
+            AIText.text = $"[To {unitsText}] {result}";
 
+            //행동 주체들
             // AI 실행
             foreach (var ai in aiList)
             {
-                if (ai.teammateName.ToLower() == cmd.target.ToLower())
+                if (cmd.command_units.Contains(ai.teammateName))
                 {
                     ai.ExecuteCommand(cmd.action, cmd.Parameters);
-                    break;
                 }
-                else if (ai.teammateNameKorean == cmd.target)
+                else if (cmd.command_units.Contains(ai.teammateNameKorean))
                 {
                     ai.ExecuteCommand(cmd.action, cmd.Parameters);
-                    break;
                 }
             }
 
