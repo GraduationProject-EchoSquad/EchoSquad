@@ -11,7 +11,7 @@ namespace Samples.Whisper
         [SerializeField] private Text message;
         [SerializeField] private Dropdown dropdown;
         
-        private readonly string fileName = "Whisper/output";
+        private readonly string fileName = "Whisper/output7";
         private readonly int duration = 5;
         
         private AudioClip clip;
@@ -63,7 +63,7 @@ namespace Samples.Whisper
             #endif
             
             //녹음된 파일 저장
-            //SaveWav.Save(fileName, clip);
+            SaveWav.Save(fileName, clip);
             
             /*
             var req = new CreateAudioTranscriptionsRequest
