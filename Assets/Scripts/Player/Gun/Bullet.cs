@@ -18,5 +18,12 @@ public class Bullet : MonoBehaviour
         {
             Debug.Log(contact.thisCollider.name + " hit " + contact.otherCollider.name);
         }
+
+        EnemyHP enemyHP = collision.gameObject.GetComponent<EnemyHP>();
+        if (enemyHP != null)
+        {
+            enemyHP.TakeDamage(damage);
+        }
+        Destroy(gameObject);
     }
 }

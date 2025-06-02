@@ -25,7 +25,7 @@ public class EnemyHP : MonoBehaviour
     private void Die()
     {
         enemyAnimator.SetTrigger("Die");
-        Debug.Log("Player died!");
-        Destroy(gameObject, 3f);
+        Debug.Log("Zombie died!");
+        Destroy(gameObject, 2f);
     }
 }
