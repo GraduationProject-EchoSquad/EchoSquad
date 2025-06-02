@@ -2,11 +2,13 @@ using System;
 using LLMUnitySamples;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class TeammateAI : MonoBehaviour
 {
     public string teammateName = "Lena";
     public string teammateNameKorean = "레나";
+    [SerializeField] private UnitController unitController;
 
     public void ExecuteCommand(AIActionEnum action, Parameters param)
     {
@@ -34,20 +36,30 @@ public class TeammateAI : MonoBehaviour
 
     void Move(Parameters param)
     {
-        /*string message = $"{param.destination} 위치 방어 중...";
-        Debug.Log($"[{teammateName}] {message}");
-        SendChat(message);*/
+        //TODO 처리 필요
+        UnitManager unitManager = FindObjectOfType<UnitManager>();
+        MapManager mapManager = FindObjectOfType<MapManager>();
+
         string message = "";
-        if (!string.IsNullOrEmpty(param.follow_target))
+        
+        //follow target
+        if (!string.IsNullOrEmpty(param.follow_target) && param.follow_target != "null")
         {
-            message = $"[{teammateName}] : {param.follow_target}";
+            if (param.follow_target.Equals("Player"))
+            {
+                unitController.followTarget = unitManager.PlayerUnit.gameObject;
+            }
+            else if (unitManager.UnitDict.TryGetValue(param.follow_target, out var followUnit))
+            {
+                unitController.followTarget = followUnit.gameObject;
+
+                Debug.Log($"Move To AI Unit {param.follow_target}");
+
+                message = $"[{teammateName}] : {param.follow_target}";
+            }
         }
         else
         {
-            //TODO 처리 필요
-            UnitManager unitManager = FindObjectOfType<UnitManager>();
-            MapManager mapManager = FindObjectOfType<MapManager>();
-
             //Left | Right | Center | Back | Forward
             if (string.Equals(param.destination, "Left", StringComparison.OrdinalIgnoreCase))
             {
@@ -61,12 +73,15 @@ public class TeammateAI : MonoBehaviour
             else if (string.Equals(param.destination, "Forward", StringComparison.OrdinalIgnoreCase))
             {
             }
-            else if (unitManager.AIUnitDict.ContainsKey(param.destination))
+            else if (unitManager.UnitDict.TryGetValue(param.destination, out var followUnit))
             {
+                unitController.MoveToUnit(followUnit);
+
                 Debug.Log($"Move To AI Unit {param.destination}");
             }
-            else if (mapManager.districtDict.ContainsKey(param.destination))
+            else if (mapManager.districtDict.TryGetValue(param.destination, out var district))
             {
+                unitController.MoveToObject(district);
                 Debug.Log($"Move To District {param.destination}");
             }
 

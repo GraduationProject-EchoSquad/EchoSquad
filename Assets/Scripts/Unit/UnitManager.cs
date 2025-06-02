@@ -2,15 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class UnitManager : MonoBehaviour
 {
     [SerializeField]
-    private List<TeammateAI> AIUnitList = new List<TeammateAI>();
+    private List<UnitController> UnitList = new List<UnitController>();
+    //[SerializeField]
+    public PlayerController PlayerUnit;
 
-    public Dictionary<string, TeammateAI> AIUnitDict = new Dictionary<string, TeammateAI>();
+    public Dictionary<string, UnitController> UnitDict = new Dictionary<string, UnitController>();
     private void Start()
     {
-        AIUnitDict = AIUnitList.ToDictionary(e => e.teammateName, e => e);
+        UnitDict = UnitList.ToDictionary(e => e.GetTeammateAI().teammateName, e => e);
     }
 }
