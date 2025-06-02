@@ -12699,7 +12699,7 @@ GameObject:
   m_Component:
   - component: {fileID: 486044942}
   m_Layer: 0
-  m_Name: PosPoints
+  m_Name: MovePoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
