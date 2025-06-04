@@ -58,6 +58,11 @@ public class WaveManager : MonoBehaviour
         StartCoroutine(HandleWaveSequence());
     }
 
+    private void UpdateUI()
+    {
+        // 현재 웨이브와 남은 적의 수 표시
+        UIManager.Instance.UpdateWaveText(currentWaveIndex, enemiesRemaining);
+    }
     private void Update()
     {
         //if (!isSpawning && enemiesRemaining == 0)
@@ -97,6 +102,7 @@ public class WaveManager : MonoBehaviour
 
         isSpawning = false;
         currentWaveIndex++;
+        UpdateUI();
     }
 
     // 숫자 → "Wave {n}" → "Fight!" 순으로 TMP 텍스트 교체
@@ -160,5 +166,6 @@ public class WaveManager : MonoBehaviour
     private void OnEnemyDeath()
     {
         enemiesRemaining = Mathf.Max(0, enemiesRemaining - 1);
+        UpdateUI();
     }
 }

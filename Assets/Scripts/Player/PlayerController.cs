@@ -1,130 +1,69 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.AI;
 
-public class PlayerController : PlayerBase
+public class PlayerController : MonoBehaviour
 {
-    private Vector3 localInputDirection;
+    private Animator animator;
+    public AudioClip itemPickupClip;
+    public int lifeRemains = 3;
+    private AudioSource playerAudioPlayer;
+    private PlayerHealth playerHealth;
+    private PlayerMovement playerMovement;
+    private PlayerShooter playerShooter;
+
+    // Start is called before the first frame update
+    private void Start()
+    {
+        playerMovement = GetComponent<PlayerMovement>();
+        playerShooter = GetComponent<PlayerShooter>();
+        playerAudioPlayer = GetComponent<AudioSource>();
+        playerHealth = GetComponent<PlayerHealth>();
+        playerHealth.OnDeath += HandleDeath;
+
+        UIManager.Instance.UpdateLifeText(lifeRemains);
+        Cursor.visible = false;
+        
+    }
     
-    protected override void Start()
+    private void HandleDeath()
     {
-        base.Start();
+        playerMovement.enabled = false;
+        playerShooter.enabled = false;
 
-        // set CameraFollow target
-        Camera m_MainCamera = Camera.main;
-        CameraFollow cameraFollow = m_MainCamera.GetComponent<CameraFollow>();
-        cameraFollow.target = transform;
-    }
-
-    void Update()
-    {
-        RotateCharacterToMouse();
-        HandleMovement();
-        ApplyGravity();
-        MoveCharacter();
-    }
-
-    void HandleMovement()
-    {
-        //use GetAxisRaw, not GetAxis
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
-        Vector3 camForward = Camera.main.transform.forward;
-        Vector3 camRight = Camera.main.transform.right;
-        camForward.y = 0; camRight.y = 0;
-        camForward.Normalize(); camRight.Normalize();
-
-        Vector3 inputDirection = (camRight * h + camForward * v).normalized;
-
-        // 달리기 처리
-        if (inputDirection.sqrMagnitude > 0.1)
+        if (lifeRemains > 0)
         {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                targetSpeed = runSpeed;
-                characterAnimator?.SetBool("IsRunning", true);
-            }
-            else
-            {
-                targetSpeed = walkSpeed;
-                characterAnimator?.SetBool("IsRunning", false);
-            }
+            lifeRemains--;
+            UIManager.Instance.UpdateLifeText(lifeRemains);
+            Invoke("Respawn", 3f);
         }
         else
         {
-            targetSpeed = 0f;
+            GameManager.Instance.EndGame();
         }
-
-        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * 5f);
-
-        if (characterController.isGrounded)
-        {
-            verticalVelocity = -0.5f;
-            moveDirection = (inputDirection * currentSpeed).normalized;
-
-            characterAnimator?.SetFloat("Speed", currentSpeed);
-            characterAnimator?.SetBool("IsFalling", false);
-
-            if (Input.GetButtonDown("Jump"))
-            {
-                Jump();
-            }
-        }
-        else
-        {
-            if (inputDirection.magnitude > 0.1f)
-            {
-                Vector3 targetDir = (inputDirection * currentSpeed).normalized;
-                moveDirection = Vector3.Lerp(moveDirection, targetDir, Time.deltaTime * airControlLerp);
-            }
-            characterAnimator?.SetBool("IsFalling", true);
-        }
-
-        // Update MoveX and MoveY based on local input direction
-        //use lerp
-        localInputDirection = Vector3.Lerp(localInputDirection, transform.InverseTransformDirection(inputDirection), Time.deltaTime * 5f);
-        characterAnimator?.SetFloat("MoveX", localInputDirection.x);
-        characterAnimator?.SetFloat("MoveY", localInputDirection.z);
+        
+        Cursor.visible = true;
     }
 
-    //void RotateCharacterToMouse()
-    //{
-    //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    //    if (Physics.Raycast(ray, out RaycastHit hit, 1000))
-    //    {
-    //        Vector3 targetPosition = new Vector3(hit.point.x, transform.position.y, hit.point.z);
-    //        Quaternion rotation = Quaternion.LookRotation(targetPosition - transform.position);
-    //        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * 10.0f);
-    //    }
-    //}
-    void RotateCharacterToMouse()
+    public void Respawn()
     {
-        // 1) 화면 정가운데(스크린 센터) 좌표 구하기
-        Vector2 screenCenter = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-        // 2) 현재 마우스 좌표
-        Vector2 mousePos = Input.mousePosition;
-        // 3) 마우스 위치와 화면 센터 간의 오프셋
-        Vector2 delta = mousePos - screenCenter;
+        gameObject.SetActive(false);
+        gameObject.SetActive(true);
+        playerMovement.enabled = true;
+        playerShooter.enabled = true;
 
-        // 4) 너무 작은 움직임(즉, 마우스가 거의 화면 중앙에 있으면)일 땐 회전하지 않음
-        if (delta.sqrMagnitude < 25f) // 5px 이내라면 무시 (원하는 값으로 조정)
-            return;
+        playerShooter.gun.ammoRemain = 120;
 
-        // 5) 스크린 상에서 (delta.x, delta.y) 벡터를 각도로 변환 (atan2 기준: x축이 왼쪽·오른쪽, y축이 위·아래)
-        //    Mathf.Atan2(delta.x, delta.y)를 사용하면, 화면 기준 위쪽(=Center→마우스)이 0°, 오른쪽이 +90°, 아래가 180°/-180°, 왼쪽이 -90°가 됩니다.
-        float angleFromCenter = Mathf.Atan2(delta.x, delta.y) * Mathf.Rad2Deg;
-
-        // 6) 현재 카메라의 Y축 회전(=캐릭터가 바라보는 기준)을 구해서 합치기
-        //    즉, '카메라가 정면(앞)이라고 생각하는 방향'에, 스크린 상 delta 각도를 더한 값이 캐릭터가 최종 바라볼 yaw가 됩니다.
-        float camYaw = Camera.main.transform.eulerAngles.y;
-        float targetYaw = camYaw + angleFromCenter;
-
-        // 7) 최종 회전(쿼터니언)으로 변환
-        Quaternion desiredRot = Quaternion.Euler(0f, targetYaw, 0f);
-
-        // 8) 부드럽게 회전 (원래 쓰던 Lerp 속도 그대로 사용)
-        transform.rotation = Quaternion.Lerp(transform.rotation, desiredRot, Time.deltaTime * 10f);
+        Cursor.visible = false;
     }
 
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // 아이템과 충돌한 경우 해당 아이템을 사용하는 처리
+        // 사망하지 않은 경우에만 아이템 사용가능
+        if (!playerHealth.dead)
+        {
+            //Todo
+        }
+    }
 }
-
