@@ -26382,8 +26382,8 @@ MonoBehaviour:
         z: 0
       Rotation:
         value:
-          x: 0.27733293
-          y: 0
+          x: 0.27733296
+          y: 9.720198e-10
           z: 0.07121054
           w: 0.9581312
     m_MetaData:
@@ -33144,12 +33144,12 @@ PrefabInstance:
     - target: {fileID: 7504695988226730694, guid: 2cfad616b5d3e5641af915816ac56868,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.15616183
+      value: 0.15616184
       objectReference: {fileID: 0}
     - target: {fileID: 7504695988226730694, guid: 2cfad616b5d3e5641af915816ac56868,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.11436138
+      value: -0.114361405
       objectReference: {fileID: 0}
     - target: {fileID: 8591215176311936676, guid: 2cfad616b5d3e5641af915816ac56868,
         type: 3}
