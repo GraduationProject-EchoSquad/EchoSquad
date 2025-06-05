@@ -21,7 +21,6 @@ public class PlayerController : UnitController
 
         UIManager.Instance.UpdateLifeText(lifeRemains);
         Cursor.visible = false;
-        
     }
     
     protected override void HandleDeath()

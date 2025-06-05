@@ -11,7 +11,7 @@ public class Intro_Controller : Singleton<Intro_Controller>
     [SerializeField] private GameObject vcamRoom1;   // Room1 가상 카메라
     [SerializeField] private GameObject vcamRoom2;   // Room2 가상 카메라
     [SerializeField] private GameObject vcamUnder;   // RoomUnder 가상 카메라
-    [SerializeField] private GameObject player;      // 데모 끝나고 켤 플레이어
+    //[SerializeField] private GameObject player;      // 데모 끝나고 켤 플레이어
 
     [SerializeField] private float durLobby = 5f;    // 로비 카메라 재생 시간
     [SerializeField] private float durRoom1 = 5f;
@@ -31,7 +31,7 @@ public class Intro_Controller : Singleton<Intro_Controller>
         vcamRoom1.SetActive(false);
         vcamRoom2.SetActive(false);
         vcamUnder.SetActive(false);
-        player.SetActive(false);
+        //player.SetActive(false);
 
         // 다른 이펙트들도 초기화…
         runestoneScript.ToggleRuneStone(false);
@@ -73,7 +73,7 @@ public class Intro_Controller : Singleton<Intro_Controller>
 
         // 4) 모든 카메라 끄고 플레이어 활성화
         vcamUnder.SetActive(false);
-        player.SetActive(true);
+        //player.SetActive(true);
 
         OnIntroFinished?.Invoke();
     }

@@ -8,7 +8,7 @@ public class TeammateController : UnitController
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private TeammateAI teammateAI;
     
-    public GameObject followTarget = null;
+    public UnitController followTarget = null;
     
     public float waitBeforeRelease = 3f;     // 멈춘 뒤 몇 초 후 target 제거
     private float stopTimer = 0f;

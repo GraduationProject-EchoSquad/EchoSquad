@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
@@ -5,7 +6,7 @@ using UnityEngine.AI;
 public class EnemyController : UnitController
 {
     public float attackRange = 2f;
-    private Transform target;
+    private UnitController target;
     private NavMeshAgent agent;
     private float attackCooldown = 1f;
     private float attackTimer = 0f;
@@ -22,9 +23,10 @@ public class EnemyController : UnitController
 
         if (target != null)
         {
-            agent.SetDestination(target.position);
+            var targetPosition = target.transform.position;
+            agent.SetDestination(targetPosition);
 
-            float dist = Vector3.Distance(transform.position, target.position);
+            float dist = Vector3.Distance(transform.position, targetPosition);
             if (dist <= attackRange)
             {
                 attackTimer += Time.deltaTime;
@@ -39,25 +41,22 @@ public class EnemyController : UnitController
 
     void UpdateTarget()
     {
-        GameObject[] player = GameObject.FindGameObjectsWithTag("Player");
-        GameObject[] ai = GameObject.FindGameObjectsWithTag("AI");
-
-        GameObject[] targets = player.Concat(ai).ToArray();
+        List<UnitController> targets = UnitManager.Instance.GetUnitTeamTypeList(GetOppositeTeamType());// GameObject.FindGameObjectsWithTag("Player");
 
         float minDistance = Mathf.Infinity;
-        Transform nearest = null;
+        UnitController nearestTarget = null;
 
-        foreach (GameObject obj in targets)
+        foreach (UnitController obj in targets)
         {
             float dist = Vector3.Distance(transform.position, obj.transform.position);
             if (dist < minDistance)
             {
                 minDistance = dist;
-                nearest = obj.transform;
+                nearestTarget = obj;
             }
         }
 
-        target = nearest;
+        target = nearestTarget;
     }
 
     void Attack()

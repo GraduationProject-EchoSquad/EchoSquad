@@ -1,3 +1,4 @@
+/*
 using System.Collections;
 using UnityEngine;
 
@@ -26,6 +27,7 @@ public class EnemySpawner : MonoBehaviour
         int randIndex = Random.Range(0, spawnPoints.Length);
         Transform spawnPoint = spawnPoints[randIndex];
         //Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
-        UnitManager.Instance.SpawnUnit(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+        UnitManager.Instance.SpawnUnit(enemyPrefab, spawnPoint.position, spawnPoint.rotation, UnitController.EUnitTeamType.Enemy);
     }
 }
+*/

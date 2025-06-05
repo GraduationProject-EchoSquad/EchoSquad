@@ -6,7 +6,7 @@ using EasyTextEffects;   // TextEffect가 이 네임스페이스에 있다고 가정
 [System.Serializable]
 public class Wave
 {
-    public GameObject enemyPrefab;
+    public UnitController enemyPrefab;
     public int count;
     public float spawnInterval;
     public Transform[] spawnPoints;
@@ -52,7 +52,7 @@ public class WaveManager : Singleton<WaveManager>
 
     private void Start()
     {
-
+        
     }
     private void HandleIntroFinished()
     {
@@ -84,6 +84,8 @@ public class WaveManager : Singleton<WaveManager>
     private IEnumerator HandleWaveSequence()
     {
         isSpawning = true;
+
+        UnitManager.Instance.InitSpawnUnit();
 
         // (첫 웨이브가 아니라면) 웨이브 간 대기
         if (currentWaveIndex > 0)
@@ -158,7 +160,7 @@ public class WaveManager : Singleton<WaveManager>
     private void SpawnEnemy(Wave wave)
     {
         Transform spawnPoint = wave.spawnPoints[Random.Range(0, wave.spawnPoints.Length)];
-        GameObject enemy = Instantiate(wave.enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+        UnitManager.Instance.SpawnUnit(wave.enemyPrefab, spawnPoint.position, spawnPoint.rotation, UnitController.EUnitTeamType.Enemy);
 
         //EnemyController ec = enemy.GetComponent<EnemyController>();
         //if (ec != null)

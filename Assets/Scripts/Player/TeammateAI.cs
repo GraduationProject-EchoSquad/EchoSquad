@@ -47,11 +47,11 @@ public class TeammateAI : MonoBehaviour
         {
             if (param.follow_target.Equals("Player"))
             {
-                unitController.followTarget = unitManager.PlayerUnit.gameObject;
+                unitController.followTarget = unitManager.GetPlayerUnit();
             }
-            else if (unitManager.allayUnitDict.TryGetValue(param.follow_target, out var followUnit))
+            else if (unitManager.teammateUnitDict.TryGetValue(param.follow_target, out var followUnit))
             {
-                unitController.followTarget = followUnit.gameObject;
+                unitController.followTarget = followUnit;
 
                 Debug.Log($"Move To AI Unit {param.follow_target}");
 
@@ -73,7 +73,7 @@ public class TeammateAI : MonoBehaviour
             else if (string.Equals(param.destination, "Forward", StringComparison.OrdinalIgnoreCase))
             {
             }
-            else if (unitManager.allayUnitDict.TryGetValue(param.destination, out var followUnit))
+            else if (unitManager.teammateUnitDict.TryGetValue(param.destination, out var followUnit))
             {
                 unitController.MoveToUnit(followUnit);
 

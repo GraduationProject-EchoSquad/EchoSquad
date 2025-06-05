@@ -161,7 +161,7 @@ namespace LLMUnitySamples
             playerText.interactable = false;
             llmCharacter.grammarString = "";
             
-            List<TeammateAI> aiList = UnitManager.Instance.allayUnitDict.Values
+            List<TeammateAI> aiList = UnitManager.Instance.teammateUnitDict.Values
                 .Select(tc => tc.GetComponent<TeammateAI>())
                 .Where(ai => ai != null)
                 .ToList();

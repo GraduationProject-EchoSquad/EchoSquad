@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  healthSlider: {fileID: 0}
+  healthSlider: {fileID: 7185601070173460331}
 --- !u!114 &2289857588096534369
 MonoBehaviour:
   m_ObjectHideFlags: 0
