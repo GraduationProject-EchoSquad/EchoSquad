@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class AllayController : UnitController
+public class TeammateController : UnitController
 {
     private const float NavSearchRadius = 100.0f;
 

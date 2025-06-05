@@ -8,7 +8,7 @@ public class TeammateAI : MonoBehaviour
 {
     public string teammateName = "Lena";
     public string teammateNameKorean = "레나";
-    [SerializeField] private AllayController unitController;
+    [SerializeField] private TeammateController unitController;
 
     public void ExecuteCommand(AIActionEnum action, Parameters param)
     {

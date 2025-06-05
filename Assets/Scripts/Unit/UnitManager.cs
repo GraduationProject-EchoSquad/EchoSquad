@@ -11,11 +11,11 @@ public class UnitManager : Singleton<UnitManager>
     //[SerializeField]
     public PlayerController PlayerUnit;
 
-    public Dictionary<string, AllayController> allayUnitDict = new Dictionary<string, AllayController>();
+    public Dictionary<string, TeammateController> allayUnitDict = new Dictionary<string, TeammateController>();
 
     private void Start()
     {
-        allayUnitDict = UnitList.OfType<AllayController>().ToDictionary(e => e.GetTeammateAI().teammateName, e => e);
+        allayUnitDict = UnitList.OfType<TeammateController>().ToDictionary(e => e.GetTeammateAI().teammateName, e => e);
     }
 
     public void SpawnUnit(UnitController unitController, Vector3 spawnPoint, Quaternion spawnRotation)
