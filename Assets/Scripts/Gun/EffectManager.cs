@@ -1,17 +1,7 @@
 ﻿using UnityEngine;
 
-public class EffectManager : MonoBehaviour
+public class EffectManager : Singleton<EffectManager>
 {
-    private static EffectManager m_Instance;
-    public static EffectManager Instance
-    {
-        get
-        {
-            if (m_Instance == null) m_Instance = FindObjectOfType<EffectManager>();
-            return m_Instance;
-        }
-    }
-
     public enum EffectType
     {
         Common,

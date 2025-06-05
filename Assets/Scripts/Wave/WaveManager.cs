@@ -12,7 +12,7 @@ public class Wave
     public Transform[] spawnPoints;
 }
 
-public class WaveManager : MonoBehaviour
+public class WaveManager : Singleton<WaveManager>
 {
     [Header("Waves")]
     public Wave[] waves;
@@ -34,14 +34,16 @@ public class WaveManager : MonoBehaviour
     private int enemiesRemaining;
     private bool isSpawning = false;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+        
         // TextEffect 컴포넌트 가져오기
         if (countdownText != null)
             countdownEffect = countdownText.GetComponent<TextEffect>();
 
         // Intro_Controller를 찾아서 이벤트에 핸들러 등록
-        Intro_Controller intro = FindObjectOfType<Intro_Controller>();
+        Intro_Controller intro = Intro_Controller.Instance;
         if (intro != null)
         {
             intro.OnIntroFinished += HandleIntroFinished;

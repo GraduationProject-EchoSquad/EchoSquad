@@ -4,14 +4,14 @@ using UnityEngine.AI;
 
 public class UnitController : MonoBehaviour
 {
-    protected LivingEntity health;
+    protected LivingEntity LivingEntity;
     protected Animator animator;
 
     protected virtual void Start()
     {
         animator = GetComponentInChildren<Animator>();
-        health = GetComponent<LivingEntity>();
-        health.OnDeath += HandleDeath;
+        LivingEntity = GetComponent<LivingEntity>();
+        LivingEntity.OnDeath += HandleDeath;
     }
 
     protected virtual void HandleDeath()

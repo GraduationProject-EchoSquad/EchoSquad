@@ -103,7 +103,7 @@ namespace LLMUnitySamples
             return string.Join(" | ", Enum.GetNames(typeof(T)));
         }
 
-        string GetAINames(TeammateAI[] aiList)
+        string GetAINames(List<TeammateAI> aiList)
         {
             HashSet<string> uniqueNames = new HashSet<string>();
 
@@ -117,7 +117,7 @@ namespace LLMUnitySamples
             return AINames;
         }
 
-        string ConstructStructuredCommandPrompt(string playerMessage, TeammateAI[] AIList, string districtsName)
+        string ConstructStructuredCommandPrompt(string playerMessage, List<TeammateAI> AIList, string districtsName)
         {
             string actions = FormatEnumOptions<AIActionEnum>();
             string unitNames = GetAINames(AIList);
@@ -154,18 +154,20 @@ namespace LLMUnitySamples
                    "    \"mode\": null\n" +
                    "  }\n" +
                    "}\n";
-
         }
 
         async void onInputFieldSubmit(string message)
         {
             playerText.interactable = false;
             llmCharacter.grammarString = "";
-
-            //TODO, 할당한 곳에서 가져와야함. UnitManager?
-            TeammateAI[] aiList = FindObjectsOfType<TeammateAI>();
+            
+            List<TeammateAI> aiList = UnitManager.Instance.allayUnitDict.Values
+                .Select(tc => tc.GetComponent<TeammateAI>())
+                .Where(ai => ai != null)
+                .ToList();
+            
             //TODO, 할당한 곳에서 가져와야함. MapManager?
-            MapManager mapManager = FindObjectOfType<MapManager>();
+            MapManager mapManager = MapManager.Instance;
             string districtsName = mapManager.GetDistrictsName();
 
             // 시간 측정 시작
@@ -211,6 +213,7 @@ namespace LLMUnitySamples
                 playerText.interactable = true;
                 return;
             }
+
             string unitsText = string.Join(", ", cmd.command_units);
             string functionName = $"{cmd.action}{cmd.Parameters}";
             Debug.Log($"[Parsed] target = {unitsText},\n action = {cmd.action},\n params = {cmd.Parameters}");

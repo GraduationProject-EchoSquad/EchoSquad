@@ -2,10 +2,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class ChatManager : MonoBehaviour
+public class ChatManager : Singleton<ChatManager>
 {
-    public Transform chatPanel;             // Ã¤ÆÃ ³»¿ëÀÌ µé¾î°¡´Â ºÎ¸ğ
-    public GameObject TextChat;     // ¸Ş½ÃÁö ÇÁ¸®ÆÕ
+    public Transform chatPanel;             // ì±„íŒ… ë‚´ìš©ì´ ë“¤ì–´ê°€ëŠ” ë¶€ëª¨
+    public GameObject TextChat;     // ë©”ì‹œì§€ í”„ë¦¬íŒ¹
 
     public void AddMessage(string sender, string message)
     {

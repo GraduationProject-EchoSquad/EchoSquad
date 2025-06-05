@@ -27,7 +27,7 @@ public class TeammateAI : MonoBehaviour
 
     void SendChat(string message)
     {
-        ChatManager chat = FindObjectOfType<ChatManager>();
+        ChatManager chat = ChatManager.Instance;
         if (chat != null)
         {
             chat.AddMessage(teammateName, message);
@@ -37,8 +37,8 @@ public class TeammateAI : MonoBehaviour
     void Move(Parameters param)
     {
         //TODO 처리 필요
-        UnitManager unitManager = FindObjectOfType<UnitManager>();
-        MapManager mapManager = FindObjectOfType<MapManager>();
+        UnitManager unitManager = UnitManager.Instance;
+        MapManager mapManager = MapManager.Instance;
 
         string message = "";
         

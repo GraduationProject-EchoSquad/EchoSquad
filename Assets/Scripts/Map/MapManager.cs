@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class MapManager : MonoBehaviour
+public class MapManager : Singleton<MapManager>
 {
     public List<GameObject> districts;
     public Dictionary<string, GameObject> districtDict;

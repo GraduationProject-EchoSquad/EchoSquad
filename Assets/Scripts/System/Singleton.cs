@@ -11,7 +11,7 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T>
             if (_instance == null)
             {
                 // 씬에서 이미 존재하는 인스턴스 찾기
-                _instance = FindObjectOfType<T>();
+                _instance = FindFirstObjectByType<T>();
 
                 // 못 찾으면 새 GameObject 생성
                 if (_instance == null)

@@ -10,7 +10,7 @@ public class UnitManager : Singleton<UnitManager>
 
     //[SerializeField]
     public PlayerController PlayerUnit;
-
+    
     public Dictionary<string, TeammateController> allayUnitDict = new Dictionary<string, TeammateController>();
 
     private void Start()

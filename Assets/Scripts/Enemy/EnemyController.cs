@@ -7,7 +7,6 @@ public class EnemyController : UnitController
     public float attackRange = 2f;
     private Transform target;
     private NavMeshAgent agent;
-    private LivingEntity health;
     private float attackCooldown = 1f;
     private float attackTimer = 0f;
 

@@ -17,7 +17,7 @@ public class PlayerController : UnitController
         playerMovement = GetComponent<PlayerMovement>();
         playerShooter = GetComponent<PlayerShooter>();
         playerAudioPlayer = GetComponent<AudioSource>();
-        playerHealth = health as PlayerHealth;
+        playerHealth = LivingEntity as PlayerHealth;
 
         UIManager.Instance.UpdateLifeText(lifeRemains);
         Cursor.visible = false;

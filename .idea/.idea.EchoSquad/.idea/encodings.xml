@@ -3,5 +3,6 @@
   <component name="Encoding" addBOMForNewFiles="with BOM under Windows, with no BOM otherwise">
     <file url="file://$PROJECT_DIR$/Assets/LLMUnity/Samples/FunctionCalling/FunctionCalling.cs" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Assets/Scripts/Player/PlayerWeapon.cs" charset="x-windows-949" />
+    <file url="file://$PROJECT_DIR$/Assets/Scripts/Wave/WaveManager.cs" charset="x-windows-949" />
   </component>
 </project>

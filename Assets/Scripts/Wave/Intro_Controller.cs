@@ -2,23 +2,23 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class Intro_Controller : MonoBehaviour
+public class Intro_Controller : Singleton<Intro_Controller>
 {
-    // ÀÎÆ®·Î°¡ ³¡³µÀ» ¶§ È£ÃâÇÒ ÀÌº¥Æ®
+    // ì¸íŠ¸ë¡œê°€ ëë‚¬ì„ ë•Œ í˜¸ì¶œí•  ì´ë²¤íŠ¸
     public event Action OnIntroFinished;
 
-    [SerializeField] private GameObject vcamLobby;   // ·Îºñ °¡»ó Ä«¸Ş¶ó
-    [SerializeField] private GameObject vcamRoom1;   // Room1 °¡»ó Ä«¸Ş¶ó
-    [SerializeField] private GameObject vcamRoom2;   // Room2 °¡»ó Ä«¸Ş¶ó
-    [SerializeField] private GameObject vcamUnder;   // RoomUnder °¡»ó Ä«¸Ş¶ó
-    [SerializeField] private GameObject player;      // µ¥¸ğ ³¡³ª°í ÄÓ ÇÃ·¹ÀÌ¾î
+    [SerializeField] private GameObject vcamLobby;   // ë¡œë¹„ ê°€ìƒ ì¹´ë©”ë¼
+    [SerializeField] private GameObject vcamRoom1;   // Room1 ê°€ìƒ ì¹´ë©”ë¼
+    [SerializeField] private GameObject vcamRoom2;   // Room2 ê°€ìƒ ì¹´ë©”ë¼
+    [SerializeField] private GameObject vcamUnder;   // RoomUnder ê°€ìƒ ì¹´ë©”ë¼
+    [SerializeField] private GameObject player;      // ë°ëª¨ ëë‚˜ê³  ì¼¤ í”Œë ˆì´ì–´
 
-    [SerializeField] private float durLobby = 5f;    // ·Îºñ Ä«¸Ş¶ó Àç»ı ½Ã°£
+    [SerializeField] private float durLobby = 5f;    // ë¡œë¹„ ì¹´ë©”ë¼ ì¬ìƒ ì‹œê°„
     [SerializeField] private float durRoom1 = 5f;
     [SerializeField] private float durRoom2 = 5f;
     [SerializeField] private float durUnder = 5f;
 
-    // ÀÌÆåÆ®¿ë ÄÄÆ÷³ÍÆ®µé¡¦
+    // ì´í™íŠ¸ìš© ì»´í¬ë„ŒíŠ¸ë“¤â€¦
     [SerializeField] private Runestone_Controller runestoneScript;
     [SerializeField] private Portal_Controller portalSimpleScripts;
     [SerializeField] private PortalRound_Controller portalRoundScripts;
@@ -26,14 +26,14 @@ public class Intro_Controller : MonoBehaviour
 
     private void Start()
     {
-        // Ã³À½¿£ ¸ğµç VCam°ú Player¸¦ ºñÈ°¼ºÈ­
+        // ì²˜ìŒì—” ëª¨ë“  VCamê³¼ Playerë¥¼ ë¹„í™œì„±í™”
         vcamLobby.SetActive(false);
         vcamRoom1.SetActive(false);
         vcamRoom2.SetActive(false);
         vcamUnder.SetActive(false);
         player.SetActive(false);
 
-        // ´Ù¸¥ ÀÌÆåÆ®µéµµ ÃÊ±âÈ­¡¦
+        // ë‹¤ë¥¸ ì´í™íŠ¸ë“¤ë„ ì´ˆê¸°í™”â€¦
         runestoneScript.ToggleRuneStone(false);
         portalRoundScripts.F_TogglePortalRound(false);
         portalGateScript.F_TogglePortalGate(false);
@@ -44,34 +44,34 @@ public class Intro_Controller : MonoBehaviour
 
     private IEnumerator DemoRoutine()
     {
-        // 0) ·é½ºÅæ ÄÑ±â & ·Îºñ Ä«¸Ş¶ó Àç»ı
+        // 0) ë£¬ìŠ¤í†¤ ì¼œê¸° & ë¡œë¹„ ì¹´ë©”ë¼ ì¬ìƒ
         runestoneScript.ToggleRuneStone(true);
 
         vcamLobby.SetActive(true);
         yield return new WaitForSeconds(durLobby);
         vcamLobby.SetActive(false);
 
-        // 1) Æ÷Å» ¶ó¿îµå ÄÑ±â & Room1 Ä«¸Ş¶ó Àç»ı
+        // 1) í¬íƒˆ ë¼ìš´ë“œ ì¼œê¸° & Room1 ì¹´ë©”ë¼ ì¬ìƒ
         portalRoundScripts.F_TogglePortalRound(true);
 
         vcamRoom1.SetActive(true);
         yield return new WaitForSeconds(durRoom1);
 
-        // 2) Æ÷Å» ½ÉÇÃ ÄÑ±â & Room2 Ä«¸Ş¶ó·Î ÀüÈ¯
+        // 2) í¬íƒˆ ì‹¬í”Œ ì¼œê¸° & Room2 ì¹´ë©”ë¼ë¡œ ì „í™˜
         portalSimpleScripts.TogglePortal(true);
 
         vcamRoom1.SetActive(false);
         vcamRoom2.SetActive(true);
         yield return new WaitForSeconds(durRoom2);
 
-        // 3) Æ÷Å» °ÔÀÌÆ® ÄÑ±â & RoomUnder Ä«¸Ş¶ó·Î ÀüÈ¯
+        // 3) í¬íƒˆ ê²Œì´íŠ¸ ì¼œê¸° & RoomUnder ì¹´ë©”ë¼ë¡œ ì „í™˜
         portalGateScript.F_TogglePortalGate(true);
 
         vcamRoom2.SetActive(false);
         vcamUnder.SetActive(true);
         yield return new WaitForSeconds(durUnder);
 
-        // 4) ¸ğµç Ä«¸Ş¶ó ²ô°í ÇÃ·¹ÀÌ¾î È°¼ºÈ­
+        // 4) ëª¨ë“  ì¹´ë©”ë¼ ë„ê³  í”Œë ˆì´ì–´ í™œì„±í™”
         vcamUnder.SetActive(false);
         player.SetActive(true);
 
