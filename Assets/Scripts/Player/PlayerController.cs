@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : UnitController
 {
-    private Animator animator;
     public AudioClip itemPickupClip;
     public int lifeRemains = 3;
     private AudioSource playerAudioPlayer;
@@ -12,20 +11,20 @@ public class PlayerController : MonoBehaviour
     private PlayerShooter playerShooter;
 
     // Start is called before the first frame update
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         playerMovement = GetComponent<PlayerMovement>();
         playerShooter = GetComponent<PlayerShooter>();
         playerAudioPlayer = GetComponent<AudioSource>();
-        playerHealth = GetComponent<PlayerHealth>();
-        playerHealth.OnDeath += HandleDeath;
+        playerHealth = health as PlayerHealth;
 
         UIManager.Instance.UpdateLifeText(lifeRemains);
         Cursor.visible = false;
         
     }
     
-    private void HandleDeath()
+    protected override void HandleDeath()
     {
         playerMovement.enabled = false;
         playerShooter.enabled = false;

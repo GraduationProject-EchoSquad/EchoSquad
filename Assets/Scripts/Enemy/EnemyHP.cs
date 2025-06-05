@@ -1,3 +1,4 @@
+/*
 using UnityEngine;
 
 public class EnemyHP : MonoBehaviour
@@ -29,3 +30,4 @@ public class EnemyHP : MonoBehaviour
         Destroy(gameObject, 2f);
     }
 }
+*/

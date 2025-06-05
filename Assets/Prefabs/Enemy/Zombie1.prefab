@@ -2873,10 +2873,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4417461363786087643}
   - component: {fileID: 4075715525829927055}
-  - component: {fileID: 7526075960573217351}
   - component: {fileID: 5770865436204916316}
   - component: {fileID: 1510129015077551741}
   - component: {fileID: 8439346654403614160}
+  - component: {fileID: 120769165018137736}
   m_Layer: 0
   m_Name: Zombie1
   m_TagString: Untagged
@@ -2936,19 +2936,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7526075960573217351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8605622981922510963}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25c5d1578a36d654da0b0dc3f1cee73c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 50
 --- !u!195 &5770865436204916316
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -3007,6 +2994,19 @@ CapsuleCollider:
   m_Height: 1.85
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &120769165018137736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8605622981922510963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fd2eaa0716b345e8a1595c4f6123669, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startingHealth: 50
 --- !u!1 &8658231281914553643
 GameObject:
   m_ObjectHideFlags: 0

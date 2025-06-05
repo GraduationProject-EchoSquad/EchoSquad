@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public GameObject enemyPrefab;          // Àû ÇÁ¸®ÆÕ
-    public Transform[] spawnPoints;         // 5°³ÀÇ ½ºÆù À§Ä¡
-    public float spawnInterval = 20f;       // 20ÃÊ °£°Ý
+    public UnitController enemyPrefab;          // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public Transform[] spawnPoints;         // 5ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
+    public float spawnInterval = 20f;       // 20ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     void Start()
     {
@@ -25,6 +25,7 @@ public class EnemySpawner : MonoBehaviour
     {
         int randIndex = Random.Range(0, spawnPoints.Length);
         Transform spawnPoint = spawnPoints[randIndex];
-        Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+        //Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+        UnitManager.Instance.SpawnUnit(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
     }
 }

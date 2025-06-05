@@ -2,20 +2,19 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyController : UnitController
 {
     public float attackRange = 2f;
     private Transform target;
     private NavMeshAgent agent;
+    private LivingEntity health;
     private float attackCooldown = 1f;
     private float attackTimer = 0f;
 
-    Animator enemyAnimator;
-
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         agent = GetComponent<NavMeshAgent>();
-        enemyAnimator = GetComponent<Animator>();
     }
 
     void Update()
@@ -64,12 +63,19 @@ public class EnemyAI : MonoBehaviour
 
     void Attack()
     {
-        enemyAnimator.SetTrigger("Attack");
+        animator.SetTrigger("Attack");
         if (target != null)
         {
             PlayerHP health = target.GetComponent<PlayerHP>();
             if (health != null)
                 health.TakeDamage(10);
         }
+    }
+    
+    protected override void HandleDeath()
+    {
+        animator.SetTrigger("Die");
+        Debug.Log("Zombie died!");
+        Destroy(gameObject, 2f);
     }
 }

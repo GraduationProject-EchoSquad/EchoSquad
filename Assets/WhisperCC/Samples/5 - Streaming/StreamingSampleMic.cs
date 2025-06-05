@@ -24,10 +24,13 @@ namespace Whisper.Samples
         private async void Start()
         {
             _stream = await whisper.CreateStream(microphoneRecord);
-            _stream.OnResultUpdated += OnResult;
-            _stream.OnSegmentUpdated += OnSegmentUpdated;
-            _stream.OnSegmentFinished += OnSegmentFinished;
-            _stream.OnStreamFinished += OnFinished;
+            if (_stream != null)
+            {
+                _stream.OnResultUpdated += OnResult;
+                _stream.OnSegmentUpdated += OnSegmentUpdated;
+                _stream.OnSegmentFinished += OnSegmentFinished;
+                _stream.OnStreamFinished += OnFinished;
+            }
 
             microphoneRecord.OnRecordStop += OnRecordStop;
             button.onClick.AddListener(OnButtonPressed);

@@ -8,7 +8,7 @@ public class TeammateAI : MonoBehaviour
 {
     public string teammateName = "Lena";
     public string teammateNameKorean = "레나";
-    [SerializeField] private UnitController unitController;
+    [SerializeField] private AllayController unitController;
 
     public void ExecuteCommand(AIActionEnum action, Parameters param)
     {
@@ -49,7 +49,7 @@ public class TeammateAI : MonoBehaviour
             {
                 unitController.followTarget = unitManager.PlayerUnit.gameObject;
             }
-            else if (unitManager.UnitDict.TryGetValue(param.follow_target, out var followUnit))
+            else if (unitManager.allayUnitDict.TryGetValue(param.follow_target, out var followUnit))
             {
                 unitController.followTarget = followUnit.gameObject;
 
@@ -73,7 +73,7 @@ public class TeammateAI : MonoBehaviour
             else if (string.Equals(param.destination, "Forward", StringComparison.OrdinalIgnoreCase))
             {
             }
-            else if (unitManager.UnitDict.TryGetValue(param.destination, out var followUnit))
+            else if (unitManager.allayUnitDict.TryGetValue(param.destination, out var followUnit))
             {
                 unitController.MoveToUnit(followUnit);
 
