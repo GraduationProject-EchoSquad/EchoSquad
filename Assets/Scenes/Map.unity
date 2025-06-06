@@ -47538,6 +47538,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_RuneStone
       objectReference: {fileID: 0}
+    - target: {fileID: 5064046406931840045, guid: 7573003ec7d73c147b9ed14640735a39,
+        type: 3}
+      propertyPath: m_TagString
+      value: Rune
+      objectReference: {fileID: 0}
     - target: {fileID: 8204769519439207838, guid: 7573003ec7d73c147b9ed14640735a39,
         type: 3}
       propertyPath: effectsColor.g
