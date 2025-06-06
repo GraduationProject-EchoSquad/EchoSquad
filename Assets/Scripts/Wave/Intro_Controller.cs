@@ -6,6 +6,8 @@ public class Intro_Controller : Singleton<Intro_Controller>
 {
     // 인트로가 끝났을 때 호출할 이벤트
     public event Action OnIntroFinished;
+    
+    [SerializeField] private bool doIntro = false;
 
     [SerializeField] private GameObject vcamLobby;   // 로비 가상 카메라
     [SerializeField] private GameObject vcamRoom1;   // Room1 가상 카메라
@@ -26,6 +28,11 @@ public class Intro_Controller : Singleton<Intro_Controller>
 
     private void Start()
     {
+        if (doIntro == false)
+        {
+            OnIntroFinished?.Invoke();
+            return;
+        }
         // 처음엔 모든 VCam과 Player를 비활성화
         vcamLobby.SetActive(false);
         vcamRoom1.SetActive(false);

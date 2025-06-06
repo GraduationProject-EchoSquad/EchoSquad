@@ -22,15 +22,12 @@ public class UnitManager : Singleton<UnitManager>
     private PlayerController playerUnit;
 
 
-    private void Start()
+    private void Awake()
     {
         foreach (UnitController.EUnitTeamType unitTeamType in Enum.GetValues(typeof(UnitController.EUnitTeamType)))
         {
             unitTeamTypeDict.Add(unitTeamType, new List<UnitController>());
         }
-
-        /*teammateUnitDict = UnitList.OfType<TeammateController>()
-            .ToDictionary(e => e.GetTeammateAI().teammateName, e => e);*/
     }
 
     public void InitSpawnUnit()
@@ -38,12 +35,8 @@ public class UnitManager : Singleton<UnitManager>
         //플레이어유닛, 동료유닛
         playerUnit = SpawnUnit(PlayerUnitPrefab, new Vector3(-20, 0, -8), PlayerUnitPrefab.transform.rotation,
             UnitController.EUnitTeamType.Allay);
-        SpawnUnit(TeammateUnitPrefab, new Vector3(14, -16, -12), TeammateUnitPrefab.transform.rotation,
+        SpawnUnit(TeammateUnitPrefab, new Vector3(-20, 0, -8), TeammateUnitPrefab.transform.rotation,
             UnitController.EUnitTeamType.Allay);
-        
-        //TODO 동료유닛 생성 시 실행되도록 코드 리팩토링 필요
-        teammateUnitDict = UnitList.OfType<TeammateController>()
-            .ToDictionary(e => e.GetTeammateAI().teammateName, e => e);
     }
 
     public T SpawnUnit<T>(T unitController, Vector3 spawnPoint, Quaternion spawnRotation,
@@ -54,6 +47,12 @@ public class UnitManager : Singleton<UnitManager>
 
         UnitList.Add(unit);
         unitTeamTypeDict[newUnitTeamType].Add(unit);
+
+        //동료유닛은 teammateUnitDict에 처리
+        if (unit is TeammateController teammateController)
+        {
+            teammateUnitDict.Add(teammateController.GetTeammateAI().teammateName, teammateController);
+        }
 
         return unit;
     }
