@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 881698746578421979}
   - component: {fileID: 1775171347842400268}
   - component: {fileID: 4800373941245335645}
+  - component: {fileID: 1977112119409932707}
   m_Layer: 0
   m_Name: AllyUnit
   m_TagString: Untagged
@@ -119,6 +120,28 @@ MonoBehaviour:
   teammateAI: {fileID: 2289857588096534369}
   followTarget: {fileID: 0}
   waitBeforeRelease: 3
+--- !u!95 &1977112119409932707
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1297004110062203105}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 26e4cbc94a3335d4ca1976f30d5ecf73, type: 3}
+  m_Controller: {fileID: 9100000, guid: 237f2b944f0b05a498b653e96e515b8a, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1520403100905379115
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using GLTFast.Schema;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,25 +13,17 @@ public class TeammateController : UnitController
     
     public float waitBeforeRelease = 3f;     // 멈춘 뒤 몇 초 후 target 제거
     private float stopTimer = 0f;
-
-    /*//should be normalized
-    protected Vector3 moveDirection;
-    protected float currentSpeed;
-    protected float targetSpeed;
-    protected float verticalVelocity;
-
-    [Header("Movement Settings")] public float walkSpeed = 1.0f;
-    public float runSpeed = 2.0f;
-    public float gravity = -15f;
-    public float jumpForce = 7.0f;
-
-    [Header("Air Control")] public float airControlFactor = 0.7f;
-    public float airControlLerp = 2f;*/
+    public float speed = 6f;
+    [SerializeField] float turnSpeed = 120f;
+    [SerializeField] float accel = 8f;
 
     protected override void Start()
     {
         base.Start();
         navMeshAgent = GetComponent<NavMeshAgent>();
+        navMeshAgent.speed = speed;
+        navMeshAgent.angularSpeed = turnSpeed;
+        navMeshAgent.acceleration = accel;
     }
     
     void Update()
@@ -43,16 +36,19 @@ public class TeammateController : UnitController
     {
         if (IsGrounded())
         {
-            animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
             animator.SetBool("IsFalling", false);
         }
         else
         {
             animator.SetBool("IsFalling", true);
         }
-        
-        // characterAnimator?.SetFloat("MoveX", localInputDirection.x);
-        // characterAnimator?.SetFloat("MoveY", localInputDirection.z);
+
+        float speed = navMeshAgent.velocity.magnitude;
+        Vector3 worldVel = navMeshAgent.velocity;
+        Vector3 localVel = transform.InverseTransformDirection(worldVel);
+        Vector2 moveInput = new Vector2(localVel.x, localVel.z).normalized;
+        animator.SetFloat("Horizontal Move", moveInput.x * speed, 0.05f, Time.deltaTime);
+        animator.SetFloat("Vertical Move", moveInput.y * speed, 0.05f, Time.deltaTime);
     }
     
     bool IsGrounded()
