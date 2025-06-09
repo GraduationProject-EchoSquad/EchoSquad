@@ -9,12 +9,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1042640586805672604}
-  - component: {fileID: 3290008949726676103}
+  - component: {fileID: 1977112119409932707}
   - component: {fileID: 2289857588096534369}
   - component: {fileID: 881698746578421979}
   - component: {fileID: 1775171347842400268}
   - component: {fileID: 4800373941245335645}
-  - component: {fileID: 1977112119409932707}
+  - component: {fileID: 605026252724606914}
+  - component: {fileID: 326972713833839956}
   m_Layer: 0
   m_Name: AllyUnit
   m_TagString: Untagged
@@ -40,20 +41,28 @@ Transform:
   - {fileID: 7753473987015575461}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3290008949726676103
-MonoBehaviour:
+--- !u!95 &1977112119409932707
+Animator:
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1297004110062203105}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a0760d80f944264797084b823fc1802, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  healthSlider: {fileID: 7185601070173460331}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 26e4cbc94a3335d4ca1976f30d5ecf73, type: 3}
+  m_Controller: {fileID: 9100000, guid: 237f2b944f0b05a498b653e96e515b8a, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &2289857588096534369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,30 +127,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   navMeshAgent: {fileID: 881698746578421979}
   teammateAI: {fileID: 2289857588096534369}
-  followTarget: {fileID: 0}
-  waitBeforeRelease: 3
---- !u!95 &1977112119409932707
-Animator:
-  serializedVersion: 7
+  speed: 6
+  turnSpeed: 120
+  accel: 8
+--- !u!114 &605026252724606914
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1297004110062203105}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 26e4cbc94a3335d4ca1976f30d5ecf73, type: 3}
-  m_Controller: {fileID: 9100000, guid: 237f2b944f0b05a498b653e96e515b8a, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3ea71aa8e3cd6d4f899638ef325b9ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gun: {fileID: 7358001590930426008}
+  excludeTarget:
+    serializedVersion: 2
+    m_Bits: 0
+--- !u!114 &326972713833839956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1297004110062203105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e85b6a0623d96be4cae25a4a8e932c64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 6
+  jumpVelocity: 20
+  airControlPercent: 0.01
+  speedSmoothTime: 0.1
+  turnSmoothTime: 0.1
 --- !u!1 &1520403100905379115
 GameObject:
   m_ObjectHideFlags: 0
@@ -1155,6 +1176,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1082493874397817935}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7358001590930426008 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7573107372154840279, guid: e0340c77c6f6e4b4abdcff780b356124,
+    type: 3}
+  m_PrefabInstance: {fileID: 1082493874397817935}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6ee64309156642038d503f446370f08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7358001590930426011 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7573107372154840276, guid: e0340c77c6f6e4b4abdcff780b356124,

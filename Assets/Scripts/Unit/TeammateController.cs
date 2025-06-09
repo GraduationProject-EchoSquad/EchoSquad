@@ -8,11 +8,12 @@ public class TeammateController : UnitController
 
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private TeammateAI teammateAI;
-    
-    public UnitController followTarget = null;
-    
-    public float waitBeforeRelease = 3f;     // 멈춘 뒤 몇 초 후 target 제거
+    private UnitShooter unitShooter;
+
+    private float waitBeforeRelease = 3f; // 멈춘 뒤 몇 초 후 target 제거
     private float stopTimer = 0f;
+    private UnitController followTarget = null;
+
     public float speed = 6f;
     [SerializeField] float turnSpeed = 120f;
     [SerializeField] float accel = 8f;
@@ -21,27 +22,37 @@ public class TeammateController : UnitController
     {
         base.Start();
         navMeshAgent = GetComponent<NavMeshAgent>();
+        unitShooter = GetComponent<UnitShooter>();
         navMeshAgent.speed = speed;
         navMeshAgent.angularSpeed = turnSpeed;
         navMeshAgent.acceleration = accel;
     }
-    
+
     void Update()
     {
         HandleMovement();
         FollowTarget();
+        
+        if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
+        {
+            if (!navMeshAgent.hasPath || navMeshAgent.velocity.sqrMagnitude == 0f)
+            {
+                navMeshAgent.ResetPath(); // 목적지 초기화
+                Debug.Log("도달 완료. 경로 초기화됨.");
+            }
+        }
     }
-    
+
     void HandleMovement()
     {
-        if (IsGrounded())
+        /*if (IsGrounded())
         {
             animator.SetBool("IsFalling", false);
         }
         else
         {
             animator.SetBool("IsFalling", true);
-        }
+        }*/
 
         float speed = navMeshAgent.velocity.magnitude;
         Vector3 worldVel = navMeshAgent.velocity;
@@ -50,7 +61,7 @@ public class TeammateController : UnitController
         animator.SetFloat("Horizontal Move", moveInput.x * speed, 0.05f, Time.deltaTime);
         animator.SetFloat("Vertical Move", moveInput.y * speed, 0.05f, Time.deltaTime);
     }
-    
+
     bool IsGrounded()
     {
         float rayDistance = 1f;
@@ -64,6 +75,7 @@ public class TeammateController : UnitController
         NavMeshHit hit;
         if (NavMesh.SamplePosition(gameObject.transform.position, out hit, NavSearchRadius, NavMesh.AllAreas))
         {
+            followTarget = null;
             navMeshAgent.SetDestination(hit.position); // 보정된 위치로 이동
         }
     }
@@ -73,8 +85,14 @@ public class TeammateController : UnitController
         NavMeshHit hit;
         if (NavMesh.SamplePosition(unitController.transform.position, out hit, NavSearchRadius, NavMesh.AllAreas))
         {
+            followTarget = null;
             navMeshAgent.SetDestination(hit.position); // 보정된 위치로 이동
         }
+    }
+
+    public void SetFollowUnit(UnitController followUnitController)
+    {
+        followTarget = followUnitController;
     }
 
     private void FollowTarget()
@@ -86,13 +104,14 @@ public class TeammateController : UnitController
 
         var targetPosition = followTarget.transform.position;
         navMeshAgent.SetDestination(targetPosition);
-        
+
         float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
 
         if (distanceToTarget <= navMeshAgent.stoppingDistance)
         {
             // agent가 실제로 멈췄는지 (목표 도착 + 속도 거의 없음)
-            if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance && navMeshAgent.velocity.sqrMagnitude < 0.01f)
+            if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance &&
+                navMeshAgent.velocity.sqrMagnitude < 0.01f)
             {
                 stopTimer += Time.deltaTime;
 
@@ -115,7 +134,7 @@ public class TeammateController : UnitController
             stopTimer = 0f;
         }
     }
-    
+
     public TeammateAI GetTeammateAI()
     {
         return teammateAI;

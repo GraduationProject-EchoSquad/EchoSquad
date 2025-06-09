@@ -47,11 +47,11 @@ public class TeammateAI : MonoBehaviour
         {
             if (param.follow_target.Equals("Player"))
             {
-                unitController.followTarget = unitManager.GetPlayerUnit();
+                unitController.SetFollowUnit(unitManager.GetPlayerUnit());
             }
             else if (unitManager.teammateUnitDict.TryGetValue(param.follow_target, out var followUnit))
             {
-                unitController.followTarget = followUnit;
+                unitController.SetFollowUnit(followUnit);
 
                 Debug.Log($"Move To AI Unit {param.follow_target}");
 

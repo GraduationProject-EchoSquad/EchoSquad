@@ -61,9 +61,35 @@ public class UnitManager : Singleton<UnitManager>
     {
         return unitTeamTypeDict[unitTeamType];
     }
+    //limitDistance까지만 탐색
+    public UnitController GetNearestEnemyUnit(UnitController unitController, float limitDistance = float.MaxValue)
+    {
+        List<UnitController> enemyList = GetUnitTeamTypeList(unitController.GetOppositeTeamType()).Where(e => e.IsDead() == false).ToList();
+        UnitController nearestEnemyUnit = null;
+        float minSqrDistance = float.MaxValue;
+        Vector3 myPosition = unitController.transform.position;
+        
+        foreach (var enemy in enemyList)
+        {
+            float sqrDistance = (enemy.transform.position - myPosition).sqrMagnitude;
+            if (sqrDistance < minSqrDistance)
+            {
+                minSqrDistance = sqrDistance;
+                nearestEnemyUnit = enemy;
+            }
+        }
+
+        if (nearestEnemyUnit != null && Vector3.Distance(myPosition, nearestEnemyUnit.transform.position) > limitDistance)
+        {
+            nearestEnemyUnit = null;
+        }
+        
+        return nearestEnemyUnit;
+    }
 
     public PlayerController GetPlayerUnit()
     {
         return playerUnit;
     }
+    
 }

@@ -5,6 +5,7 @@
 public class PlayerInput : MonoBehaviour
 {
     public string fireButtonName = "Fire1"; // 발사를 위한 입력 버튼 이름
+    public string subFireButtonName = "Fire2";
     public string jumpButtonName = "Jump";
     public string moveHorizontalAxisName = "Horizontal"; // 좌우 회전을 위한 입력축 이름
     public string moveVerticalAxisName = "Vertical"; // 앞뒤 움직임을 위한 입력축 이름
@@ -14,6 +15,7 @@ public class PlayerInput : MonoBehaviour
 
     public Vector2 moveInput { get; private set; }
     public bool fire { get; private set; } // 감지된 발사 입력값
+    public bool subFire { get; private set; } // 마우스 우클릭
     public bool reload { get; private set; } // 감지된 재장전 입력값
     public bool jump { get; private set; }
     
@@ -37,6 +39,7 @@ public class PlayerInput : MonoBehaviour
 
         jump = Input.GetButtonDown(jumpButtonName);
         fire = Input.GetButton(fireButtonName);
+        subFire = Input.GetButton(subFireButtonName);
         reload = Input.GetButtonDown(reloadButtonName);
     }
 }

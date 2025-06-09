@@ -22,9 +22,10 @@ public class PlayerController : UnitController
         UIManager.Instance.UpdateLifeText(lifeRemains);
         Cursor.visible = false;
     }
-    
+
     protected override void HandleDeath()
     {
+        base.HandleDeath();
         playerMovement.enabled = false;
         playerShooter.enabled = false;
 
@@ -38,12 +39,14 @@ public class PlayerController : UnitController
         {
             GameManager.Instance.EndGame();
         }
-        
+
         Cursor.visible = true;
     }
 
     public void Respawn()
     {
+        ChangeUnitState(EUnitState.Idle);
+
         gameObject.SetActive(false);
         gameObject.SetActive(true);
         playerMovement.enabled = true;

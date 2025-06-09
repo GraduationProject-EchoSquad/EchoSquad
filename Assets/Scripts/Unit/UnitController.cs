@@ -11,20 +11,29 @@ public class UnitController : MonoBehaviour
         Neutral,
         Enemy
     }
-    
+
+    public enum EUnitState
+    {
+        None,
+        Idle,
+        Die
+    }
+
     /*public enum EUnitType
     {
         Player,
         Teammate,
         Zombie,
     }*/
-    
+
     protected LivingEntity LivingEntity;
     protected Animator animator;
     protected EUnitTeamType unitTeamType;
+    protected EUnitState unitState;
 
     protected virtual void Start()
     {
+        unitState = EUnitState.Idle;
         animator = GetComponentInChildren<Animator>();
         LivingEntity = GetComponent<LivingEntity>();
         LivingEntity.OnDeath += HandleDeath;
@@ -37,13 +46,14 @@ public class UnitController : MonoBehaviour
 
     protected virtual void HandleDeath()
     {
+        ChangeUnitState(EUnitState.Die);
     }
 
     public EUnitTeamType GetUnitTeamType()
     {
         return unitTeamType;
     }
-    
+
     public EUnitTeamType GetOppositeTeamType()
     {
         switch (GetUnitTeamType())
@@ -55,5 +65,15 @@ public class UnitController : MonoBehaviour
             default:
                 return EUnitTeamType.None;
         }
+    }
+
+    protected void ChangeUnitState(EUnitState newUnitState)
+    {
+        unitState = newUnitState;
+    }
+
+    public bool IsDead()
+    {
+        return unitState == EUnitState.Die;
     }
 }

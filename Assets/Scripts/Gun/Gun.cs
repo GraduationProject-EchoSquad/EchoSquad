@@ -15,7 +15,7 @@ public class Gun : MonoBehaviour
     }
     public State state { get; private set; } // 현재 총의 상태
     
-    private PlayerShooter gunHolder;
+    private UnitShooter gunHolder;
     private LineRenderer bulletLineRenderer; // 총알 궤적을 그리기 위한 렌더러
     [Header("발사 예측선용 라인")]
     [SerializeField] private LineRenderer previewLineRenderer;
@@ -68,7 +68,7 @@ public class Gun : MonoBehaviour
         }
     }
 
-    public void Setup(PlayerShooter gunHolder)
+    public void Setup(UnitShooter gunHolder)
     {
         this.gunHolder = gunHolder;
         excludeTarget = gunHolder.excludeTarget;
@@ -255,7 +255,7 @@ public class Gun : MonoBehaviour
         state = State.Ready;
     }
 
-    private void DrawPreviewLine()
+    public void DrawPreviewLine()
     {
         Vector3 start = fireTransform.position;
         Vector3 dir = fireTransform.forward.normalized;
@@ -265,20 +265,14 @@ public class Gun : MonoBehaviour
         previewLineRenderer.SetPosition(0, start);
         previewLineRenderer.SetPosition(1, targetPoint);
     }
+    
+    public void UnDrawPreviewLine()
+    {
+        previewLineRenderer.enabled = false;
+    }
 
     private void Update()
     {
-        // 1) 예측선 그리기 (예: 우클릭)
-        if (Input.GetMouseButton(1))
-        {
-            DrawPreviewLine();
-        }
-        else if (previewLineRenderer.enabled)
-        {
-            previewLineRenderer.enabled = false;
-        }
-
-
         currentSpread = Mathf.SmoothDamp(currentSpread, 0f, ref currentSpreadVelocity, 1f / restoreFromRecoilSpeed);
         currentSpread = Mathf.Clamp(currentSpread, 0f, maxSpread);
     }
