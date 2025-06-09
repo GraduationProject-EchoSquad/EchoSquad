@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class UnitShooter : MonoBehaviour
@@ -20,6 +21,11 @@ public class UnitShooter : MonoBehaviour
     private UnitController unit;
     private UnitController aimTargetUnit;
 
+    [Header("Visibility Setting")]
+    [SerializeField] float viewDistance = 10f;      // 최대 탐지 거리
+    [SerializeField] float viewAngle = 120f;      // 시야각(°)
+    [SerializeField] float eyeHeight;  //  Raycast 시작 높이
+
     protected bool hasEnoughDistance =>
         !Physics.Linecast(transform.position + Vector3.up * gun.fireTransform.position.y, gun.fireTransform.position,
             ~excludeTarget);
@@ -28,6 +34,15 @@ public class UnitShooter : MonoBehaviour
     {
         unitAnimator = GetComponent<Animator>();
         unit = GetComponent<UnitController>();
+
+        InitializeEyeHeight();
+
+    }
+
+    protected virtual void InitializeEyeHeight()
+    {
+        var col = GetComponent<CapsuleCollider>();
+        eyeHeight = col.center.y;
     }
 
     private void OnEnable()
@@ -104,7 +119,11 @@ public class UnitShooter : MonoBehaviour
             }
         }
 
-        aimTargetUnit = UnitManager.Instance.GetNearestEnemyUnit(unit, 10f);
+        //aimTargetUnit = UnitManager.Instance.GetNearestEnemyUnit(unit, 10f);
+        aimTargetUnit = UnitManager.Instance
+        .GetVisibleEnemies(unit, viewDistance, viewAngle, eyeHeight, excludeTarget)
+        .OrderBy(e => (e.transform.position - transform.position).sqrMagnitude)
+        .FirstOrDefault();
     }
 
     // 애니메이터의 IK 갱신

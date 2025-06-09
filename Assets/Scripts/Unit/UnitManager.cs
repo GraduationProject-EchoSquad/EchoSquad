@@ -87,6 +87,36 @@ public class UnitManager : Singleton<UnitManager>
         return nearestEnemyUnit;
     }
 
+    public IEnumerable<UnitController> GetAliveEnemies(UnitController me) =>
+    GetUnitTeamTypeList(me.GetOppositeTeamType()).Where(e => !e.IsDead());
+
+    public IEnumerable<UnitController> GetVisibleEnemies(
+        UnitController shooter,
+        float maxDistance,
+        float viewAngle,
+        float eyeHeight,
+        LayerMask excludeMask)
+    {
+        Vector3 eyePos = shooter.transform.position + Vector3.up * eyeHeight;
+
+        return GetAliveEnemies(shooter)
+            .Where(e =>
+            {
+                Vector3 dir = e.transform.position - eyePos;
+                float distSqr = dir.sqrMagnitude;
+                if (distSqr > maxDistance * maxDistance) return false;
+                if (Vector3.Angle(shooter.transform.forward, dir) > viewAngle * 0.5f) return false;
+
+                if (Physics.Raycast(eyePos, dir.normalized, out var hit, Mathf.Sqrt(distSqr), ~excludeMask))
+                {
+                    var hitCtrl = hit.collider.GetComponentInParent<UnitController>();
+                    if (hitCtrl != e) return false;
+                }
+
+                return true;
+            });
+    }
+
     public PlayerController GetPlayerUnit()
     {
         return playerUnit;

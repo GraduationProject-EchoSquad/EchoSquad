@@ -220,7 +220,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1852215011948341700}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.57966155, y: 0.1561619, z: -0.11436141, w: 0.79153484}
+  m_LocalRotation: {x: 0.5797106, y: 0.15615797, z: -0.11437354, w: 0.79149795}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -604,7 +604,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4951491762058695250}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.57966155, y: 0.1561619, z: -0.11436141, w: 0.79153484}
+  m_LocalRotation: {x: 0.5797106, y: 0.15615797, z: -0.11437354, w: 0.79149795}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -891,6 +891,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireButtonName: Fire1
+  subFireButtonName: Fire2
   jumpButtonName: Jump
   moveHorizontalAxisName: Horizontal
   moveVerticalAxisName: Vertical
@@ -911,6 +912,9 @@ MonoBehaviour:
   excludeTarget:
     serializedVersion: 2
     m_Bits: 0
+  viewDistance: 10
+  viewAngle: 60
+  eyeHeight: 0
 --- !u!114 &7578207875882508878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -966,7 +970,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5031951649460978938}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.57966155, y: 0.1561619, z: -0.11436141, w: 0.79153484}
+  m_LocalRotation: {x: 0.5796983, y: 0.15615837, z: -0.11437006, w: 0.79150736}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

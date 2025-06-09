@@ -18,6 +18,11 @@ public class TeammateController : UnitController
     [SerializeField] float turnSpeed = 120f;
     [SerializeField] float accel = 8f;
 
+    [SerializeField] float patrolRadius = 3f;  // 순찰 반경
+    [SerializeField] float patrolInterval = 5f;   // 다음 순찰 지점 선택까지 대기 시간
+    private Vector3 homePosition;  // 시작 위치 저장
+    float patrolTimer;
+
     protected override void Start()
     {
         base.Start();
@@ -26,13 +31,38 @@ public class TeammateController : UnitController
         navMeshAgent.speed = speed;
         navMeshAgent.angularSpeed = turnSpeed;
         navMeshAgent.acceleration = accel;
+        patrolTimer = patrolInterval;
+        homePosition = transform.position;
     }
 
     void Update()
     {
         HandleMovement();
         FollowTarget();
-        
+
+        if (followTarget == null)
+        {
+            if (unitShooter.GetAimTargetUnit() != null) // 타겟 발견시 순찰 중단
+            {
+                if (navMeshAgent.hasPath)
+                {
+                    navMeshAgent.ResetPath();     
+                    navMeshAgent.isStopped = true;
+                }
+                return;
+            }
+
+            patrolTimer -= Time.deltaTime;
+            // 타이머 만료 or 목적지 도착 시 or 적 제거 후 가만히 있을 때
+            if (patrolTimer <= 0f ||
+                (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance) || navMeshAgent.isStopped)
+            {
+                PickPatrolPoint();
+                patrolTimer = patrolInterval;
+            }
+        }
+
+
         if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
         {
             if (!navMeshAgent.hasPath || navMeshAgent.velocity.sqrMagnitude == 0f)
@@ -40,6 +70,20 @@ public class TeammateController : UnitController
                 navMeshAgent.ResetPath(); // 목적지 초기화
                 Debug.Log("도달 완료. 경로 초기화됨.");
             }
+        }
+    }
+
+    void PickPatrolPoint()
+    {
+        // homePosition을 중심으로 랜덤 위치 생성
+        Vector3 randomDir = Random.insideUnitSphere * patrolRadius + homePosition;
+
+        // NavMesh 위 유효 위치로 보정
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomDir, out hit, patrolRadius, NavMesh.AllAreas))
+        {
+            navMeshAgent.SetDestination(hit.position);
+            Debug.Log($"새 순찰 지점: {hit.position}");
         }
     }
 
@@ -117,6 +161,7 @@ public class TeammateController : UnitController
 
                 if (stopTimer >= waitBeforeRelease)
                 {
+                    homePosition = transform.position;
                     Debug.Log("타겟 도착 후 3초 경과 → 타겟 해제");
                     followTarget = null;
                     stopTimer = 0f;
