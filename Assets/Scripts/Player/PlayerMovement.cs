@@ -35,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (currentSpeed > 0.2f || playerInput.fire || playerShooter.aimState == PlayerShooter.AimState.HipFire) Rotate();
+        if (currentSpeed > 0.2f || playerInput.fire || playerShooter.GetAimState() == PlayerShooter.AimState.HipFire) Rotate();
 
         Move(playerInput.moveInput);
         

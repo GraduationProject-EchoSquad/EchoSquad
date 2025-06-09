@@ -15,7 +15,7 @@ public class Gun : MonoBehaviour
     }
     public State state { get; private set; } // 현재 총의 상태
     
-    private PlayerShooter gunHolder;
+    private UnitShooter gunHolder;
     private LineRenderer bulletLineRenderer; // 총알 궤적을 그리기 위한 렌더러
     [Header("발사 예측선용 라인")]
     [SerializeField] private LineRenderer previewLineRenderer;
@@ -68,7 +68,7 @@ public class Gun : MonoBehaviour
         }
     }
 
-    public void Setup(PlayerShooter gunHolder)
+    public void Setup(UnitShooter gunHolder)
     {
         this.gunHolder = gunHolder;
         excludeTarget = gunHolder.excludeTarget;

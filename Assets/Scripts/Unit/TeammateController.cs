@@ -9,10 +9,10 @@ public class TeammateController : UnitController
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private TeammateAI teammateAI;
     
-    public UnitController followTarget = null;
-    
-    public float waitBeforeRelease = 3f;     // 멈춘 뒤 몇 초 후 target 제거
+    private float waitBeforeRelease = 3f;     // 멈춘 뒤 몇 초 후 target 제거
     private float stopTimer = 0f;
+    private UnitController followTarget = null;
+    
     public float speed = 6f;
     [SerializeField] float turnSpeed = 120f;
     [SerializeField] float accel = 8f;
@@ -34,14 +34,14 @@ public class TeammateController : UnitController
     
     void HandleMovement()
     {
-        if (IsGrounded())
+        /*if (IsGrounded())
         {
             animator.SetBool("IsFalling", false);
         }
         else
         {
             animator.SetBool("IsFalling", true);
-        }
+        }*/
 
         float speed = navMeshAgent.velocity.magnitude;
         Vector3 worldVel = navMeshAgent.velocity;
@@ -64,6 +64,7 @@ public class TeammateController : UnitController
         NavMeshHit hit;
         if (NavMesh.SamplePosition(gameObject.transform.position, out hit, NavSearchRadius, NavMesh.AllAreas))
         {
+            followTarget = null;
             navMeshAgent.SetDestination(hit.position); // 보정된 위치로 이동
         }
     }
@@ -73,8 +74,14 @@ public class TeammateController : UnitController
         NavMeshHit hit;
         if (NavMesh.SamplePosition(unitController.transform.position, out hit, NavSearchRadius, NavMesh.AllAreas))
         {
+            followTarget = null;
             navMeshAgent.SetDestination(hit.position); // 보정된 위치로 이동
         }
+    }
+    
+    public void SetFollowUnit(UnitController followUnitController)
+    {
+        followTarget = followUnitController;
     }
 
     private void FollowTarget()
