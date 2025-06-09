@@ -13,35 +13,41 @@ public class UnitShooter : MonoBehaviour
     public Gun gun; // 사용할 총
     public LayerMask excludeTarget;
     protected Animator unitAnimator; // 애니메이터 컴포넌트
-    
-    protected float waitingTimeForReleasingAim = 2.5f;
-    protected float lastFireInputTime; 
-    
-    protected Vector3 aimPoint;
 
-    protected bool hasEnoughDistance => !Physics.Linecast(transform.position + Vector3.up * gun.fireTransform.position.y,gun.fireTransform.position, ~excludeTarget);
-    
+    protected float waitingTimeForReleasingAim = 2.5f;
+    protected float lastFireInputTime;
+
+    private UnitController unit;
+    private UnitController aimTargetUnit;
+
+    protected bool hasEnoughDistance =>
+        !Physics.Linecast(transform.position + Vector3.up * gun.fireTransform.position.y, gun.fireTransform.position,
+            ~excludeTarget);
+
     protected virtual void Start()
     {
         unitAnimator = GetComponent<Animator>();
+        unit = GetComponent<UnitController>();
     }
-    
+
     private void OnEnable()
     {
         aimState = AimState.Idle;
         gun.gameObject.SetActive(true);
         gun.Setup(this);
     }
-    
+
     private void OnDisable()
     {
         aimState = AimState.Idle;
         gun.gameObject.SetActive(false);
     }
-    
+
     private void Update()
     {
         UpdateAimTarget();
+        Shoot();
+        gun.DrawPreviewLine();
 
         // 1) 카메라 계산 부분을 무시하고 상체 ‘들기’에 대응되는 최소값(예: 0.8f)만 넘겨주기
         float fixedAngle = 0.5f; // 1에 가까울수록 더 완전하게 상체를 든 상태
@@ -55,56 +61,45 @@ public class UnitShooter : MonoBehaviour
             aimState = AimState.Idle;
         }
     }
-    
+
     public virtual void Shoot()
     {
-        Debug.Log($"[Shoot] 단발 모드 진입 → hasEnoughDistance={hasEnoughDistance}");
+        //Debug.Log($"[Shoot] 단발 모드 진입 → hasEnoughDistance={hasEnoughDistance}");
 
         // linedUp 체크 제거하고, 사거리(장애물)만 확인
-        if (hasEnoughDistance)
+        if (aimTargetUnit != null && hasEnoughDistance)
         {
-            Debug.Log("[Shoot] hasEnoughDistance == true → gun.Fire 호출");
-            bool fired = gun.Fire(aimPoint);
-            Debug.Log($"[Shoot] gun.Fire 리턴값 = {fired}");
+            //Debug.Log("[Shoot] hasEnoughDistance == true → gun.Fire 호출");
+            bool fired = gun.Fire(aimTargetUnit.transform.position);
+            //Debug.Log($"[Shoot] gun.Fire 리턴값 = {fired}");
             if (fired)
             {
-                Debug.Log("[Shoot] 발사 성공 → 애니메이터 트리거");
+                //Debug.Log("[Shoot] 발사 성공 → 애니메이터 트리거");
                 unitAnimator.SetTrigger("Shoot");
+                if (gun.magAmmo <= 0)
+                {
+                    Reload();
+                }
             }
-        }
-        else
-        {
-            Debug.Log("[Shoot] 사정거리/장애물 조건 불만족");
         }
     }
 
     public void Reload()
     {
         // 재장전 입력 감지시 재장전
-        if(gun.Reload()) unitAnimator.SetTrigger("Reload");
+        if (gun.Reload()) unitAnimator.SetTrigger("Reload");
     }
-    
+
     protected virtual void UpdateAimTarget()
     {
-        /*RaycastHit hit;
-        
-        var ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1f));
-
-        if (Physics.Raycast(ray, out hit, gun.fireDistance, ~excludeTarget))
+        if (aimTargetUnit != null && aimTargetUnit.IsDead() == false)
         {
-            aimPoint = hit.point;
-
-            if (Physics.Linecast(gun.fireTransform.position, hit.point, out hit, ~excludeTarget))
-            {
-                aimPoint = hit.point;
-            }
+            return;
         }
-        else
-        {
-            aimPoint = playerCamera.transform.position + playerCamera.transform.forward * gun.fireDistance;
-        }*/
+
+        aimTargetUnit = UnitManager.Instance.GetNearestEnemyUnit(unit, 10f);
     }
-    
+
     // 애니메이터의 IK 갱신
     private void OnAnimatorIK(int layerIndex)
     {

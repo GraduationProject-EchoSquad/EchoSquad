@@ -255,7 +255,7 @@ public class Gun : MonoBehaviour
         state = State.Ready;
     }
 
-    private void DrawPreviewLine()
+    public void DrawPreviewLine()
     {
         Vector3 start = fireTransform.position;
         Vector3 dir = fireTransform.forward.normalized;
@@ -265,20 +265,14 @@ public class Gun : MonoBehaviour
         previewLineRenderer.SetPosition(0, start);
         previewLineRenderer.SetPosition(1, targetPoint);
     }
+    
+    public void UnDrawPreviewLine()
+    {
+        previewLineRenderer.enabled = false;
+    }
 
     private void Update()
     {
-        // 1) 예측선 그리기 (예: 우클릭)
-        if (Input.GetMouseButton(1))
-        {
-            DrawPreviewLine();
-        }
-        else if (previewLineRenderer.enabled)
-        {
-            previewLineRenderer.enabled = false;
-        }
-
-
         currentSpread = Mathf.SmoothDamp(currentSpread, 0f, ref currentSpreadVelocity, 1f / restoreFromRecoilSpeed);
         currentSpread = Mathf.Clamp(currentSpread, 0f, maxSpread);
     }

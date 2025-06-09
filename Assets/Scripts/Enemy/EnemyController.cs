@@ -21,15 +21,15 @@ public class EnemyController : UnitController
 
     void Update()
     {
-        UpdateAttackTarget();   // ±ÙÃ³ Àû È®ÀÎ
-                                // °ø°İ ´ë»óÀÌ ÀÖÀ¸¸é ±×°É ÃßÀû
+        UpdateAttackTarget();   // ê·¼ì²˜ ì  í™•ì¸
+                                // ê³µê²© ëŒ€ìƒì´ ìˆìœ¼ë©´ ê·¸ê±¸ ì¶”ì 
 
         moveTarget = attackTarget != null ? attackTarget : FindNearestRune();
 
         if (moveTarget != null)
             agent.SetDestination(moveTarget.position);
 
-        // °ø°İ Ã³¸®
+        // ê³µê²© ì²˜ë¦¬
         if (attackTarget != null)
         {
             float dist = Vector3.Distance(transform.position, attackTarget.position);
@@ -56,7 +56,7 @@ public class EnemyController : UnitController
         foreach (UnitController unit in units)
         {
             float dist = Vector3.Distance(transform.position, unit.transform.position);
-            if (dist <= 3f && dist < minDist)  // °ø°İ ¹üÀ§º¸´Ù ³Ë³ËÇÏ°Ô Å½»ö ¹üÀ§ ¼³Á¤
+            if (dist <= 3f && dist < minDist)  // ê³µê²© ë²”ìœ„ë³´ë‹¤ ë„‰ë„‰í•˜ê²Œ íƒìƒ‰ ë²”ìœ„ ì„¤ì •
             {
                 minDist = dist;
                 nearest = unit.transform;
@@ -94,7 +94,7 @@ public class EnemyController : UnitController
             if (health != null)
                 health.TakeDamage(10);
 
-            // ·é Ã¼·Â ½ºÅ©¸³Æ® ÀÛ¼º ÈÄ ÁÖ¼® ÇØÁ¦
+            // ë£¬ ì²´ë ¥ ìŠ¤í¬ë¦½íŠ¸ ì‘ì„± í›„ ì£¼ì„ í•´ì œ
             /*var rune = target.GetComponent<RuneHP>();
             if (rune != null)
             {
@@ -105,6 +105,7 @@ public class EnemyController : UnitController
     
     protected override void HandleDeath()
     {
+        base.HandleDeath();
         animator.SetTrigger("Die");
         Debug.Log("Zombie died!");
         Destroy(gameObject, 2f);

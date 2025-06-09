@@ -7,6 +7,7 @@ public class PlayerShooter : UnitShooter
     
     private PlayerInput playerInput;
     private Camera playerCamera;
+    private Vector3 aimPoint;
     
     void Awake()
     {
@@ -35,6 +36,15 @@ public class PlayerShooter : UnitShooter
         {
             Debug.Log("[FixedUpdate] playerInput.reload == true, Reload() 호출");
             Reload();
+        }
+        
+        if (playerInput.subFire)
+        {
+            gun.DrawPreviewLine();
+        }
+        else
+        {
+            gun.UnDrawPreviewLine();
         }
     }
 
