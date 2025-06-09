@@ -2621,6 +2621,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   teammateName: jin
   teammateNameKorean: "\uC9C4"
+  unitController: {fileID: 0}
 --- !u!65 &1520019359
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2994,6 +2995,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   teammateName: Lena
   teammateNameKorean: "\uB808\uB098"
+  unitController: {fileID: 0}
 --- !u!65 &1599451606
 BoxCollider:
   m_ObjectHideFlags: 0
