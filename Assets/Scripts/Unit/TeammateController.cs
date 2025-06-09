@@ -32,6 +32,15 @@ public class TeammateController : UnitController
     {
         HandleMovement();
         FollowTarget();
+        
+        if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
+        {
+            if (!navMeshAgent.hasPath || navMeshAgent.velocity.sqrMagnitude == 0f)
+            {
+                navMeshAgent.ResetPath(); // 목적지 초기화
+                Debug.Log("도달 완료. 경로 초기화됨.");
+            }
+        }
     }
 
     void HandleMovement()
