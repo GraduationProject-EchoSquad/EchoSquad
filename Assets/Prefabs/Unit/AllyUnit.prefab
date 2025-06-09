@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1775171347842400268}
   - component: {fileID: 4800373941245335645}
   - component: {fileID: 605026252724606914}
+  - component: {fileID: 326972713833839956}
   m_Layer: 0
   m_Name: AllyUnit
   m_TagString: Untagged
@@ -145,6 +146,23 @@ MonoBehaviour:
   excludeTarget:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &326972713833839956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1297004110062203105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e85b6a0623d96be4cae25a4a8e932c64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 6
+  jumpVelocity: 20
+  airControlPercent: 0.01
+  speedSmoothTime: 0.1
+  turnSmoothTime: 0.1
 --- !u!1 &1520403100905379115
 GameObject:
   m_ObjectHideFlags: 0
