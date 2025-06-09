@@ -24,6 +24,10 @@ public class PlayerShooter : UnitShooter
         playerInput = GetComponent<PlayerInput>();
     }
 
+    protected override void InitializeEyeHeight()
+    {
+    }
+
     private void FixedUpdate()
     {
         if (playerInput.fire)
@@ -51,7 +55,6 @@ public class PlayerShooter : UnitShooter
     private void Update()
     {
         // 1) 카메라 계산 부분을 무시하고 상체 ‘들기’에 대응되는 최소값(예: 0.8f)만 넘겨주기
-        float fixedAngle = 0.5f; // 1에 가까울수록 더 완전하게 상체를 든 상태
         float camY = playerCamera.transform.position.y;
         float animAngle = Mathf.InverseLerp(0f, 20f, camY);
         // camY=6 → animAngle=0  /  camY=8 → animAngle=0.5  /  camY=10 → animAngle=1
