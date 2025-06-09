@@ -31,6 +31,10 @@ public class Intro_Controller : Singleton<Intro_Controller>
         if (doIntro == false)
         {
             OnIntroFinished?.Invoke();
+            runestoneScript.ToggleRuneStone(true);
+            portalRoundScripts.F_TogglePortalRound(true);
+            portalSimpleScripts.TogglePortal(true);
+            portalGateScript.F_TogglePortalGate(true);
             return;
         }
         // 처음엔 모든 VCam과 Player를 비활성화
