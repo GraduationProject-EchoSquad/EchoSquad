@@ -170,6 +170,26 @@ public class TeammateController : UnitController
             ChangeUnitState(EUnitState.Move);
         }
     }
+    
+    public float maxDistance = 100f; // 최대 이동 거리
+    public void MoveDirection(Vector3 origin, Vector3 direction)
+    {
+        Vector3 target = origin + direction * maxDistance;
+
+        NavMeshHit hit;
+
+        // NavMeshRaycast로 장애물이나 NavMesh의 경계를 확인
+        if (NavMesh.Raycast(origin, target, out hit, NavMesh.AllAreas))
+        {
+            // 벽이나 끊긴 경로까지의 지점을 목적지로 설정
+            navMeshAgent.SetDestination(hit.position);
+        }
+        else
+        {
+            // 장애물이 없으면 최대 거리까지 이동
+            navMeshAgent.SetDestination(target);
+        }
+    }
 
     public void SetFollowUnit(UnitController followUnitController)
     {
