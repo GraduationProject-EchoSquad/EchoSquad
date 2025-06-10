@@ -51,7 +51,6 @@ public class TeammateController : UnitController
         }
 
         HandleMovement();
-        FollowTarget();
 
         //정찰상태
         if (unitState == EUnitState.Scout)
@@ -87,7 +86,11 @@ public class TeammateController : UnitController
         //LLM 이동 명령 수행하는 상태
         else if (unitState == EUnitState.Move)
         {
-            if (followTarget == null && IsNavArrivedTargetPosition())
+            if (followTarget != null)
+            {
+                FollowTarget();
+            }
+            else if (IsNavArrivedTargetPosition())
             {
                 ChangeUnitState(EUnitState.Idle);
             }
@@ -170,6 +173,7 @@ public class TeammateController : UnitController
     public void SetFollowUnit(UnitController followUnitController)
     {
         followTarget = followUnitController;
+        ChangeUnitState(EUnitState.Move);
     }
 
     private void FollowTarget()
