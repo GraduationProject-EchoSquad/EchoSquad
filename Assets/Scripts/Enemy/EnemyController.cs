@@ -4,8 +4,15 @@ using UnityEngine;
 using UnityEngine.AI;
 using static Unity.Collections.Unicode;
 
+public enum EnemyType
+{
+    Zombie, 
+    Monster   
+}
+
 public class EnemyController : UnitController
 {
+    public EnemyType enemyType;
     public float attackRange = 1f;
     private Transform moveTarget;  
     private Transform attackTarget;
@@ -92,7 +99,10 @@ public class EnemyController : UnitController
         {
             PlayerHP health = attackTarget.GetComponent<PlayerHP>();
             if (health != null)
-                health.TakeDamage(10);
+            {
+                int damage = (enemyType == EnemyType.Monster) ? 20 : 10;
+                health.TakeDamage(damage);
+            }
 
             // 룬 체력 스크립트 작성 후 주석 해제
             /*var rune = target.GetComponent<RuneHP>();
@@ -107,7 +117,7 @@ public class EnemyController : UnitController
     {
         base.HandleDeath();
         animator.SetTrigger("Die");
-        Debug.Log("Zombie died!");
+        Debug.Log("Enemy died!");
         Destroy(gameObject, 2f);
     }
 }
