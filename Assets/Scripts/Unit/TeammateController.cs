@@ -34,6 +34,14 @@ public class TeammateController : UnitController
         patrolTimer = patrolInterval;
         homePosition = transform.position;
     }
+    
+        
+    public void Init(EUnitTeamType newUnitTeamType, string engName, string korName)
+    {
+        base.Init(newUnitTeamType);
+        teammateAI.teammateName = engName;
+        teammateAI.teammateNameKorean = korName;
+    }
 
     void Update()
     {
