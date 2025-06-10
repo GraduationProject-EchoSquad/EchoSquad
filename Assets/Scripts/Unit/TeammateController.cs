@@ -92,6 +92,7 @@ public class TeammateController : UnitController
             }
             else if (IsNavArrivedTargetPosition())
             {
+                homePosition = transform.position;
                 ChangeUnitState(EUnitState.Idle);
             }
         }
