@@ -18,9 +18,9 @@ public class TeammateController : UnitController
     [SerializeField] float turnSpeed = 120f;
     [SerializeField] float accel = 8f;
 
-    [SerializeField] float patrolRadius = 3f;  // 순찰 반경
-    [SerializeField] float patrolInterval = 5f;   // 다음 순찰 지점 선택까지 대기 시간
-    private Vector3 homePosition;  // 시작 위치 저장
+    [SerializeField] float patrolRadius = 3f; // 순찰 반경
+    [SerializeField] float patrolInterval = 5f; // 다음 순찰 지점 선택까지 대기 시간
+    private Vector3 homePosition; // 시작 위치 저장
     float patrolTimer;
 
     protected override void Start()
@@ -34,8 +34,8 @@ public class TeammateController : UnitController
         patrolTimer = patrolInterval;
         homePosition = transform.position;
     }
-    
-        
+
+
     public void Init(EUnitTeamType newUnitTeamType, string engName, string korName)
     {
         base.Init(newUnitTeamType);
@@ -45,40 +45,62 @@ public class TeammateController : UnitController
 
     void Update()
     {
+        if (IsDead())
+        {
+            return;
+        }
+
         HandleMovement();
         FollowTarget();
 
-        if (followTarget == null)
+        //정찰상태
+        if (unitState == EUnitState.Scout)
         {
             if (unitShooter.GetAimTargetUnit() != null) // 타겟 발견시 순찰 중단
             {
                 if (navMeshAgent.hasPath)
                 {
-                    navMeshAgent.ResetPath();     
-                    navMeshAgent.isStopped = true;
+                    navMeshAgent.ResetPath(); // 목적지 초기화
+                    ChangeUnitState(EUnitState.Idle);
                 }
+
                 return;
             }
 
+            if (IsNavArrivedTargetPosition())
+            {
+                ChangeUnitState(EUnitState.Idle);
+            }
+        }
+        //목적 없는 상태
+        else if (unitState == EUnitState.Idle)
+        {
             patrolTimer -= Time.deltaTime;
-            // 타이머 만료 or 목적지 도착 시 or 적 제거 후 가만히 있을 때
-            if (patrolTimer <= 0f ||
-                (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance) || navMeshAgent.isStopped)
+
+
+            if (patrolTimer <= 0f)
             {
                 PickPatrolPoint();
                 patrolTimer = patrolInterval;
             }
         }
+        //LLM 이동 명령 수행하는 상태
+        else if (unitState == EUnitState.Move)
+        {
+            if (followTarget == null && IsNavArrivedTargetPosition())
+            {
+                ChangeUnitState(EUnitState.Idle);
+            }
+        }
 
-
-        if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
+        /*if (IsNavArrivedTargetPosition())
         {
             if (!navMeshAgent.hasPath || navMeshAgent.velocity.sqrMagnitude == 0f)
             {
                 navMeshAgent.ResetPath(); // 목적지 초기화
                 Debug.Log("도달 완료. 경로 초기화됨.");
             }
-        }
+        }*/
     }
 
     void PickPatrolPoint()
@@ -92,6 +114,7 @@ public class TeammateController : UnitController
         {
             navMeshAgent.SetDestination(hit.position);
             Debug.Log($"새 순찰 지점: {hit.position}");
+            ChangeUnitState(EUnitState.Scout);
         }
     }
 
@@ -129,6 +152,7 @@ public class TeammateController : UnitController
         {
             followTarget = null;
             navMeshAgent.SetDestination(hit.position); // 보정된 위치로 이동
+            ChangeUnitState(EUnitState.Move);
         }
     }
 
@@ -139,6 +163,7 @@ public class TeammateController : UnitController
         {
             followTarget = null;
             navMeshAgent.SetDestination(hit.position); // 보정된 위치로 이동
+            ChangeUnitState(EUnitState.Move);
         }
     }
 
@@ -162,8 +187,7 @@ public class TeammateController : UnitController
         if (distanceToTarget <= navMeshAgent.stoppingDistance)
         {
             // agent가 실제로 멈췄는지 (목표 도착 + 속도 거의 없음)
-            if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance &&
-                navMeshAgent.velocity.sqrMagnitude < 0.01f)
+            if (IsNavArrivedTargetPosition())
             {
                 stopTimer += Time.deltaTime;
 
@@ -173,6 +197,7 @@ public class TeammateController : UnitController
                     Debug.Log("타겟 도착 후 3초 경과 → 타겟 해제");
                     followTarget = null;
                     stopTimer = 0f;
+                    ChangeUnitState(EUnitState.Idle);
                 }
             }
             else
@@ -186,6 +211,11 @@ public class TeammateController : UnitController
             // 아직 도착하지 않음
             stopTimer = 0f;
         }
+    }
+
+    public bool IsNavArrivedTargetPosition()
+    {
+        return !navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance;
     }
 
     public TeammateAI GetTeammateAI()
