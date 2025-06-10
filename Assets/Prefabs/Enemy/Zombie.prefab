@@ -2945,7 +2945,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 8605622981922510963}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.35
+  m_Radius: 0.3
   m_Speed: 1.5
   m_Acceleration: 4
   avoidancePriority: 50
@@ -2970,6 +2970,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 592b5982891e3e84185a2be806a2dd67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyType: 0
   attackRange: 2
 --- !u!136 &8439346654403614160
 CapsuleCollider:
@@ -2990,7 +2991,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.35
+  m_Radius: 0.3
   m_Height: 1.85
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
