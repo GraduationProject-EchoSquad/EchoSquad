@@ -16,6 +16,8 @@ public class UnitController : MonoBehaviour
     {
         None,
         Idle,
+        Scout, // 정찰
+        Move, // 정찰
         Die
     }
 
