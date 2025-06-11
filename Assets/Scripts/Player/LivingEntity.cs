@@ -1,10 +1,17 @@
 ﻿using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 // 생명체로서 동작할 게임 오브젝트들을 위한 뼈대를 제공
 // 체력, 데미지 받아들이기, 사망 기능, 사망 이벤트를 제공
 public class LivingEntity : MonoBehaviour, IDamageable
 {
+    [Header("UI")]
+    public Slider healthSlider;      // 인스펙터에서 연결
+    public TextMeshProUGUI nameText;      // 인스펙터에서 연결
+    public UnitController UnitController;      // 인스펙터에서 연결
+    
     public float startingHealth = 100f; // 시작 체력
     public float health { get; protected set; } // 현재 체력
     public bool dead { get; protected set; } // 사망 상태
@@ -23,7 +30,16 @@ public class LivingEntity : MonoBehaviour, IDamageable
             return true;
         }
     }
-    
+
+    private void Start()
+    {
+        UnitController = GetComponent<UnitController>();
+        if (UnitController is TeammateController teammateController)
+        {
+            nameText.text = teammateController.GetTeammateAI().teammateName;
+        }
+    }
+
     // 생명체가 활성화될때 상태를 리셋
     protected virtual void OnEnable()
     {
@@ -31,6 +47,12 @@ public class LivingEntity : MonoBehaviour, IDamageable
         dead = false;
         // 체력을 시작 체력으로 초기화
         health = startingHealth;
+        if (healthSlider != null)
+        {
+            healthSlider.maxValue = startingHealth; // LivingEntity에서 정의된 최대 체력
+            healthSlider.value = health;            // LivingEntity에서 현재 체력(health 필드)
+        }
+        UpdateUI();
     }
 
     // 데미지를 입는 기능
@@ -50,13 +72,15 @@ public class LivingEntity : MonoBehaviour, IDamageable
     }
     
     // 체력을 회복하는 기능
-    public virtual void RestoreHealth(float newHealth)
+    public void RestoreHealth(float newHealth)
     {
         if (dead) return;
 
         // 체력 추가
         health += newHealth;
+        UpdateUI();
     }
+    
 
     // 사망 처리
     public virtual void Die()
@@ -66,5 +90,11 @@ public class LivingEntity : MonoBehaviour, IDamageable
 
         // 사망 상태를 참으로 변경
         dead = true;
+    }
+    
+    protected void UpdateUI()
+    {
+        if (healthSlider != null)
+            healthSlider.value = health;  // LivingEntity에서 관리하는 현재 체력
     }
 }
