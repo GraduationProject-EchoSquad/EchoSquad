@@ -52709,7 +52709,7 @@ MonoBehaviour:
   dontDestroyOnLoad: 1
   contextSize: 8192
   batchSize: 512
-  model: llama-3.2-3b-instruct-q4_k_m.gguf
+  model: unsloth.Q8_0.gguf
   chatTemplate: llama3 chat
   lora: 
   loraWeights: 

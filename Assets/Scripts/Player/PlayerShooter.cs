@@ -24,6 +24,10 @@ public class PlayerShooter : UnitShooter
         playerInput = GetComponent<PlayerInput>();
     }
 
+    protected override void InitializeEyeHeight()
+    {
+    }
+
     private void FixedUpdate()
     {
         if (playerInput.fire)
@@ -50,10 +54,7 @@ public class PlayerShooter : UnitShooter
 
     private void Update()
     {
-        UpdateAimTarget();
-
         // 1) 카메라 계산 부분을 무시하고 상체 ‘들기’에 대응되는 최소값(예: 0.8f)만 넘겨주기
-        float fixedAngle = 0.5f; // 1에 가까울수록 더 완전하게 상체를 든 상태
         float camY = playerCamera.transform.position.y;
         float animAngle = Mathf.InverseLerp(0f, 20f, camY);
         // camY=6 → animAngle=0  /  camY=8 → animAngle=0.5  /  camY=10 → animAngle=1
@@ -67,51 +68,6 @@ public class PlayerShooter : UnitShooter
         
         UpdateUI();
     }
-
-    //public void Shoot()
-    //{
-    //    Debug.Log($"[Shoot] 진입. aimState={aimState}, linedUp={linedUp}, hasEnoughDistance={hasEnoughDistance}");
-
-    //    if (aimState == AimState.Idle)
-    //    {
-    //        Debug.Log("[Shoot] 현재 상태: Idle");
-    //        if (linedUp)
-    //        {
-    //            Debug.Log("[Shoot] linedUp == true → aimState를 HipFire로 변경");
-    //            aimState = AimState.HipFire;
-    //        }
-    //        else
-    //        {
-    //            Debug.Log("[Shoot] linedUp == false → 아무 동작 안 함");
-    //        }
-    //    }
-    //    else if (aimState == AimState.HipFire)
-    //    {
-    //        Debug.Log("[Shoot] 현재 상태: HipFire");
-    //        if (hasEnoughDistance)
-    //        {
-    //            Debug.Log("[Shoot] hasEnoughDistance == true → gun.Fire() 호출 시도");
-    //            if (gun.Fire(aimPoint))
-    //            {
-    //                Debug.Log("[Shoot] gun.Fire() 성공 → 애니메이터 트리거 발동");
-    //                playerAnimator.SetTrigger("Shoot");
-    //            }
-    //            else
-    //            {
-    //                Debug.Log("[Shoot] gun.Fire() 실패 (남은 탄약 없음 등)");
-    //            }
-    //        }
-    //        else
-    //        {
-    //            Debug.Log("[Shoot] hasEnoughDistance == false → aimState를 Idle로 변경");
-    //            aimState = AimState.Idle;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        Debug.Log($"[Shoot] 정의되지 않은 상태: {aimState}");
-    //    }
-    //}
 
     public override void Shoot()
     {
@@ -132,27 +88,6 @@ public class PlayerShooter : UnitShooter
         else
         {
             Debug.Log("[Shoot] 사정거리/장애물 조건 불만족");
-        }
-    }
-
-    protected override void UpdateAimTarget()
-    {
-        RaycastHit hit;
-        
-        var ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1f));
-
-        if (Physics.Raycast(ray, out hit, gun.fireDistance, ~excludeTarget))
-        {
-            aimPoint = hit.point;
-
-            if (Physics.Linecast(gun.fireTransform.position, hit.point, out hit, ~excludeTarget))
-            {
-                aimPoint = hit.point;
-            }
-        }
-        else
-        {
-            aimPoint = playerCamera.transform.position + playerCamera.transform.forward * gun.fireDistance;
         }
     }
 

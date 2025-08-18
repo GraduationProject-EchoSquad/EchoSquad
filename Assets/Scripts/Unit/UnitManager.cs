@@ -10,6 +10,13 @@ public class UnitManager : Singleton<UnitManager>
     [SerializeField] private PlayerController PlayerUnitPrefab;
     [SerializeField] private TeammateController TeammateUnitPrefab;
 
+    private Dictionary<string, string> teammateNameDic = new Dictionary<string, string>
+    {
+        { "Lena", "레나" },
+        { "James", "제임스" },
+        { "Sara", "사라" },
+    };
+
     //모든 유닛 list
     private List<UnitController> UnitList = new List<UnitController>();
 
@@ -35,15 +42,18 @@ public class UnitManager : Singleton<UnitManager>
         //플레이어유닛, 동료유닛
         playerUnit = SpawnUnit(PlayerUnitPrefab, new Vector3(-20, 0, -8), PlayerUnitPrefab.transform.rotation,
             UnitController.EUnitTeamType.Allay);
-        SpawnUnit(TeammateUnitPrefab, new Vector3(-20, 0, -8), TeammateUnitPrefab.transform.rotation,
-            UnitController.EUnitTeamType.Allay);
+        for (int i = 0; i < teammateNameDic.Count; i++)
+        {
+            SpawnUnit(TeammateUnitPrefab, new Vector3(-20 + i, 0, -8), TeammateUnitPrefab.transform.rotation,
+                UnitController.EUnitTeamType.Allay);
+        }
     }
 
     public T SpawnUnit<T>(T unitController, Vector3 spawnPoint, Quaternion spawnRotation,
         UnitController.EUnitTeamType newUnitTeamType) where T : UnitController
     {
         T unit = Instantiate(unitController, spawnPoint, spawnRotation);
-        unit.Init(newUnitTeamType);
+        //unit.Init(newUnitTeamType);
 
         UnitList.Add(unit);
         unitTeamTypeDict[newUnitTeamType].Add(unit);
@@ -51,24 +61,40 @@ public class UnitManager : Singleton<UnitManager>
         //동료유닛은 teammateUnitDict에 처리
         if (unit is TeammateController teammateController)
         {
+            foreach (var pair in teammateNameDic)
+            {
+                if (teammateUnitDict.ContainsKey(pair.Key) == false)
+                {
+                    teammateController.Init(newUnitTeamType, pair.Key, pair.Value);
+                    break;
+                }
+            }
+
             teammateUnitDict.Add(teammateController.GetTeammateAI().teammateName, teammateController);
+        }
+        else
+        {
+            unit.Init(newUnitTeamType);
         }
 
         return unit;
     }
 
+
     public List<UnitController> GetUnitTeamTypeList(UnitController.EUnitTeamType unitTeamType)
     {
         return unitTeamTypeDict[unitTeamType];
     }
+
     //limitDistance까지만 탐색
     public UnitController GetNearestEnemyUnit(UnitController unitController, float limitDistance = float.MaxValue)
     {
-        List<UnitController> enemyList = GetUnitTeamTypeList(unitController.GetOppositeTeamType()).Where(e => e.IsDead() == false).ToList();
+        List<UnitController> enemyList = GetUnitTeamTypeList(unitController.GetOppositeTeamType())
+            .Where(e => e.IsDead() == false).ToList();
         UnitController nearestEnemyUnit = null;
         float minSqrDistance = float.MaxValue;
         Vector3 myPosition = unitController.transform.position;
-        
+
         foreach (var enemy in enemyList)
         {
             float sqrDistance = (enemy.transform.position - myPosition).sqrMagnitude;
@@ -79,17 +105,47 @@ public class UnitManager : Singleton<UnitManager>
             }
         }
 
-        if (nearestEnemyUnit != null && Vector3.Distance(myPosition, nearestEnemyUnit.transform.position) > limitDistance)
+        if (nearestEnemyUnit != null &&
+            Vector3.Distance(myPosition, nearestEnemyUnit.transform.position) > limitDistance)
         {
             nearestEnemyUnit = null;
         }
-        
+
         return nearestEnemyUnit;
+    }
+
+    public IEnumerable<UnitController> GetAliveEnemies(UnitController me) =>
+        GetUnitTeamTypeList(me.GetOppositeTeamType()).Where(e => !e.IsDead());
+
+    public IEnumerable<UnitController> GetVisibleEnemies(
+        UnitController shooter,
+        float maxDistance,
+        float viewAngle,
+        float eyeHeight,
+        LayerMask excludeMask)
+    {
+        Vector3 eyePos = shooter.transform.position + Vector3.up * eyeHeight;
+
+        return GetAliveEnemies(shooter)
+            .Where(e =>
+            {
+                Vector3 dir = e.transform.position - eyePos;
+                float distSqr = dir.sqrMagnitude;
+                if (distSqr > maxDistance * maxDistance) return false;
+                if (Vector3.Angle(shooter.transform.forward, dir) > viewAngle * 0.5f) return false;
+
+                if (Physics.Raycast(eyePos, dir.normalized, out var hit, Mathf.Sqrt(distSqr), ~excludeMask))
+                {
+                    var hitCtrl = hit.collider.GetComponentInParent<UnitController>();
+                    if (hitCtrl != e) return false;
+                }
+
+                return true;
+            });
     }
 
     public PlayerController GetPlayerUnit()
     {
         return playerUnit;
     }
-    
 }

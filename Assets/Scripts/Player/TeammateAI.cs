@@ -1,8 +1,6 @@
 using System;
 using LLMUnitySamples;
-using UnityEditor.VersionControl;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class TeammateAI : MonoBehaviour
 {
@@ -41,7 +39,7 @@ public class TeammateAI : MonoBehaviour
         MapManager mapManager = MapManager.Instance;
 
         string message = "";
-        
+
         //follow target
         if (!string.IsNullOrEmpty(param.follow_target) && param.follow_target != "null")
         {
@@ -61,17 +59,26 @@ public class TeammateAI : MonoBehaviour
         else
         {
             //Left | Right | Center | Back | Forward
+            //플레이어 기준 방향 이동
             if (string.Equals(param.destination, "Left", StringComparison.OrdinalIgnoreCase))
             {
+                unitController.MoveDirection(unitManager.GetPlayerUnit().transform.position,
+                    -unitManager.GetPlayerUnit().transform.right);
             }
             else if (string.Equals(param.destination, "Right", StringComparison.OrdinalIgnoreCase))
             {
+                unitController.MoveDirection(unitManager.GetPlayerUnit().transform.position,
+                    unitManager.GetPlayerUnit().transform.right);
             }
             else if (string.Equals(param.destination, "Back", StringComparison.OrdinalIgnoreCase))
             {
+                unitController.MoveDirection(unitManager.GetPlayerUnit().transform.position,
+                    -unitManager.GetPlayerUnit().transform.forward);
             }
             else if (string.Equals(param.destination, "Forward", StringComparison.OrdinalIgnoreCase))
             {
+                unitController.MoveDirection(unitManager.GetPlayerUnit().transform.position,
+                    unitManager.GetPlayerUnit().transform.forward);
             }
             else if (unitManager.teammateUnitDict.TryGetValue(param.destination, out var followUnit))
             {

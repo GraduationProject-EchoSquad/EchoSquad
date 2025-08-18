@@ -4,9 +4,6 @@ using UnityEngine.UI;
 // LivingEntity: 기본 체력/데미지 로직을 제공한다고 가정
 public class PlayerHealth : LivingEntity
 {
-    [Header("UI")]
-    public Slider healthSlider;      // 인스펙터에서 연결
-
     private Animator animator;
     private AudioSource playerAudioPlayer;
     public AudioClip deathClip;
@@ -18,7 +15,7 @@ public class PlayerHealth : LivingEntity
         animator = GetComponent<Animator>();
     }
 
-    protected override void OnEnable()
+    /*protected override void OnEnable()
     {
         base.OnEnable();
         // 체력 최대값과 현재값으로 슬라이더 초기화
@@ -28,13 +25,7 @@ public class PlayerHealth : LivingEntity
             healthSlider.value = health;            // LivingEntity에서 현재 체력(health 필드)
         }
         UpdateUI();
-    }
-
-    public override void RestoreHealth(float newHealth)
-    {
-        base.RestoreHealth(newHealth);
-        UpdateUI();
-    }
+    }*/
 
     public override bool ApplyDamage(DamageMessage damageMessage)
     {
@@ -61,11 +52,5 @@ public class PlayerHealth : LivingEntity
         UpdateUI();  // 체력 0으로 반영
         playerAudioPlayer.PlayOneShot(deathClip);
         animator.SetTrigger("Die");
-    }
-
-    private void UpdateUI()
-    {
-        if (healthSlider != null)
-            healthSlider.value = health;  // LivingEntity에서 관리하는 현재 체력
     }
 }
