@@ -1,8 +1,6 @@
 using System;
 using LLMUnitySamples;
-using UnityEditor.VersionControl;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class TeammateAI : MonoBehaviour
 {

@@ -1,4 +1,5 @@
 using GLTFast.Schema;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,6 +9,8 @@ public class TeammateController : UnitController
 
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private TeammateAI teammateAI;
+    [SerializeField] private CinemachineFreeLook camera;
+    private bool isTest = true;
     private UnitShooter unitShooter;
 
     private float waitBeforeRelease = 3f; // 멈춘 뒤 몇 초 후 target 제거
@@ -55,6 +58,7 @@ public class TeammateController : UnitController
         //정찰상태
         if (unitState == EUnitState.Scout)
         {
+            SetCamera(false);
             if (unitShooter.GetAimTargetUnit() != null) // 타겟 발견시 순찰 중단
             {
                 if (navMeshAgent.hasPath)
@@ -74,6 +78,7 @@ public class TeammateController : UnitController
         //목적 없는 상태
         else if (unitState == EUnitState.Idle)
         {
+            SetCamera(false);
             patrolTimer -= Time.deltaTime;
 
 
@@ -157,6 +162,7 @@ public class TeammateController : UnitController
             followTarget = null;
             navMeshAgent.SetDestination(hit.position); // 보정된 위치로 이동
             ChangeUnitState(EUnitState.Move);
+            SetCamera(true);
         }
     }
 
@@ -168,6 +174,7 @@ public class TeammateController : UnitController
             followTarget = null;
             navMeshAgent.SetDestination(hit.position); // 보정된 위치로 이동
             ChangeUnitState(EUnitState.Move);
+            SetCamera(true);
         }
     }
     
@@ -189,12 +196,15 @@ public class TeammateController : UnitController
             // 장애물이 없으면 최대 거리까지 이동
             navMeshAgent.SetDestination(target);
         }
+        ChangeUnitState(EUnitState.Move);
+        SetCamera(true);
     }
 
     public void SetFollowUnit(UnitController followUnitController)
     {
         followTarget = followUnitController;
         ChangeUnitState(EUnitState.Move);
+        SetCamera(true);
     }
 
     private void FollowTarget()
@@ -214,6 +224,7 @@ public class TeammateController : UnitController
             // agent가 실제로 멈췄는지 (목표 도착 + 속도 거의 없음)
             if (IsNavArrivedTargetPosition())
             {
+                SetCamera(false);
                 stopTimer += Time.deltaTime;
 
                 if (stopTimer >= waitBeforeRelease)
@@ -246,5 +257,13 @@ public class TeammateController : UnitController
     public TeammateAI GetTeammateAI()
     {
         return teammateAI;
+    }
+    
+    
+    void SetCamera(bool setActive)
+    {
+        if (isTest == false) return;
+        camera.gameObject.SetActive(setActive);
+        
     }
 }
