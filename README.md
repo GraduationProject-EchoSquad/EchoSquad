@@ -1,48 +1,43 @@
-[프로젝트 이름]
+# EchoSquad
 
-📖 Table of Contents
-Highlights
+## Table of Contents
+- [Highlights](#highlights)
+- [Installation](#installation)
+- [How to Play](#how-to-play)
+- [Trailer](#trailer)
+- [System Overview](#system-overview)
+- [Reference](#reference)
+- [License](#license)
+- [Team](#team)
 
-Installation
+## Highlights
 
-How to Play
-
-Trailer
-
-System Overview
-
-Reference
-
-License
-
-Team
-
-✨ Highlights
-
-🛠️ Installation
-Prerequisites
+## Installation
+### Prerequisites
 
 
-Installation
+### Installation
 
 
-🎮 How to Play
+## How to Play
 
 
-🎬 Trailer
+## Trailer
 
 
-⚙️ System Overview
+## System Overview
 
 
-📚 Reference
+## Reference
 
 
-📄 License
+## License
 이 프로젝트는 [라이선스 이름 (예: MIT)] 라이선스를 따릅니다. 자세한 내용은 LICENSE 파일을 참고해주세요.
 
-👨‍💻 Team
-Name	Role	GitHub
-[팀원 이름 1]	[역할 1]	@github_id
-[팀원 이름 2]	[역할 2]	@github_id
-[팀원 이름 3]	[역할 3]	@github_id
+## Team
+
+| Name | Role | GitHub |
+|------|------|--------|
+| [팀원 이름 1] | [역할 1] | [@github_id](https://github.com/github_id) |
+| [팀원 이름 2] | [역할 2] | [@github_id](https://github.com/github_id) |
+| [팀원 이름 3] | [역할 3] | [@github_id](https://github.com/github_id) |
