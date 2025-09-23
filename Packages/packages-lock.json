@@ -7,6 +7,23 @@
       "dependencies": {},
       "hash": "06067cd4c83e372310d6f79d1c625f6870ff7a2a"
     },
+    "com.genesis.sparktts.unity": {
+      "version": "https://github.com/ljm008jjang/Spark-TTS-Unity.git#ljm008jjang/improve",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.github.asus4.onnxruntime": "0.4.0",
+        "com.unity.nuget.newtonsoft-json": "3.2.1"
+      },
+      "hash": "cd8fa5a2a6d6509a8e657e704f856bb723ee8cdb"
+    },
+    "com.github.asus4.onnxruntime": {
+      "version": "0.4.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://registry.npmjs.com"
+    },
     "com.qiaozhilei.easy-text-effects": {
       "version": "https://github.com/LeiQiaoZhi/Easy-Text-Effect.git",
       "depth": 0,
