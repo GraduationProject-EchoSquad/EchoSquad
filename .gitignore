@@ -13,6 +13,9 @@
 #Asset folder
 Assets/ImportedAsset/
 
+# Large AI model files (download separately)
+Assets/StreamingAssets/undreamai-v1.2.5-llamacpp/
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
