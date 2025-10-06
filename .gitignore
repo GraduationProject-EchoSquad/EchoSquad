@@ -13,8 +13,9 @@
 #Asset folder
 Assets/ImportedAsset/
 
-# Large AI model files (download separately)
-Assets/StreamingAssets/undreamai-v1.2.5-llamacpp/
+# Large AI model files (download separately via LLMUnity plugin)
+Assets/StreamingAssets/
+*.gguf
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -76,8 +77,3 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
-Assets/StreamingAssets/Whisper/ggml-large-v3-turbo-q8_0.bin
-Assets/StreamingAssets/Whisper/ggml-tiny.bin.meta
-Assets/StreamingAssets/Whisper/ggml-tiny.bin
-Assets/StreamingAssets/Whisper/ggml-large-v3-turbo-q8_0.bin.meta
-*.gguf
