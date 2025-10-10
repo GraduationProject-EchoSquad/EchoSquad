@@ -27,6 +27,7 @@ namespace LLMUnitySamples
         public string support_type;
         public string area;
         public string mode;
+        public string voice;
 
         public override string ToString()
         {
@@ -36,7 +37,8 @@ namespace LLMUnitySamples
                    $"    \"support_target\": \"{support_target}\",\n" +
                    $"    \"support_type\": \"{support_type}\",\n\n" +
                    $"    \"area\": \"{area}\",\n" +
-                   $"    \"mode\": \"{mode}\"\n";
+                   $"    \"mode\": \"{mode}\",\n" + 
+                   $"    \"voice\": \"{voice}\",\n";
         }
     }
 
@@ -143,7 +145,9 @@ namespace LLMUnitySamples
                    "   - support_target   → Alpha | WoundedUnit | null\n" +
                    "   - support_type     → Heal | Shield | null\n" +
                    "   - area             → Left | Right | EnemyBase | null\n" +
-                   "   - mode             → Stealth | Quick | null\n\n" +
+                   "   - mode             → Stealth | Quick | null\n" +
+                   "   - mode             → Stealth | Quick | null\n" + 
+                   "   - voice            → A short, natural confirmation phrase in Korean based on the original command.\n\n" +
                    "7. Example output:\n" +
                    "{\n" +
                    "  \"command_units\": [\"James\"],\n" +
@@ -156,6 +160,7 @@ namespace LLMUnitySamples
                    "    \"support_type\": null,\n" +
                    "    \"area\": null,\n" +
                    "    \"mode\": null\n" +
+                   "    \"voice\": \"Okay I will go to Left\"\n" +
                    "  }\n" +
                    "}\n";
         }

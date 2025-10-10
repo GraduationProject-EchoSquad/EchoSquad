@@ -266,4 +266,9 @@ public class TeammateController : UnitController
         camera.gameObject.SetActive(setActive);
         
     }
+
+    public void DoVoice(string voiceText)
+    {
+        SparkTTSManager.Instance.CreateStyleVoice(voiceText, "male", "moderate", "moderate");
+    }
 }
