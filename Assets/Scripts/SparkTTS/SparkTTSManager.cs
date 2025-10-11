@@ -9,11 +9,11 @@ using SparkTTS.Models;
 // 음성 특성을 나타내는 키 구조체
 public struct VoiceKey : IEquatable<VoiceKey>
 {
-    public readonly string Gender;
-    public readonly string Pitch;
-    public readonly string Speed;
+    public readonly VoiceGender Gender;
+    public readonly VoiceProperty Pitch;
+    public readonly VoiceProperty Speed;
 
-    public VoiceKey(string gender, string pitch, string speed)
+    public VoiceKey(VoiceGender gender, VoiceProperty pitch, VoiceProperty speed)
     {
         Gender = gender;
         Pitch = pitch;
@@ -31,7 +31,11 @@ public struct VoiceKey : IEquatable<VoiceKey>
 public abstract class VoiceRequest
 {
     public string Text { get; }
-    protected VoiceRequest(string text) { Text = text; }
+
+    protected VoiceRequest(string text)
+    {
+        Text = text;
+    }
 }
 
 /// <summary>
@@ -40,7 +44,11 @@ public abstract class VoiceRequest
 public class StyleVoiceRequest : VoiceRequest
 {
     public VoiceKey Key { get; }
-    public StyleVoiceRequest(string text, VoiceKey key) : base(text) { Key = key; }
+
+    public StyleVoiceRequest(string text, VoiceKey key) : base(text)
+    {
+        Key = key;
+    }
 }
 
 /// <summary>
@@ -49,7 +57,11 @@ public class StyleVoiceRequest : VoiceRequest
 public class FileVoiceRequest : VoiceRequest
 {
     public AudioClip Clip { get; }
-    public FileVoiceRequest(string text, AudioClip clip) : base(text) { Clip = clip; }
+
+    public FileVoiceRequest(string text, AudioClip clip) : base(text)
+    {
+        Clip = clip;
+    }
 }
 
 public class SparkTTSManager : Singleton<SparkTTSManager>
@@ -79,8 +91,9 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
     /// <summary>
     /// Creates a style-based voice with the specified gender and current dropdown settings.
     /// </summary>
-    public void CreateStyleVoice(string text, string gender = "male", string pitch = "moderate",
-        string speed = "moderate")
+    public void CreateStyleVoice(string text, VoiceGender gender = VoiceGender.Male,
+        VoiceProperty pitch = VoiceProperty.Moderate,
+        VoiceProperty speed = VoiceProperty.Moderate)
     {
         var request = new StyleVoiceRequest(text, new VoiceKey(gender, pitch, speed));
         _requestQueue.Enqueue(request);
@@ -130,7 +143,8 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
 
                     if (!_styleVoiceCache.TryGetValue(voiceKey, out _currentVoice))
                     {
-                        string folderName = $"{voiceKey.Gender}_{voiceKey.Pitch}_{voiceKey.Speed}";
+                        string folderName =
+                            $"{voiceKey.Gender.ToApiString()}_{voiceKey.Pitch.ToApiString()}_{voiceKey.Speed.ToApiString()}";
                         string folderPath = Path.Combine(Application.persistentDataPath, folderName);
 
                         if (Directory.Exists(folderPath))
@@ -141,7 +155,8 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
                         else
                         {
                             Debug.Log("Style voice not in cache or file. Creating...");
-                            _currentVoice = await _voiceFactory.CreateFromStyleAsync(voiceKey.Gender, voiceKey.Pitch, voiceKey.Speed, text);
+                            _currentVoice = await _voiceFactory.CreateFromStyleAsync(voiceKey.Gender.ToApiString(),
+                                voiceKey.Pitch.ToApiString(), voiceKey.Speed.ToApiString(), text);
                             if (_currentVoice != null)
                             {
                                 Directory.CreateDirectory(folderPath); // 폴더가 없으면 생성
@@ -156,6 +171,7 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
                     {
                         Debug.Log("Style voice found in memory cache.");
                     }
+
                     break;
                 }
                 case FileVoiceRequest fileRequest:
@@ -184,13 +200,14 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
                                 await _currentVoice.SaveVoiceAsync(folderPath);
                             }
                         }
-                        
+
                         if (_currentVoice != null) _fileVoiceCache[clip.name] = _currentVoice;
                     }
                     else
                     {
                         Debug.Log("File voice found in memory cache.");
                     }
+
                     break;
                 }
             }
@@ -255,12 +272,14 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
         {
             voice.Dispose();
         }
+
         _styleVoiceCache.Clear();
 
         foreach (var voice in _fileVoiceCache.Values)
         {
             voice.Dispose();
         }
+
         _fileVoiceCache.Clear();
 
         _voiceFactory?.Dispose();

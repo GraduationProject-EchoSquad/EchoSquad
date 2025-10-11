@@ -9,6 +9,10 @@ public class UnitManager : Singleton<UnitManager>
     //TODO 리소스 관리 따로 필요?
     [SerializeField] private PlayerController PlayerUnitPrefab;
     [SerializeField] private TeammateController TeammateUnitPrefab;
+    [Header("Teammate Voice Profiles")]
+    [SerializeField] private VoiceProfile lenaVoiceProfile;
+    [SerializeField] private VoiceProfile jamesVoiceProfile;
+    [SerializeField] private VoiceProfile saraVoiceProfile;
 
     private Dictionary<string, string> teammateNameDic = new Dictionary<string, string>
     {
@@ -16,6 +20,8 @@ public class UnitManager : Singleton<UnitManager>
         { "James", "제임스" },
         { "Sara", "사라" },
     };
+
+    private Dictionary<string, VoiceProfile> teammateVoiceProfileDict = new Dictionary<string, VoiceProfile>();
 
     //모든 유닛 list
     private List<UnitController> UnitList = new List<UnitController>();
@@ -35,6 +41,11 @@ public class UnitManager : Singleton<UnitManager>
         {
             unitTeamTypeDict.Add(unitTeamType, new List<UnitController>());
         }
+
+        // 목소리 프로필 딕셔너리 초기화
+        teammateVoiceProfileDict.Add("Lena", lenaVoiceProfile);
+        teammateVoiceProfileDict.Add("James", jamesVoiceProfile);
+        teammateVoiceProfileDict.Add("Sara", saraVoiceProfile);
     }
 
     public void InitSpawnUnit()
@@ -65,7 +76,8 @@ public class UnitManager : Singleton<UnitManager>
             {
                 if (teammateUnitDict.ContainsKey(pair.Key) == false)
                 {
-                    teammateController.Init(newUnitTeamType, pair.Key, pair.Value);
+                    teammateVoiceProfileDict.TryGetValue(pair.Key, out var profile);
+                    teammateController.Init(newUnitTeamType, pair.Key, pair.Value, profile);
                     break;
                 }
             }

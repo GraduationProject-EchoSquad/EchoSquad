@@ -7,6 +7,7 @@ public class TeammateController : UnitController
 {
     private const float NavSearchRadius = 100.0f;
 
+    [SerializeField] private VoiceProfile voiceProfile;
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private TeammateAI teammateAI;
     [SerializeField] private CinemachineFreeLook camera;
@@ -39,11 +40,12 @@ public class TeammateController : UnitController
     }
 
 
-    public void Init(EUnitTeamType newUnitTeamType, string engName, string korName)
+    public void Init(EUnitTeamType newUnitTeamType, string engName, string korName, VoiceProfile profile)
     {
         base.Init(newUnitTeamType);
         teammateAI.teammateName = engName;
         teammateAI.teammateNameKorean = korName;
+        this.voiceProfile = profile;
     }
 
     void Update()
@@ -177,8 +179,9 @@ public class TeammateController : UnitController
             SetCamera(true);
         }
     }
-    
+
     public float maxDistance = 100f; // 최대 이동 거리
+
     public void MoveDirection(Vector3 origin, Vector3 direction)
     {
         Vector3 target = origin + direction * maxDistance;
@@ -196,6 +199,7 @@ public class TeammateController : UnitController
             // 장애물이 없으면 최대 거리까지 이동
             navMeshAgent.SetDestination(target);
         }
+
         ChangeUnitState(EUnitState.Move);
         SetCamera(true);
     }
@@ -258,17 +262,24 @@ public class TeammateController : UnitController
     {
         return teammateAI;
     }
-    
-    
+
+
     void SetCamera(bool setActive)
     {
         if (GameManager.Instance.isTest == false) return;
         camera.gameObject.SetActive(setActive);
-        
     }
 
     public void DoVoice(string voiceText)
     {
-        SparkTTSManager.Instance.CreateStyleVoice(voiceText, "male", "moderate", "moderate");
+        if (voiceProfile == null)
+        {
+            Debug.LogWarning($"VoiceProfile is not set for {teammateAI.teammateName}. Using default voice.");
+            SparkTTSManager.Instance.CreateStyleVoice(voiceText);
+            return;
+        }
+
+        SparkTTSManager.Instance.CreateStyleVoice(voiceText, voiceProfile.gender, voiceProfile.pitch,
+            voiceProfile.speed);
     }
 }
