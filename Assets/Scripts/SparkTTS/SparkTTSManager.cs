@@ -1,11 +1,10 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using SparkTTS;
+using System.IO;
 using SparkTTS.Models;
-using TMPro;
 
 // 음성 특성을 나타내는 키 구조체
 public struct VoiceKey : IEquatable<VoiceKey>
@@ -26,21 +25,47 @@ public struct VoiceKey : IEquatable<VoiceKey>
     public override int GetHashCode() => HashCode.Combine(Gender, Pitch, Speed);
 }
 
+/// <summary>
+/// TTS 요청의 기본 클래스
+/// </summary>
+public abstract class VoiceRequest
+{
+    public string Text { get; }
+    protected VoiceRequest(string text) { Text = text; }
+}
+
+/// <summary>
+/// 스타일 기반 TTS 요청
+/// </summary>
+public class StyleVoiceRequest : VoiceRequest
+{
+    public VoiceKey Key { get; }
+    public StyleVoiceRequest(string text, VoiceKey key) : base(text) { Key = key; }
+}
+
+/// <summary>
+/// 오디오 파일 클립 기반 TTS 요청
+/// </summary>
+public class FileVoiceRequest : VoiceRequest
+{
+    public AudioClip Clip { get; }
+    public FileVoiceRequest(string text, AudioClip clip) : base(text) { Clip = clip; }
+}
+
 public class SparkTTSManager : Singleton<SparkTTSManager>
 {
     [Header("References")] public AudioSource audioSource;
-    public AudioClip referenceAudioClip;
 
     // Character voice components
     private CharacterVoiceFactory _voiceFactory;
 
-    //private CharacterVoice _currentVoice;
     // 현재 활성화된 목소리
     private CharacterVoice _currentVoice;
-    private Dictionary<VoiceKey, CharacterVoice> _voiceCache = new Dictionary<VoiceKey, CharacterVoice>();
+    private readonly Dictionary<VoiceKey, CharacterVoice> _styleVoiceCache = new Dictionary<VoiceKey, CharacterVoice>();
+    private readonly Dictionary<string, CharacterVoice> _fileVoiceCache = new Dictionary<string, CharacterVoice>();
 
     // 동시 요청 처리를 위한 큐와 락 객체
-    private readonly Queue<Tuple<string, VoiceKey>> _requestQueue = new Queue<Tuple<string, VoiceKey>>();
+    private readonly Queue<VoiceRequest> _requestQueue = new Queue<VoiceRequest>();
     private bool _isGenerating = false;
 
     void Start()
@@ -57,8 +82,8 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
     public void CreateStyleVoice(string text, string gender = "male", string pitch = "moderate",
         string speed = "moderate")
     {
-        var voiceKey = new VoiceKey(gender, pitch, speed);
-        _requestQueue.Enqueue(new Tuple<string, VoiceKey>(text, voiceKey));
+        var request = new StyleVoiceRequest(text, new VoiceKey(gender, pitch, speed));
+        _requestQueue.Enqueue(request);
 
         // 이미 처리 중인 작업이 없다면 새로운 처리 시작
         if (!_isGenerating)
@@ -67,7 +92,21 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
         }
     }
 
-    private async UniTaskVoid ProcessQueueAsync()
+    public void CreateVoiceFromClip(string text, AudioClip clip)
+    {
+        if (clip == null) return;
+
+        var request = new FileVoiceRequest(text, clip);
+        _requestQueue.Enqueue(request);
+
+        // 이미 처리 중인 작업이 없다면 새로운 처리 시작
+        if (!_isGenerating)
+        {
+            ProcessQueueAsync().Forget();
+        }
+    }
+
+    private async UniTask ProcessQueueAsync()
     {
         if (_isGenerating)
         {
@@ -79,46 +118,94 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
         while (_requestQueue.Count > 0)
         {
             var request = _requestQueue.Dequeue();
-            string text = request.Item1;
-            VoiceKey voiceKey = request.Item2;
+            string text = request.Text;
+            _currentVoice = null; // 다음 요청 처리를 위해 초기화
 
-            if (_isGenerating)
+            switch (request)
             {
-                Debug.Log(
-                    $"Processing voice for key: text='{text}', Gender={voiceKey.Gender}, Pitch={voiceKey.Pitch}, Speed={voiceKey.Speed}");
-
-                // 캐시에서 목소리를 찾아보고, 없으면 새로 생성합니다.
-                if (!_voiceCache.TryGetValue(voiceKey, out _currentVoice))
+                case StyleVoiceRequest styleRequest:
                 {
-                    Debug.Log("Voice not in cache. Creating a new one...");
-                    _currentVoice = await _voiceFactory.CreateFromStyleAsync(
-                        voiceKey.Gender,
-                        voiceKey.Pitch,
-                        voiceKey.Speed,
-                        text); // 첫 생성 시 텍스트로 미리 생성
+                    VoiceKey voiceKey = styleRequest.Key;
+                    Debug.Log($"Processing Style Request: text='{text}', Gender={voiceKey.Gender}");
 
-                    if (_currentVoice != null)
+                    if (!_styleVoiceCache.TryGetValue(voiceKey, out _currentVoice))
                     {
-                        _voiceCache[voiceKey] = _currentVoice; // 새 목소리를 캐시에 추가
-                        Debug.Log("Voice created and cached successfully.");
+                        string folderName = $"{voiceKey.Gender}_{voiceKey.Pitch}_{voiceKey.Speed}";
+                        string folderPath = Path.Combine(Application.persistentDataPath, folderName);
+
+                        if (Directory.Exists(folderPath))
+                        {
+                            Debug.Log($"Loading style voice from folder: {folderPath}");
+                            _currentVoice = await _voiceFactory.CreateFromFolderAsync(folderPath);
+                        }
+                        else
+                        {
+                            Debug.Log("Style voice not in cache or file. Creating...");
+                            _currentVoice = await _voiceFactory.CreateFromStyleAsync(voiceKey.Gender, voiceKey.Pitch, voiceKey.Speed, text);
+                            if (_currentVoice != null)
+                            {
+                                Directory.CreateDirectory(folderPath); // 폴더가 없으면 생성
+                                Debug.Log($"Saving style voice to folder: {folderPath}");
+                                await _currentVoice.SaveVoiceAsync(folderPath);
+                            }
+                        }
+
+                        if (_currentVoice != null) _styleVoiceCache[voiceKey] = _currentVoice;
                     }
                     else
                     {
-                        Debug.LogError("Failed to create voice.");
-                        continue; // 다음 요청 처리
+                        Debug.Log("Style voice found in memory cache.");
                     }
+                    break;
                 }
-                else
+                case FileVoiceRequest fileRequest:
                 {
-                    Debug.Log("Voice found in cache.");
-                }
+                    AudioClip clip = fileRequest.Clip;
+                    Debug.Log($"Processing File Request: text='{text}', Clip='{clip.name}'");
 
-                // 음성 생성 및 재생
-                await GenerateAndPlaySpeechAsync(text);
+                    if (!_fileVoiceCache.TryGetValue(clip.name, out _currentVoice))
+                    {
+                        string folderName = clip.name;
+                        string folderPath = Path.Combine(Application.persistentDataPath, folderName);
+
+                        if (Directory.Exists(folderPath))
+                        {
+                            Debug.Log($"Loading file voice from folder: {folderPath}");
+                            _currentVoice = await _voiceFactory.CreateFromFolderAsync(folderPath);
+                        }
+                        else
+                        {
+                            Debug.Log("File voice not in cache or file. Creating from AudioClip...");
+                            _currentVoice = _voiceFactory.CreateFromReference(clip);
+                            if (_currentVoice != null)
+                            {
+                                Directory.CreateDirectory(folderPath); // 폴더가 없으면 생성
+                                Debug.Log($"Saving file voice to folder: {folderPath}");
+                                await _currentVoice.SaveVoiceAsync(folderPath);
+                            }
+                        }
+                        
+                        if (_currentVoice != null) _fileVoiceCache[clip.name] = _currentVoice;
+                    }
+                    else
+                    {
+                        Debug.Log("File voice found in memory cache.");
+                    }
+                    break;
+                }
             }
 
-            _isGenerating = false;
+            if (_currentVoice != null)
+            {
+                await GenerateAndPlaySpeechAsync(text);
+            }
+            else
+            {
+                Debug.LogError("Failed to create or retrieve voice.");
+            }
         }
+
+        _isGenerating = false;
     }
 
     /// <summary>
@@ -163,13 +250,19 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
     void OnDestroy()
     {
         // Clean up resources
-        _currentVoice?.Dispose();
-        foreach (var voice in _voiceCache.Values)
+        // _currentVoice는 캐시된 인스턴스 중 하나이므로 별도 Dispose 불필요
+        foreach (var voice in _styleVoiceCache.Values)
         {
             voice.Dispose();
         }
+        _styleVoiceCache.Clear();
 
-        _voiceCache.Clear();
+        foreach (var voice in _fileVoiceCache.Values)
+        {
+            voice.Dispose();
+        }
+        _fileVoiceCache.Clear();
+
         _voiceFactory?.Dispose();
     }
 }

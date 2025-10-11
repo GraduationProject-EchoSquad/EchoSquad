@@ -10,7 +10,7 @@ public class TeammateController : UnitController
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private TeammateAI teammateAI;
     [SerializeField] private CinemachineFreeLook camera;
-    private bool isTest = true;
+
     private UnitShooter unitShooter;
 
     private float waitBeforeRelease = 3f; // 멈춘 뒤 몇 초 후 target 제거
@@ -262,7 +262,7 @@ public class TeammateController : UnitController
     
     void SetCamera(bool setActive)
     {
-        if (isTest == false) return;
+        if (GameManager.Instance.isTest == false) return;
         camera.gameObject.SetActive(setActive);
         
     }

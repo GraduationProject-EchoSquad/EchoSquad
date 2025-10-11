@@ -6,6 +6,8 @@ public class GameManager : Singleton<GameManager>
 
     private int score; // 현재 게임 점수
     public bool isGameover { get; private set; } // 게임 오버 상태
+    
+    public bool isTest { get; private set; }
 
     protected override void Awake()
     {
@@ -13,6 +15,7 @@ public class GameManager : Singleton<GameManager>
 
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
+        isTest = false;
     }
 
 
