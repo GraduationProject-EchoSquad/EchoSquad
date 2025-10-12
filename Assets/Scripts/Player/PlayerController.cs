@@ -32,7 +32,9 @@ public class PlayerController : UnitController
         if (lifeRemains > 0)
         {
             lifeRemains--;
-            UIManager.Instance.UpdateLifeText(lifeRemains);
+            
+            PubSubManager.Instance.Publish(PubSubEvent.OnPlayerDeath);
+            //UIManager.Instance.UpdateLifeText(lifeRemains);
             Invoke("Respawn", 3f);
         }
         else
@@ -67,4 +69,17 @@ public class PlayerController : UnitController
             //Todo
         }
     }
+    
+    #if UNITY_EDITOR
+    public void ForceDead()
+    {
+        LivingEntity.Die();
+    }
+    
+    public void ForceDeadImmediately()
+    {
+        lifeRemains = 0;
+        LivingEntity.Die();
+    }
+    #endif
 }

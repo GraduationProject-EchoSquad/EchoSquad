@@ -21,6 +21,8 @@ public class TeammateAI : MonoBehaviour
             Support(param);
         else if (action == AIActionEnum.Scout)
             Scout(param);
+
+        DoVoice(param.voice);
     }
 
     void SendChat(string message)
@@ -121,5 +123,10 @@ public class TeammateAI : MonoBehaviour
         Debug.Log($"[{teammateName}] {message}");
         SendChat(message);
         // TODO: 탐색 루트로 이동
+    }
+
+    void DoVoice(string voiceText)
+    {
+        unitController.DoVoice(voiceText);
     }
 }

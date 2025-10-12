@@ -27,6 +27,7 @@ namespace LLMUnitySamples
         public string support_type;
         public string area;
         public string mode;
+        public string voice;
 
         public override string ToString()
         {
@@ -36,7 +37,8 @@ namespace LLMUnitySamples
                    $"    \"support_target\": \"{support_target}\",\n" +
                    $"    \"support_type\": \"{support_type}\",\n\n" +
                    $"    \"area\": \"{area}\",\n" +
-                   $"    \"mode\": \"{mode}\"\n";
+                   $"    \"mode\": \"{mode}\",\n" + 
+                   $"    \"voice\": \"{voice}\",\n";
         }
     }
 
@@ -45,7 +47,8 @@ namespace LLMUnitySamples
         Move,
         Combat,
         Support,
-        Scout
+        Scout,
+        Error
     }
 
     public static class Functions
@@ -72,7 +75,10 @@ namespace LLMUnitySamples
             { "ScoutForward", new[] { "전방 확인 중...", "앞쪽 정찰 중이야.", "앞에 뭐 있나 보고 올게!" } },
             { "ScoutBack", new[] { "후방 정찰 중...", "뒤쪽 확인하고 올게.", "뒤에 뭐 있나 본다!" } },
 
-            { "HealNone", new[] { "힐 중이야, 엄호해줘!", "치료 들어간다. 잠깐만!", "회복 중... 부탁해!" } }
+            { "HealNone", new[] { "힐 중이야, 엄호해줘!", "치료 들어간다. 잠깐만!", "회복 중... 부탁해!" } },
+            
+            // Error 케이스들
+            { "Error", new[] { "명령을 이해할 수 없어!", "뭔 소리야? 다시 말해봐.", "그런 명령은 실행할 수 없어!" } }
         };
 
         public static string GetVoiceLine(string functionName)
@@ -139,7 +145,9 @@ namespace LLMUnitySamples
                    "   - support_target   → Alpha | WoundedUnit | null\n" +
                    "   - support_type     → Heal | Shield | null\n" +
                    "   - area             → Left | Right | EnemyBase | null\n" +
-                   "   - mode             → Stealth | Quick | null\n\n" +
+                   "   - mode             → Stealth | Quick | null\n" +
+                   "   - mode             → Stealth | Quick | null\n" + 
+                   "   - voice            → A short, natural confirmation phrase in Korean based on the original command.\n\n" +
                    "7. Example output:\n" +
                    "{\n" +
                    "  \"command_units\": [\"James\"],\n" +
@@ -152,6 +160,7 @@ namespace LLMUnitySamples
                    "    \"support_type\": null,\n" +
                    "    \"area\": null,\n" +
                    "    \"mode\": null\n" +
+                   "    \"voice\": \"Okay I will go to Left\"\n" +
                    "  }\n" +
                    "}\n";
         }
