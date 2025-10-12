@@ -24,8 +24,8 @@ public class PlayerInput : MonoBehaviour
     private void Update()
     {
         // 게임오버 상태에서는 사용자 입력을 감지하지 않는다
-        if (GameManager.Instance != null
-            && GameManager.Instance.isGameover)
+        if (GameManager.Instance == null
+            || GameManager.Instance.IsGameControllable() == false)
         {
             moveInput = Vector2.zero;
             fire = false;

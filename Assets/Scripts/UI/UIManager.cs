@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -9,6 +10,11 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private Text scoreText;
     [SerializeField] private Text ammoText;
     [SerializeField] private Text waveText;
+
+    private void Start()
+    {
+        PubSubManager.Instance.Subscribe(PubSubEvent.OnPlayerDeath, UpdateLifeText);
+    }
 
     public void UpdateAmmoText(int magAmmo, int remainAmmo)
     {
@@ -25,6 +31,13 @@ public class UIManager : Singleton<UIManager>
         waveText.text = "Wave : " + waves + "\nEnemy Left : " + count;
     }
 
+    private void UpdateLifeText(PubSubDataBase data)
+    {
+        if (data is OnPlayerDeathData onPlayerDeathData)
+        {
+            UpdateLifeText(onPlayerDeathData.liveCount);
+        }
+    }
     public void UpdateLifeText(int count)
     {
         lifeText.text = "Life : " + count;

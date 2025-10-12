@@ -1,4 +1,5 @@
 using System.Collections;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using TMPro;             // TMP 용
 using EasyTextEffects;   // TextEffect가 이 네임스페이스에 있다고 가정
@@ -56,8 +57,9 @@ public class WaveManager : Singleton<WaveManager>
     }
     private void HandleIntroFinished()
     {
+        GameManager.Instance.SetGameState(GameManager.GameState.Wave);
         // 인트로 끝나면 카운트다운+스폰 시퀀스 실행
-        StartCoroutine(HandleWaveSequence());
+        HandleWaveSequence();
     }
 
     private void UpdateUI()
@@ -81,7 +83,7 @@ public class WaveManager : Singleton<WaveManager>
     }
 
     // 웨이브 전체 흐름: timeBetweenWaves → 카운트다운 → 적 스폰
-    private IEnumerator HandleWaveSequence()
+    private async UniTask HandleWaveSequence()
     {
         isSpawning = true;
 
@@ -89,10 +91,10 @@ public class WaveManager : Singleton<WaveManager>
 
         // (첫 웨이브가 아니라면) 웨이브 간 대기
         if (currentWaveIndex > 0)
-            yield return new WaitForSeconds(timeBetweenWaves);
+            await UniTask.WaitForSeconds(timeBetweenWaves);
 
         // 카운트다운 재생
-        yield return StartCoroutine(PlayCountdownText());
+        await PlayCountdownText();
 
         // 실제 웨이브 스폰
         Wave wave = waves[currentWaveIndex];
@@ -101,7 +103,7 @@ public class WaveManager : Singleton<WaveManager>
         for (int i = 0; i < wave.count; i++)
         {
             SpawnEnemy(wave);
-            yield return new WaitForSeconds(wave.spawnInterval);
+            await UniTask.WaitForSeconds(wave.spawnInterval);
         }
 
         isSpawning = false;
@@ -110,11 +112,11 @@ public class WaveManager : Singleton<WaveManager>
     }
 
     // 숫자 → "Wave {n}" → "Fight!" 순으로 TMP 텍스트 교체
-    private IEnumerator PlayCountdownText()
+    private async UniTask PlayCountdownText()
     {
         if (countdownText == null)
         {
-            yield break;
+            return;
         }
 
         // (1) 5,4,3,2,1 카운트
@@ -128,7 +130,7 @@ public class WaveManager : Singleton<WaveManager>
                 countdownEffect.UpdateStyleInfos();
                 countdownEffect.Refresh(); // 필요한 경우 Refresh() 호출
             }
-            yield return new WaitForSeconds(countdownInterval);
+            await UniTask.WaitForSeconds(countdownInterval);
         }
 
         // (2) "Wave {번호}" 표시 (currentWaveIndex가 0부터 시작하므로 +1)
@@ -139,7 +141,7 @@ public class WaveManager : Singleton<WaveManager>
             countdownEffect.UpdateStyleInfos();
             countdownEffect.Refresh();
         }
-        yield return new WaitForSeconds(countdownInterval);
+        await UniTask.WaitForSeconds(countdownInterval);
 
         // (3) "Fight!" 표시
         countdownText.text = $"<b><size=250px><link=gradient+wave+rotate+scale>Start!</link></size></b>";
@@ -148,23 +150,21 @@ public class WaveManager : Singleton<WaveManager>
             countdownEffect.UpdateStyleInfos();
             countdownEffect.Refresh();
         }
-        yield return new WaitForSeconds(countdownInterval);
+        await UniTask.WaitForSeconds(countdownInterval);
 
         // (4) 텍스트 숨김
         countdownText.text = string.Empty;
         if (countdownText.gameObject.activeSelf)
             countdownText.gameObject.SetActive(false);
-        yield return null;
+       
     }
 
     private void SpawnEnemy(Wave wave)
     {
         Transform spawnPoint = wave.spawnPoints[Random.Range(0, wave.spawnPoints.Length)];
         UnitManager.Instance.SpawnUnit(wave.enemyPrefab, spawnPoint.position, spawnPoint.rotation, UnitController.EUnitTeamType.Enemy);
-
-        //EnemyController ec = enemy.GetComponent<EnemyController>();
-        //if (ec != null)
-        //    ec.onDeath += OnEnemyDeath;
+        
+        PubSubManager.Instance.Publish(PubSubEvent.OnEnemySpawn);
     }
 
     private void OnEnemyDeath()

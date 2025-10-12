@@ -27,12 +27,14 @@ public class PlayerMovement : UnitMovement
 
         Move(playerInput.moveInput);
 
-        if (playerInput.jump) Jump();
+
     }
 
     protected override void Update()
     {
         UpdateAnimation(playerInput.moveInput);
+        
+        if (playerInput.jump) Jump();
     }
 
     public void Move(Vector2 moveInput)
