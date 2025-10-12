@@ -69,4 +69,17 @@ public class PlayerController : UnitController
             //Todo
         }
     }
+    
+    #if UNITY_EDITOR
+    public void ForceDead()
+    {
+        LivingEntity.Die();
+    }
+    
+    public void ForceDeadImmediately()
+    {
+        lifeRemains = 0;
+        LivingEntity.Die();
+    }
+    #endif
 }

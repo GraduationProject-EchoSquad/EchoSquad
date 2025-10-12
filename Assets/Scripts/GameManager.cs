@@ -36,6 +36,8 @@ public class GameManager : Singleton<GameManager>
         }
         
         CurrentGameState = NewGameState;
+        
+        Debug.Log($"SetGameState : {NewGameState}");
     }
 
 
@@ -56,7 +58,7 @@ public class GameManager : Singleton<GameManager>
     public void EndGame()
     {
         // 게임 오버 상태를 참으로 변경
-        CurrentGameState = GameState.End;
+        SetGameState(GameState.End);
         // 게임 오버 UI를 활성화
         UIManager.Instance.SetActiveGameoverUI(true);
     }

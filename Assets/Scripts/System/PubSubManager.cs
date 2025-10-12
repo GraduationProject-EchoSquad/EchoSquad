@@ -8,7 +8,7 @@ public enum PubSubEvent
     OnEnemySpawn,
     OnEnemyDeath,
     OnScoreUpdated,
-    OnLevelStart
+    OnWaveStart,
 }
 
 public class PubSubDataBase
@@ -86,10 +86,6 @@ public class PubSubManager : Singleton<PubSubManager>
         if (_eventDictionary.TryGetValue(eventType, out Action<PubSubDataBase> thisEvent))
         {
             thisEvent?.Invoke(data);
-        }
-        else
-        {
-            Debug.LogWarning($"이벤트 '{eventType}'에 구독된 리스너가 없습니다.");
         }
     }
 }

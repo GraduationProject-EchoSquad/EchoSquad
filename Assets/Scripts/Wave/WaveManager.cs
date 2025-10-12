@@ -1,8 +1,8 @@
 using System.Collections;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using TMPro;             // TMP ¿ë
-using EasyTextEffects;   // TextEffect°¡ ÀÌ ³×ÀÓ½ºÆäÀÌ½º¿¡ ÀÖ´Ù°í °¡Á¤
+using TMPro;             // TMP ìš©
+using EasyTextEffects;   // TextEffectê°€ ì´ ë„¤ì„ìŠ¤í˜ì´ìŠ¤ì— ìˆë‹¤ê³  ê°€ì •
 
 [System.Serializable]
 public class Wave
@@ -31,24 +31,28 @@ public class WaveManager : Singleton<WaveManager>
     [Header("Countdown Interval (s)")]
     public float countdownInterval = 1f;
 
-    private int currentWaveIndex = 0;
+    private int currentWaveIndex;
+    private const int MaxWaveIndex = 1;
     private int enemiesRemaining;
-    private bool isSpawning = false;
+    private UniTaskCompletionSource<bool> waveCompletionSource;
 
     protected override void Awake()
     {
         base.Awake();
         
-        // TextEffect ÄÄÆ÷³ÍÆ® °¡Á®¿À±â
+        // TextEffect ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì˜¤ê¸°
         if (countdownText != null)
             countdownEffect = countdownText.GetComponent<TextEffect>();
 
-        // Intro_Controller¸¦ Ã£¾Æ¼­ ÀÌº¥Æ®¿¡ ÇÚµé·¯ µî·Ï
+        // Intro_Controllerë¥¼ ì°¾ì•„ì„œ ì´ë²¤íŠ¸ì— í•¸ë“¤ëŸ¬ ë“±ë¡
         Intro_Controller intro = Intro_Controller.Instance;
         if (intro != null)
         {
             intro.OnIntroFinished += HandleIntroFinished;
         }
+        
+        // ëª¬ìŠ¤í„° ì‚¬ë§ ì´ë²¤íŠ¸ êµ¬ë…
+        PubSubManager.Instance.Subscribe(PubSubEvent.OnEnemyDeath, (data) => OnEnemyDeath());
     }
 
     private void Start()
@@ -58,60 +62,88 @@ public class WaveManager : Singleton<WaveManager>
     private void HandleIntroFinished()
     {
         GameManager.Instance.SetGameState(GameManager.GameState.Wave);
-        // ÀÎÆ®·Î ³¡³ª¸é Ä«¿îÆ®´Ù¿î+½ºÆù ½ÃÄö½º ½ÇÇà
-        HandleWaveSequence();
+        // ì¸íŠ¸ë¡œ ëë‚˜ë©´ ê²Œì„ ë£¨í”„ ì‹œì‘
+        GameLoop().Forget();
     }
 
     private void UpdateUI()
     {
-        // ÇöÀç ¿şÀÌºê¿Í ³²Àº ÀûÀÇ ¼ö Ç¥½Ã
+        // í˜„ì¬ ì›¨ì´ë¸Œì™€ ë‚¨ì€ ì ì˜ ìˆ˜ í‘œì‹œ
         UIManager.Instance.UpdateWaveText(currentWaveIndex, enemiesRemaining);
     }
-    private void Update()
-    {
-        //if (!isSpawning && enemiesRemaining == 0)
-        //{
-        //    if (currentWaveIndex < waves.Length)
-        //    {
-        //        StartCoroutine(HandleWaveSequence());
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("¸ğµç ¿şÀÌºê ¿Ï·á!");
-        //    }
-        //}
-    }
 
-    // ¿şÀÌºê ÀüÃ¼ Èå¸§: timeBetweenWaves ¡æ Ä«¿îÆ®´Ù¿î ¡æ Àû ½ºÆù
-    private async UniTask HandleWaveSequence()
+    // ê²Œì„ì˜ ì „ì²´ íë¦„ì„ ê´€ë¦¬í•˜ëŠ” ë©”ì¸ ë£¨í”„
+    private async UniTaskVoid GameLoop()
     {
-        isSpawning = true;
-
         UnitManager.Instance.InitSpawnUnit();
 
-        // (Ã¹ ¿şÀÌºê°¡ ¾Æ´Ï¶ó¸é) ¿şÀÌºê °£ ´ë±â
-        if (currentWaveIndex > 0)
-            await UniTask.WaitForSeconds(timeBetweenWaves);
+        while (currentWaveIndex < MaxWaveIndex)
+        {
+            // --- ì›¨ì´ë¸Œ ì‹œì‘ ---
+            GameManager.Instance.SetGameState(GameManager.GameState.Wave);
+            await PlayCountdownText();
+            await RunWave();
 
-        // Ä«¿îÆ®´Ù¿î Àç»ı
-        await PlayCountdownText();
+            // í”Œë ˆì´ì–´ê°€ ëª¨ë“  ìƒëª…ì„ ìƒì—ˆëŠ”ì§€ í™•ì¸ (PlayerControllerê°€ EndGame í˜¸ì¶œ)
+            if (GameManager.Instance.CurrentGameState == GameManager.GameState.End)
+            {
+                break; // ê²Œì„ ë£¨í”„ ì¢…ë£Œ
+            }
 
-        // ½ÇÁ¦ ¿şÀÌºê ½ºÆù
+            // --- íœ´ì‹ ì‹œê°„ ì‹œì‘ ---
+            GameManager.Instance.SetGameState(GameManager.GameState.Break);
+            await BreakTime();
+
+            currentWaveIndex++;
+        }
+
+        // ëª¨ë“  ì›¨ì´ë¸Œë¥¼ í´ë¦¬ì–´í–ˆê±°ë‚˜ ê²Œì„ ì˜¤ë²„ ìƒíƒœ
+        if (GameManager.Instance.CurrentGameState != GameManager.GameState.End)
+        {
+            GameManager.Instance.EndGame(); // "You Win" ì‹œë‚˜ë¦¬ì˜¤
+        }
+    }
+
+    private async UniTask RunWave()
+    {
+        waveCompletionSource = new UniTaskCompletionSource<bool>();
+        PubSubManager.Instance.Subscribe(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
+
         Wave wave = waves[currentWaveIndex];
         enemiesRemaining = wave.count;
+        UpdateUI();
+        
+        PubSubManager.Instance.Publish(PubSubEvent.OnWaveStart);
 
+        // ëª¬ìŠ¤í„° ìŠ¤í°ì„ ë°±ê·¸ë¼ìš´ë“œì—ì„œ ì§„í–‰
+        SpawnEnemiesAsync(wave).Forget();
+
+        // ì›¨ì´ë¸Œ ì¢…ë£Œ ì¡°ê±´ (ëª¨ë“  ëª¬ìŠ¤í„° ì‚¬ë§ ë˜ëŠ” í”Œë ˆì´ì–´ ì‚¬ë§)ì„ ê¸°ë‹¤ë¦¼
+        await waveCompletionSource.Task;
+
+        // ë‹¤ìŒ ì›¨ì´ë¸Œë¥¼ ìœ„í•´ ì´ë²¤íŠ¸ êµ¬ë… í•´ì œ
+        PubSubManager.Instance.Unsubscribe(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
+    }
+
+    private async UniTask SpawnEnemiesAsync(Wave wave)
+    {
         for (int i = 0; i < wave.count; i++)
         {
+            // ì›¨ì´ë¸Œê°€ ì´ë¯¸ ì¢…ë£Œë˜ì—ˆë‹¤ë©´ ìŠ¤í° ì¤‘ì§€
+            if (waveCompletionSource.Task.Status.IsCompleted()) break;
+            
             SpawnEnemy(wave);
             await UniTask.WaitForSeconds(wave.spawnInterval);
         }
-
-        isSpawning = false;
-        currentWaveIndex++;
-        UpdateUI();
     }
 
-    // ¼ıÀÚ ¡æ "Wave {n}" ¡æ "Fight!" ¼øÀ¸·Î TMP ÅØ½ºÆ® ±³Ã¼
+    private async UniTask BreakTime()
+    {
+        // TODO: íœ´ì‹ ì‹œê°„ UI í‘œì‹œ (ì˜ˆ: "Next wave in...")
+        await UniTask.WaitForSeconds(timeBetweenWaves);
+    }
+
+    // ìˆ«ì â†’ "Wave {n}" â†’ "Fight!" ìˆœìœ¼ë¡œ TMP í…ìŠ¤íŠ¸ êµì²´
     private async UniTask PlayCountdownText()
     {
         if (countdownText == null)
@@ -119,21 +151,21 @@ public class WaveManager : Singleton<WaveManager>
             return;
         }
 
-        // (1) 5,4,3,2,1 Ä«¿îÆ®
+        // (1) 5,4,3,2,1 ì¹´ìš´íŠ¸
         for (int i = countdownStart; i > 0; i--)
         {
-            // ¿¹: "<link=wave+fadein+movein>5</link>"
+            // ì˜ˆ: "<link=wave+fadein+movein>5</link>"
             countdownText.text = $"<link=wave+fadein+movein>{i}</link>";
-            // ÅÂ±× ÇØ¼® °»½Å
+            // íƒœê·¸ í•´ì„ ê°±ì‹ 
             if (countdownEffect != null)
             {
                 countdownEffect.UpdateStyleInfos();
-                countdownEffect.Refresh(); // ÇÊ¿äÇÑ °æ¿ì Refresh() È£Ãâ
+                countdownEffect.Refresh(); // í•„ìš”í•œ ê²½ìš° Refresh() í˜¸ì¶œ
             }
             await UniTask.WaitForSeconds(countdownInterval);
         }
 
-        // (2) "Wave {¹øÈ£}" Ç¥½Ã (currentWaveIndex°¡ 0ºÎÅÍ ½ÃÀÛÇÏ¹Ç·Î +1)
+        // (2) "Wave {ë²ˆí˜¸}" í‘œì‹œ (currentWaveIndexê°€ 0ë¶€í„° ì‹œì‘í•˜ë¯€ë¡œ +1)
         int waveNumber = currentWaveIndex + 1;
         countdownText.text = $"<link=wave+fadein+movein>Wave {waveNumber}</link>";
         if (countdownEffect != null)
@@ -143,7 +175,7 @@ public class WaveManager : Singleton<WaveManager>
         }
         await UniTask.WaitForSeconds(countdownInterval);
 
-        // (3) "Fight!" Ç¥½Ã
+        // (3) "Fight!" í‘œì‹œ
         countdownText.text = $"<b><size=250px><link=gradient+wave+rotate+scale>Start!</link></size></b>";
         if (countdownEffect != null)
         {
@@ -152,7 +184,7 @@ public class WaveManager : Singleton<WaveManager>
         }
         await UniTask.WaitForSeconds(countdownInterval);
 
-        // (4) ÅØ½ºÆ® ¼û±è
+        // (4) í…ìŠ¤íŠ¸ ìˆ¨ê¹€
         countdownText.text = string.Empty;
         if (countdownText.gameObject.activeSelf)
             countdownText.gameObject.SetActive(false);
@@ -167,9 +199,33 @@ public class WaveManager : Singleton<WaveManager>
         PubSubManager.Instance.Publish(PubSubEvent.OnEnemySpawn);
     }
 
+    // ëª¬ìŠ¤í„°ê°€ ì£½ì„ ë•Œë§ˆë‹¤ í˜¸ì¶œ
     private void OnEnemyDeath()
     {
         enemiesRemaining = Mathf.Max(0, enemiesRemaining - 1);
         UpdateUI();
+
+        // ë‚¨ì€ ëª¬ìŠ¤í„°ê°€ ì—†ê³ , ì›¨ì´ë¸Œê°€ ì•„ì§ ì§„í–‰ ì¤‘ì´ë¼ë©´ ì›¨ì´ë¸Œ ì¢…ë£Œ ì²˜ë¦¬
+        if (enemiesRemaining <= 0 && !waveCompletionSource.Task.Status.IsCompleted())
+        {
+            waveCompletionSource.TrySetResult(true); // ì›¨ì´ë¸Œ ì„±ê³µìœ¼ë¡œ ì¢…ë£Œ
+        }
+    }
+
+    // ì›¨ì´ë¸Œ ì§„í–‰ ì¤‘ í”Œë ˆì´ì–´ê°€ ì£½ì—ˆì„ ë•Œ í˜¸ì¶œ
+    private void HandlePlayerDeathDuringWave(PubSubDataBase data)
+    {
+        // ì›¨ì´ë¸Œê°€ ì•„ì§ ì§„í–‰ ì¤‘ì´ë¼ë©´ ì›¨ì´ë¸Œ ì¢…ë£Œ ì²˜ë¦¬
+        if (!waveCompletionSource.Task.Status.IsCompleted())
+            waveCompletionSource.TrySetResult(false); // ì›¨ì´ë¸Œ ì‹¤íŒ¨ë¡œ ì¢…ë£Œ
+    }
+
+    // ë””ë²„ê·¸ìš©: í˜„ì¬ ì›¨ì´ë¸Œë¥¼ ê°•ì œë¡œ ì¢…ë£Œì‹œí‚µë‹ˆë‹¤.
+    public void ForceEndWave(bool success)
+    {
+        if (waveCompletionSource != null && !waveCompletionSource.Task.Status.IsCompleted())
+        {
+            waveCompletionSource.TrySetResult(success);
+        }
     }
 }
