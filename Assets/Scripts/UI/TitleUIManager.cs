@@ -6,6 +6,7 @@ public class TitleUIManager : MonoBehaviour
 {
     [Header("UI References")]
     public GameObject settingPanel;  // SettingUI 패널 오브젝트
+    public GameObject startPanel;  // SettingUI 패널 오브젝트
     public Button startButton;       // Start 버튼
     public Button settingButton;     // Setting 버튼
     public Button exitButton;        // Exit 버튼
@@ -13,11 +14,21 @@ public class TitleUIManager : MonoBehaviour
     void Start()
     {
         // 버튼 클릭 이벤트 연결
+        if (startButton != null)
+            startButton.onClick.AddListener(OpenStartPanel);
+
         if (settingButton != null)
             settingButton.onClick.AddListener(OpenSettingPanel);
 
         if (exitButton != null)
             exitButton.onClick.AddListener(ExitGame);
+    }
+
+    void OpenStartPanel()
+    {
+        if (startPanel != null)
+            gameObject.SetActive(false);
+            startPanel.SetActive(true);
     }
 
     void OpenSettingPanel()
