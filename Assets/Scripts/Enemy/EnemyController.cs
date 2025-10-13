@@ -28,6 +28,11 @@ public class EnemyController : UnitController
 
     void Update()
     {
+        if (IsDead())
+        {
+            return;
+        }
+        
         UpdateAttackTarget();   // 근처 적 확인
                                 // 공격 대상이 있으면 그걸 추적
 
@@ -116,6 +121,7 @@ public class EnemyController : UnitController
     protected override void HandleDeath()
     {
         base.HandleDeath();
+        agent.enabled = false;
         animator.SetTrigger("Die");
         Debug.Log("Enemy died!");
         Destroy(gameObject, 2f);

@@ -35,7 +35,7 @@ public class UnitController : MonoBehaviour
 
     protected virtual void Start()
     {
-        unitState = EUnitState.Idle;
+        ChangeUnitState(EUnitState.Idle);
         animator = GetComponentInChildren<Animator>();
         LivingEntity = GetComponent<LivingEntity>();
         LivingEntity.OnDeath += HandleDeath;

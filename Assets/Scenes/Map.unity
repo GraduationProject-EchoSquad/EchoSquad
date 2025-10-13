@@ -26372,8 +26372,8 @@ MonoBehaviour:
         z: 0
       Rotation:
         value:
-          x: 0.27733293
-          y: 0
+          x: 0.27733296
+          y: 9.720198e-10
           z: 0.07121054
           w: 0.9581312
     m_MetaData:
@@ -43903,17 +43903,9 @@ MonoBehaviour:
       type: 3}
     count: 10
     spawnInterval: 5
-    spawnPoints:
-    - {fileID: 960073198}
-    - {fileID: 983752670}
-    - {fileID: 234321631}
-    - {fileID: 1740722884}
-    - {fileID: 1667829911}
-    - {fileID: 1879873406}
-  - enemyPrefab: {fileID: 1510129015077551741, guid: 32aafcecb007f1f46a227de5e7b0bd14,
+    isBossWave: 1
+    bossPrefab: {fileID: 1510129015077551741, guid: 5701b381e6ba73d4b8f53c6432da5b90,
       type: 3}
-    count: 20
-    spawnInterval: 5
     spawnPoints:
     - {fileID: 960073198}
     - {fileID: 983752670}

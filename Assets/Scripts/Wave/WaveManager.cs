@@ -7,9 +7,16 @@ using EasyTextEffects;   // TextEffect가 이 네임스페이스에 있다고 �
 [System.Serializable]
 public class Wave
 {
+    [Header("Normal Wave Settings")]
     public UnitController enemyPrefab;
     public int count;
     public float spawnInterval;
+ 
+    [Header("Boss Wave Settings")]
+    public bool isBossWave;
+    public UnitController bossPrefab;
+ 
+    [Header("Common Settings")]
     public Transform[] spawnPoints;
 }
 
@@ -110,13 +117,29 @@ public class WaveManager : Singleton<WaveManager>
         PubSubManager.Instance.Subscribe(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
 
         Wave wave = waves[currentWaveIndex];
-        enemiesRemaining = wave.count;
+
+        if (wave.isBossWave)
+        {
+            enemiesRemaining = 1;
+        }
+        else
+        {
+            enemiesRemaining = wave.count;
+        }
+
         UpdateUI();
         
         PubSubManager.Instance.Publish(PubSubEvent.OnWaveStart);
 
         // 몬스터 스폰을 백그라운드에서 진행
-        SpawnEnemiesAsync(wave).Forget();
+        if (wave.isBossWave)
+        {
+            SpawnBoss(wave);
+        }
+        else
+        {
+            SpawnEnemiesAsync(wave).Forget();
+        }
 
         // 웨이브 종료 조건 (모든 몬스터 사망 또는 플레이어 사망)을 기다림
         await waveCompletionSource.Task;
@@ -197,6 +220,19 @@ public class WaveManager : Singleton<WaveManager>
         UnitManager.Instance.SpawnUnit(wave.enemyPrefab, spawnPoint.position, spawnPoint.rotation, UnitController.EUnitTeamType.Enemy);
         
         PubSubManager.Instance.Publish(PubSubEvent.OnEnemySpawn);
+    }
+
+    private void SpawnBoss(Wave wave)
+    {
+        if (wave.bossPrefab == null)
+        {
+            Debug.LogError($"Boss wave {currentWaveIndex} has no boss prefab assigned!");
+            waveCompletionSource.TrySetResult(true); // 오류가 있지만 웨이브를 강제로 종료하여 멈춤 방지
+            return;
+        }
+        // 보스는 보통 정해진 위치에 소환되므로, 첫 번째 스폰 포인트를 사용하거나 별도의 보스 스폰 포인트를 지정할 수 있습니다.
+        Transform spawnPoint = wave.spawnPoints[0];
+        UnitManager.Instance.SpawnUnit(wave.bossPrefab, spawnPoint.position, spawnPoint.rotation, UnitController.EUnitTeamType.Enemy);
     }
 
     // 몬스터가 죽을 때마다 호출
