@@ -14,6 +14,13 @@ public class DebugManagerEditor : Editor
 
         // 버튼들을 그리기 위한 공간을 만듭니다.
         EditorGUILayout.Space();
+        // "플레이어 즉사" 버튼
+        if (GUILayout.Button("Do Command"))
+        {
+            debugManager.DoCommand();
+        }
+        
+        EditorGUILayout.Space();
         EditorGUILayout.LabelField("Debug Actions", EditorStyles.boldLabel);
 
         // "플레이어 즉사" 버튼

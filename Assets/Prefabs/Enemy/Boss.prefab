@@ -2874,9 +2874,9 @@ GameObject:
   - component: {fileID: 4417461363786087643}
   - component: {fileID: 4075715525829927055}
   - component: {fileID: 5770865436204916316}
-  - component: {fileID: 1510129015077551741}
   - component: {fileID: 8439346654403614160}
   - component: {fileID: 120769165018137736}
+  - component: {fileID: 3354316289118794396}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -2958,20 +2958,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &1510129015077551741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8605622981922510963}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 592b5982891e3e84185a2be806a2dd67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyType: 0
-  attackRange: 2
 --- !u!136 &8439346654403614160
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3011,6 +2997,20 @@ MonoBehaviour:
   nameText: {fileID: 0}
   UnitController: {fileID: 0}
   startingHealth: 1000
+--- !u!114 &3354316289118794396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8605622981922510963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bddc654191427c4ca3d98a4df029ac0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyType: 0
+  attackRange: 4
 --- !u!1 &8658231281914553643
 GameObject:
   m_ObjectHideFlags: 0

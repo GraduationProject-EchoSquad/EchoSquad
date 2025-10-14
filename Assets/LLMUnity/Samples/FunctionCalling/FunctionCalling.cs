@@ -90,7 +90,7 @@ namespace LLMUnitySamples
         }
     }
 
-    public class FunctionCalling : MonoBehaviour
+    public class FunctionCalling : Singleton<FunctionCalling>
     {
         public LLMCharacter llmCharacter;
         public InputField playerText;
@@ -223,6 +223,34 @@ namespace LLMUnitySamples
                 return;
             }
 
+            DoCommand(cmd, aiList);
+            /*string unitsText = string.Join(", ", cmd.command_units);
+            string functionName = $"{cmd.action}{cmd.Parameters}";
+            Debug.Log($"[Parsed] target = {unitsText},\n action = {cmd.action},\n params = {cmd.Parameters}");
+
+            // 대사 출력
+            string result = Functions.GetVoiceLine(functionName);
+            AIText.text = $"[To {unitsText}] {result}";
+
+            //행동 주체들
+            // AI 실행
+            foreach (var ai in aiList)
+            {
+                if (cmd.command_units.Contains(ai.teammateName))
+                {
+                    ai.ExecuteCommand(cmd.action, cmd.Parameters);
+                }
+                else if (cmd.command_units.Contains(ai.teammateNameKorean))
+                {
+                    ai.ExecuteCommand(cmd.action, cmd.Parameters);
+                }
+            }
+
+            playerText.interactable = true;*/
+        }
+
+        public void DoCommand(ParsedCommand cmd, List<TeammateAI> aiList)
+        {
             string unitsText = string.Join(", ", cmd.command_units);
             string functionName = $"{cmd.action}{cmd.Parameters}";
             Debug.Log($"[Parsed] target = {unitsText},\n action = {cmd.action},\n params = {cmd.Parameters}");

@@ -18230,6 +18230,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4a93c71ddc7f44f942cd883405e5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Command:
+    command_units:
+    - James
+    action: 1
+    Parameters:
+      destination: 
+      follow_target: 
+      engage_enemy: Boss
+      support_target: 
+      support_type: 
+      area: 
+      mode: 
+      voice: 
 --- !u!1001 &738900453
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43904,7 +43917,7 @@ MonoBehaviour:
     count: 10
     spawnInterval: 5
     isBossWave: 1
-    bossPrefab: {fileID: 1510129015077551741, guid: 5701b381e6ba73d4b8f53c6432da5b90,
+    bossPrefab: {fileID: 3354316289118794396, guid: 5701b381e6ba73d4b8f53c6432da5b90,
       type: 3}
     spawnPoints:
     - {fileID: 960073198}

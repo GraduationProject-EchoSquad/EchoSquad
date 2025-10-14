@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 using static Unity.Collections.Unicode;
@@ -118,12 +119,16 @@ public class EnemyController : UnitController
         }
     }
     
-    protected override void HandleDeath()
+    protected override async UniTaskVoid HandleDeath()
     {
         base.HandleDeath();
         agent.enabled = false;
         animator.SetTrigger("Die");
         Debug.Log("Enemy died!");
-        Destroy(gameObject, 2f);
+        //Destroy(gameObject, 2f);
+
+        await UniTask.WaitForSeconds(2f);
+        
+        UnitManager.Instance.DeleteUnit(this);
     }
 }

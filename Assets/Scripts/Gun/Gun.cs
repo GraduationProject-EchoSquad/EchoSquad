@@ -124,10 +124,10 @@ public class Gun : MonoBehaviour
         }
         else
         {
-            if (state != State.Ready)
+            /*if (state != State.Ready)
                 Debug.Log($"[Fire] 발사 불가: state != Ready ({state})");
             else
-                Debug.Log($"[Fire] 발사 불가: 아직 쿨다운 중 (Time.time={Time.time:F3} < {lastFireTime + timeBetFire:F3})");
+                Debug.Log($"[Fire] 발사 불가: 아직 쿨다운 중 (Time.time={Time.time:F3} < {lastFireTime + timeBetFire:F3})");*/
         }
 
         return false;

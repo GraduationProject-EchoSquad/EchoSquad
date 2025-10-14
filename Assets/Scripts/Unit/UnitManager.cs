@@ -92,6 +92,14 @@ public class UnitManager : Singleton<UnitManager>
         return unit;
     }
 
+    public void DeleteUnit(UnitController unitController)
+    {
+        UnitList.Remove(unitController);
+        unitTeamTypeDict[unitController.GetUnitTeamType()].Remove(unitController);
+        
+        Destroy(unitController);
+    }
+
 
     public List<UnitController> GetUnitTeamTypeList(UnitController.EUnitTeamType unitTeamType)
     {
@@ -125,12 +133,17 @@ public class UnitManager : Singleton<UnitManager>
 
         return nearestEnemyUnit;
     }
+    
+    public BossController GetBossController()
+    { 
+        return UnitList.Find(e => e is BossController) as BossController;
+    }
 
     public IEnumerable<UnitController> GetAliveEnemies(UnitController me) =>
         GetUnitTeamTypeList(me.GetOppositeTeamType()).Where(e => !e.IsDead());
 
     public IEnumerable<UnitController> GetVisibleEnemies(
-        UnitController shooter,
+        UnitShooter shooter,
         float maxDistance,
         float viewAngle,
         float eyeHeight,
@@ -138,10 +151,11 @@ public class UnitManager : Singleton<UnitManager>
     {
         Vector3 eyePos = shooter.transform.position + Vector3.up * eyeHeight;
 
-        return GetAliveEnemies(shooter)
+        return GetAliveEnemies(shooter.unit)
             .Where(e =>
             {
-                Vector3 dir = e.transform.position - eyePos;
+                return shooter.IsVisibleTarget(e);
+                /*Vector3 dir = e.transform.position - eyePos;
                 float distSqr = dir.sqrMagnitude;
                 if (distSqr > maxDistance * maxDistance) return false;
                 if (Vector3.Angle(shooter.transform.forward, dir) > viewAngle * 0.5f) return false;
@@ -152,7 +166,7 @@ public class UnitManager : Singleton<UnitManager>
                     if (hitCtrl != e) return false;
                 }
 
-                return true;
+                return true;*/
             });
     }
 

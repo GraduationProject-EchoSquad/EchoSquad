@@ -32,13 +32,13 @@ public class PlayerShooter : UnitShooter
     {
         if (playerInput.fire)
         {
-            Debug.Log("[FixedUpdate] playerInput.fire == true, Shoot() 호출 시도");
+            //Debug.Log("[FixedUpdate] playerInput.fire == true, Shoot() 호출 시도");
             lastFireInputTime = Time.time;
             Shoot();
         }
         else if (playerInput.reload)
         {
-            Debug.Log("[FixedUpdate] playerInput.reload == true, Reload() 호출");
+            //Debug.Log("[FixedUpdate] playerInput.reload == true, Reload() 호출");
             Reload();
         }
         
@@ -76,18 +76,18 @@ public class PlayerShooter : UnitShooter
         // linedUp 체크 제거하고, 사거리(장애물)만 확인
         if (hasEnoughDistance)
         {
-            Debug.Log("[Shoot] hasEnoughDistance == true → gun.Fire 호출");
+            //Debug.Log("[Shoot] hasEnoughDistance == true → gun.Fire 호출");
             bool fired = gun.Fire(aimPoint);
-            Debug.Log($"[Shoot] gun.Fire 리턴값 = {fired}");
+            //Debug.Log($"[Shoot] gun.Fire 리턴값 = {fired}");
             if (fired)
             {
-                Debug.Log("[Shoot] 발사 성공 → 애니메이터 트리거");
+                //Debug.Log("[Shoot] 발사 성공 → 애니메이터 트리거");
                 unitAnimator.SetTrigger("Shoot");
             }
         }
         else
         {
-            Debug.Log("[Shoot] 사정거리/장애물 조건 불만족");
+            //Debug.Log("[Shoot] 사정거리/장애물 조건 불만족");
         }
     }
 

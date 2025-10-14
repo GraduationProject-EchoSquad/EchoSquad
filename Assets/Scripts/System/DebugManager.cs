@@ -1,7 +1,19 @@
+using System.Linq;
+using LLMUnitySamples;
 using UnityEngine;
 
 public class DebugManager : Singleton<DebugManager>
 {
+    [SerializeField] private ParsedCommand Command;
+
+    public void DoCommand()
+    {
+        FunctionCalling.Instance.DoCommand(Command, UnitManager.Instance.teammateUnitDict.Values
+            .Select(tc => tc.GetComponent<TeammateAI>())
+            .Where(ai => ai != null)
+            .ToList());
+    }
+
     public void KillPlayer()
     {
         PlayerController player = UnitManager.Instance.GetPlayerUnit();
@@ -11,7 +23,7 @@ public class DebugManager : Singleton<DebugManager>
             player.ForceDead();
         }
     }
-    
+
     public void KillPlayerImmediately()
     {
         PlayerController player = UnitManager.Instance.GetPlayerUnit();

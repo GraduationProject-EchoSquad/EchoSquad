@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.AI;
 
 public class PlayerController : UnitController
@@ -23,7 +24,7 @@ public class PlayerController : UnitController
         Cursor.visible = false;
     }
 
-    protected override void HandleDeath()
+    protected override async UniTaskVoid HandleDeath()
     {
         base.HandleDeath();
         playerMovement.enabled = false;
@@ -32,10 +33,11 @@ public class PlayerController : UnitController
         if (lifeRemains > 0)
         {
             lifeRemains--;
-            
+
             PubSubManager.Instance.Publish(PubSubEvent.OnPlayerDeath);
             //UIManager.Instance.UpdateLifeText(lifeRemains);
-            Invoke("Respawn", 3f);
+            await UniTask.WaitForSeconds(3f);
+            Respawn();
         }
         else
         {
@@ -69,17 +71,17 @@ public class PlayerController : UnitController
             //Todo
         }
     }
-    
-    #if UNITY_EDITOR
+
+#if UNITY_EDITOR
     public void ForceDead()
     {
         LivingEntity.Die();
     }
-    
+
     public void ForceDeadImmediately()
     {
         lifeRemains = 0;
         LivingEntity.Die();
     }
-    #endif
+#endif
 }

@@ -45,7 +45,7 @@ public class TeammateAI : MonoBehaviour
         //follow target
         if (!string.IsNullOrEmpty(param.follow_target) && param.follow_target != "null")
         {
-            if (param.follow_target.Equals("Player"))
+            if (string.Equals(param.follow_target,"Player",  StringComparison.OrdinalIgnoreCase))
             {
                 unitController.SetFollowUnit(unitManager.GetPlayerUnit());
             }
@@ -107,7 +107,21 @@ public class TeammateAI : MonoBehaviour
         string message = $"{param.engage_enemy} 공격!";
         Debug.Log($"[{teammateName}] {message}");
         SendChat(message);
+        UnitManager unitManager = UnitManager.Instance;
         // TODO: 공격 대상 지정, 애니메이션 트리거 등
+        if (!string.IsNullOrEmpty(param.engage_enemy) && param.engage_enemy != "null")
+        {
+            if (string.Equals(param.engage_enemy,"Boss", StringComparison.OrdinalIgnoreCase))
+            {
+                BossController bossController = unitManager.GetBossController();
+                if (bossController == null)
+                {
+                    Debug.LogWarning("No Boss!");
+                    return;
+                }
+                unitController.GetUnitShooter().SetAimTargetUnit(bossController);
+            }
+        }
     }
 
     void Support(Parameters param)
