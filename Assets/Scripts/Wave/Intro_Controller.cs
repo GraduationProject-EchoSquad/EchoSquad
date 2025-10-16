@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class Intro_Controller : Singleton<Intro_Controller>
@@ -50,37 +50,37 @@ public class Intro_Controller : Singleton<Intro_Controller>
         portalGateScript.F_TogglePortalGate(false);
         portalSimpleScripts.TogglePortal(false);
 
-        StartCoroutine(DemoRoutine());
+        DemoRoutine().Forget();
     }
 
-    private IEnumerator DemoRoutine()
+    private async UniTaskVoid DemoRoutine()
     {
         // 0) 룬스톤 켜기 & 로비 카메라 재생
         runestoneScript.ToggleRuneStone(true);
 
         vcamLobby.SetActive(true);
-        yield return new WaitForSeconds(durLobby);
+        await UniTask.WaitForSeconds(durLobby);
         vcamLobby.SetActive(false);
 
         // 1) 포탈 라운드 켜기 & Room1 카메라 재생
         portalRoundScripts.F_TogglePortalRound(true);
 
         vcamRoom1.SetActive(true);
-        yield return new WaitForSeconds(durRoom1);
+        await UniTask.WaitForSeconds(durRoom1);
 
         // 2) 포탈 심플 켜기 & Room2 카메라로 전환
         portalSimpleScripts.TogglePortal(true);
 
         vcamRoom1.SetActive(false);
         vcamRoom2.SetActive(true);
-        yield return new WaitForSeconds(durRoom2);
+        await UniTask.WaitForSeconds(durRoom2);
 
         // 3) 포탈 게이트 켜기 & RoomUnder 카메라로 전환
         portalGateScript.F_TogglePortalGate(true);
 
         vcamRoom2.SetActive(false);
         vcamUnder.SetActive(true);
-        yield return new WaitForSeconds(durUnder);
+        await UniTask.WaitForSeconds(durUnder);
 
         // 4) 모든 카메라 끄고 플레이어 활성화
         vcamUnder.SetActive(false);
