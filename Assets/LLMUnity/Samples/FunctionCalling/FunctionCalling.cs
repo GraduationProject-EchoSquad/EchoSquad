@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using UnityEngine;
 using LLMUnity;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine.Serialization;
 
 namespace LLMUnitySamples
@@ -26,19 +27,23 @@ namespace LLMUnitySamples
         public string support_target;
         public string support_type;
         public string area;
+        public string scout_from;
+        public string scout_to;
         public string mode;
         public string voice;
 
         public override string ToString()
         {
             return $"    \"destination\": \"{destination}\",\n" +
-                   $"    \"follow_target\": \"{follow_target}\",\n\n" +
-                   $"    \"engage_enemy\": \"{engage_enemy}\",\n\n" +
+                   $"    \"follow_target\": \"{follow_target}\",\n" +
+                   $"    \"engage_enemy\": \"{engage_enemy}\",\n" +
                    $"    \"support_target\": \"{support_target}\",\n" +
-                   $"    \"support_type\": \"{support_type}\",\n\n" +
+                   $"    \"support_type\": \"{support_type}\",\n" +
                    $"    \"area\": \"{area}\",\n" +
-                   $"    \"mode\": \"{mode}\",\n" + 
-                   $"    \"voice\": \"{voice}\",\n";
+                   $"    \"scout_from\": \"{scout_from}\",\n" +
+                   $"    \"scout_to\": \"{scout_to}\",\n" +
+                   $"    \"mode\": \"{mode}\",\n" +
+                   $"    \"voice\": \"{voice}\"";
         }
     }
 
@@ -76,7 +81,7 @@ namespace LLMUnitySamples
             { "ScoutBack", new[] { "후방 정찰 중...", "뒤쪽 확인하고 올게.", "뒤에 뭐 있나 본다!" } },
 
             { "HealNone", new[] { "힐 중이야, 엄호해줘!", "치료 들어간다. 잠깐만!", "회복 중... 부탁해!" } },
-            
+
             // Error 케이스들
             { "Error", new[] { "명령을 이해할 수 없어!", "뭔 소리야? 다시 말해봐.", "그런 명령은 실행할 수 없어!" } }
         };
@@ -128,92 +133,365 @@ namespace LLMUnitySamples
             string actions = FormatEnumOptions<AIActionEnum>();
             string unitNames = GetAINames(AIList);
 
-            return $"Command: \"{playerMessage}\"\n\n" +
-                   "Analyze the command and convert it into the following JSON structure.\n\n" +
-                   "You MUST strictly follow these rules:\n\n" +
-                   "1. Output ONLY valid JSON. Do NOT include explanations or any other text.\n\n" +
-                   "2. For the \"action\" field, use ONLY ONE enum value from:\n" +
-                   $"<One of: {actions}>\n\n" +
-                   "3. For the \"command_units\" field, output a JSON array of units involved in the command. Use ONLY values from:\n" +
-                   $"<One or more of: {unitNames}>\n\n" +
-                   "4. If the command includes 'follow me', 'come with me', or similar, map it to \"follow_target\": \"Player\"\n\n" +
-                   "5. If the command involves multiple actions or units, merge them if compatible, or ignore secondary commands.\n\n" +
-                   "6. For each parameter, use only the allowed values. If not used, set to null.\n\n" +
-                   $"   - destination      → Left | Right | Center | Back | Forward | {unitNames} | {districtsName}\n" +
-                   $"   - follow_target    → {unitNames} | Player | null\n" +
-                   "   - engage_enemy     → Nearest | Sniper | Tank | null\n" +
-                   "   - support_target   → Alpha | WoundedUnit | null\n" +
-                   "   - support_type     → Heal | Shield | null\n" +
-                   "   - area             → Left | Right | EnemyBase | null\n" +
-                   "   - mode             → Stealth | Quick | null\n" +
-                   "   - mode             → Stealth | Quick | null\n" + 
-                   "   - voice            → A short, natural confirmation phrase in Korean based on the original command.\n\n" +
-                   "7. Example output:\n" +
-                   "{\n" +
-                   "  \"command_units\": [\"James\"],\n" +
-                   "  \"action\": \"Move\",\n" +
-                   "  \"parameters\": {\n" +
-                   "    \"destination\": \"Left\",\n" +
-                   "    \"follow_target\": null,\n" +
-                   "    \"engage_enemy\": null,\n" +
-                   "    \"support_target\": null,\n" +
-                   "    \"support_type\": null,\n" +
-                   "    \"area\": null,\n" +
-                   "    \"mode\": null\n" +
-                   "    \"voice\": \"Okay I will go to Left\"\n" +
-                   "  }\n" +
-                   "}\n";
+            return "### Core Rules\n" +
+                   "You are a military command parser. Parse natural language into structured commands.\n\n" +
+
+                   "**OUTPUT FORMAT**: Single JSON object only. No explanations.\n\n" +
+
+                   $"**ACTIONS** - Use exactly one: {actions}\n" +
+                   "- Move: go, walk, run, advance, retreat, follow, come, travel, proceed\n" +
+                   "- Combat: attack, fight, kill, eliminate, engage, destroy, take out, deal with [enemy]\n" +
+                   "- Support: heal, shield, protect, assist, help, cover, aid\n" +
+                   "- Scout: scout, reconnaissance, patrol, watch, survey, investigate, check out\n" +
+                   "- Error: invalid/impossible commands\n\n" +
+
+                   "**ENTITY RECOGNITION**\n" +
+                   $"- Units: {unitNames} (case-insensitive)\n" +
+                   "- 'me/myself/I' → 'Player'\n" +
+                   $"- 'all/everyone/everybody' → [{string.Join(",", AIList.Select(ai => $"\"{ai.teammateName}\""))}]\n" +
+                   $"- Locations: {districtsName}, Left, Right, Forward, Back\n" +
+                   "- Enemies: Zombie, Alien, Lion, Boss\n\n" +
+
+                   "**CRITICAL: 'me' PATTERN HANDLING**\n" +
+                   "- 'help me James' → command_units: ['James'], support_target: 'Player'\n" +
+                   "- 'heal me Sara' → command_units: ['Sara'], support_target: 'Player'\n" +
+                   "- 'I need X from Y' → command_units: ['Y'], target: 'Player'\n" +
+                   "- RULE: The unit AFTER 'me' or 'from' executes the command\n\n" +
+
+                   "**ERROR CONDITIONS**\n" +
+                   "- Unknown units (John, Bob, etc.)\n" +
+                   "- Unknown locations (Mars, outside, etc.)\n" +
+                   "- Unknown enemies (elephant, friendly, etc.)\n" +
+                   "- Invalid actions (dance, sing, etc.)\n" +
+                   "- Multi-step commands (X and Y, X but Y)\n" +
+                   "- Vague commands without clear action\n\n" +
+
+                   "### Parameters\n" +
+                   "Use each parameter only for its specified role. If not used, set it to `null`.\n" +
+                   "- `destination`: Use for moving to a location (Kitchen) or a direction (Left). For following a unit, use `follow_target` instead.\n" +
+                   "- `follow_target`: Use ONLY for 'follow' commands. If this value is set, `destination` MUST be `null`.\n" +
+                   "- `engage_enemy`: The name of the enemy to engage. (e.g., Zombie, Alien, Lion, Boss)\n" +
+                   "- `support_target`: The target to receive support.\n" +
+                   "- `support_type`: The type of support. (e.g., Heal, Shield)\n" +
+                   "- `area`: The area to scout.\n" +
+                   "- `scout_from` / `scout_to`: The start and end points for scouting.\n" +
+                   "- `mode`: Special action mode. (e.g., Stealth, Quick)\n" +
+                   "- `voice`: **REQUIRED**. A short natural English confirmation phrase. Examples: \"Moving to Kitchen!\", \"Following you!\", \"Attacking zombie!\". MUST be filled.\n\n" +
+
+                   "### Pattern Examples\n" +
+                   "**Movement Patterns:**\n" +
+                   $"- '{(AIList.Count > 0 ? AIList[0].teammateName : "Lena")} go Kitchen' / 'send {(AIList.Count > 0 ? AIList[0].teammateName : "Lena")} to Kitchen'\n" +
+                   $"  → {{\"command_units\":[\"{(AIList.Count > 0 ? AIList[0].teammateName : "Lena")}\"],\"action\":\"Move\",\"parameters\":{{\"destination\":\"Kitchen\",\"voice\":\"Okay moving to Kitchen!\"}}}}\n" +
+                   $"- 'James follow me' / 'James come with me'\n" +
+                   "  → {\"command_units\":[\"James\"],\"action\":\"Move\",\"parameters\":{\"follow_target\":\"Player\",\"voice\":\"Following you!\"}}\n\n" +
+
+                   "**Combat Patterns:**\n" +
+                   "- 'attack the zombie' / 'kill that zombie' / 'take out the zombie'\n" +
+                   "  → {\"command_units\":[context],\"action\":\"Combat\",\"parameters\":{\"engage_enemy\":\"Zombie\",\"voice\":\"Attacking zombie!\"}}\n\n" +
+
+                   "**Support Patterns:**\n" +
+                   "- 'heal Sara' / 'give Sara medical aid'\n" +
+                   "  → {\"command_units\":[context],\"action\":\"Support\",\"parameters\":{\"support_target\":\"Sara\",\"support_type\":\"Heal\",\"voice\":\"Healing Sara!\"}}\n" +
+                   "- 'help me James' → James executes, Player receives\n" +
+                   "  → {\"command_units\":[\"James\"],\"action\":\"Support\",\"parameters\":{\"support_target\":\"Player\",\"voice\":\"On my way!\"}}\n\n" +
+
+                   "**Scout Patterns:**\n" +
+                   "- 'scout Kitchen' / 'check out Kitchen'\n" +
+                   "  → {\"command_units\":[context],\"action\":\"Scout\",\"parameters\":{\"area\":\"Kitchen\",\"voice\":\"Scouting Kitchen!\"}}\n\n" +
+
+                   "**Error Patterns:**\n" +
+                   "- Multi-step: 'go Kitchen and watch' → {\"command_units\":null,\"action\":\"Error\",\"parameters\":{\"voice\":\"Cannot understand command!\"}}\n" +
+                   "- Invalid: 'go to Mars' / 'John move' / 'Lena dance'\n" +
+                   "  → {\"command_units\":null,\"action\":\"Error\",\"parameters\":{\"voice\":\"Invalid command!\"}}\n\n" +
+
+                   "### Command to Process\n" +
+                   $"Command: {playerMessage}";
+        }
+
+        private ParsedCommand ParseAndCorrectCommand(string json)
+        {
+            var actionSynonyms = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "Attack", "Combat" }, { "Engage", "Combat" }, { "Fight", "Combat" }, { "Kill", "Combat" }, { "Eliminate", "Combat" },
+                { "Follow", "Move" }, { "Go", "Move" },
+                { "Heal", "Support" }, { "Shield", "Support" }, { "Protect", "Support" },
+                { "Watch", "Scout" }, { "Reconnaissance", "Scout" }
+            };
+
+            if (string.IsNullOrWhiteSpace(json)) return new ParsedCommand();
+
+            // Debug: Log raw JSON before cleanup
+            Debug.Log($"[RAW JSON BEFORE CLEANUP] {json}");
+
+            // Enhanced JSON cleanup
+            json = CleanupJsonString(json);
+
+            // Debug: Log cleaned JSON
+            Debug.Log($"[CLEANED JSON] {json}");
+
+            try
+            {
+                JObject tempCmd = JObject.Parse(json);
+
+                if (tempCmd["action"] != null)
+                {
+                    string actionValue = tempCmd["action"].ToString();
+                    if (actionSynonyms.TryGetValue(actionValue, out string correctAction))
+                    {
+                        tempCmd["action"] = correctAction;
+                    }
+                }
+                var parsedCmd = tempCmd.ToObject<ParsedCommand>();
+
+                // Post-processing validation
+                return ValidateAndCorrectCommand(parsedCmd);
+            }
+            catch (JsonException ex)
+            {
+                Debug.LogError($"[JSON PARSE ERROR] {ex.Message}\n[Cleaned JSON] {json}");
+                return new ParsedCommand(); // Return empty command on parse failure
+            }
+        }
+
+        private string CleanupJsonString(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json)) return "{}";
+
+            json = json.Trim();
+
+            // Remove code blocks
+            if (json.StartsWith("```json"))
+            {
+                json = json.Substring(7);
+            }
+            else if (json.StartsWith("```"))
+            {
+                json = json.Substring(3);
+            }
+
+            if (json.EndsWith("```"))
+            {
+                json = json.Substring(0, json.Length - 3);
+            }
+
+            json = json.Trim();
+
+            // Find the first { and last } to extract only the JSON object
+            int firstBrace = json.IndexOf('{');
+            int lastBrace = json.LastIndexOf('}');
+
+            if (firstBrace >= 0 && lastBrace >= 0 && lastBrace > firstBrace)
+            {
+                json = json.Substring(firstBrace, lastBrace - firstBrace + 1);
+            }
+
+            // Remove any extra text after the JSON object
+            // Find the complete JSON object by counting braces
+            int braceCount = 0;
+            int endIndex = -1;
+
+            for (int i = 0; i < json.Length; i++)
+            {
+                if (json[i] == '{')
+                {
+                    braceCount++;
+                }
+                else if (json[i] == '}')
+                {
+                    braceCount--;
+                    if (braceCount == 0)
+                    {
+                        endIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            if (endIndex >= 0)
+            {
+                json = json.Substring(0, endIndex + 1);
+            }
+
+            // Fix unquoted values first
+            json = FixUnquotedValues(json);
+
+            // Simple brace balance fix
+            while (true)
+            {
+                int openBraces = json.Count(c => c == '{');
+                int closeBraces = json.Count(c => c == '}');
+
+                if (openBraces == closeBraces) break;
+
+                if (openBraces > closeBraces)
+                {
+                    json += "}";
+                }
+                else
+                {
+                    // Too many closing braces - remove from end
+                    int lastBraceIndex = json.LastIndexOf('}');
+                    if (lastBraceIndex >= 0)
+                        json = json.Remove(lastBraceIndex, 1);
+                    else
+                        break;
+                }
+
+                // Safety check to prevent infinite loop
+                if (json.Length > 1000) break;
+            }
+
+            return json.Trim();
+        }
+
+        private string FixUnquotedValues(string json)
+        {
+            // Fix broken parameters object - look for unterminated string at position 60
+            // Pattern: "parameters":{"} where there's a quote but no proper key:value
+            json = System.Text.RegularExpressions.Regex.Replace(json, @"""parameters"":\{""(?=[}\]])", "\"parameters\":{}");
+
+            // Fix parameters with incomplete content
+            json = System.Text.RegularExpressions.Regex.Replace(json, @"""parameters"":\{""[^""]*""?\}?(?=\})", "\"parameters\":{}");
+            json = System.Text.RegularExpressions.Regex.Replace(json, @"""parameters"":\{""""?\}", "\"parameters\":{}");
+
+            // Fix unterminated strings - add missing quotes before delimiters
+            json = System.Text.RegularExpressions.Regex.Replace(json, @":""([^"",}\]]*?)(?=[,}\]])", ":\"$1\"");
+            json = System.Text.RegularExpressions.Regex.Replace(json, @":""([^""]*?)$", ":\"$1\"");
+
+            // Fix common unquoted values
+            json = System.Text.RegularExpressions.Regex.Replace(json, @"\[context\]", "[\"context\"]");
+            json = System.Text.RegularExpressions.Regex.Replace(json, @":context([,\]}])", ":\"context\"$1");
+            json = System.Text.RegularExpressions.Regex.Replace(json, @":null([,\]}])", ":null$1"); // keep null as is
+            json = System.Text.RegularExpressions.Regex.Replace(json, @":([a-zA-Z_][a-zA-Z0-9_]*)([,\]}])", ":\"$1\"$2");
+
+            // Fix malformed parameters object
+            json = System.Text.RegularExpressions.Regex.Replace(json, @"""parameters"":\{""""\}", "\"parameters\":{}");
+            json = System.Text.RegularExpressions.Regex.Replace(json, @"""parameters"":\{\s*\}", "\"parameters\":{}");
+
+            // Convert arrays to strings for parameters that should be strings
+            // support_target array -> string conversion
+            json = System.Text.RegularExpressions.Regex.Replace(json,
+                @"""support_target"":\s*\[\s*""([^""]+)""\s*(?:,\s*""[^""]+"")*\s*\]",
+                "\"support_target\":\"$1\"");
+
+            // engage_enemy array -> string conversion
+            json = System.Text.RegularExpressions.Regex.Replace(json,
+                @"""engage_enemy"":\s*\[\s*""([^""]+)""\s*(?:,\s*""[^""]+"")*\s*\]",
+                "\"engage_enemy\":\"$1\"");
+
+            // destination array -> string conversion
+            json = System.Text.RegularExpressions.Regex.Replace(json,
+                @"""destination"":\s*\[\s*""([^""]+)""\s*(?:,\s*""[^""]+"")*\s*\]",
+                "\"destination\":\"$1\"");
+
+            // follow_target array -> string conversion
+            json = System.Text.RegularExpressions.Regex.Replace(json,
+                @"""follow_target"":\s*\[\s*""([^""]+)""\s*(?:,\s*""[^""]+"")*\s*\]",
+                "\"follow_target\":\"$1\"");
+
+            // Fix "null" as string instead of null value
+            json = System.Text.RegularExpressions.Regex.Replace(json, @"""command_units"":""null""", "\"command_units\":null");
+
+            return json;
+        }
+
+        private ParsedCommand ValidateAndCorrectCommand(ParsedCommand cmd)
+        {
+            if (cmd == null) return new ParsedCommand();
+
+            Debug.Log($"[VALIDATION START] Action: {cmd.action}, Units: {string.Join(",", cmd.command_units ?? new List<string>())}, Enemy: {cmd.Parameters?.engage_enemy}");
+
+            var aiList = UnitManager.Instance.teammateUnitDict.Values
+                .Select(tc => tc.GetComponent<TeammateAI>())
+                .Where(ai => ai != null)
+                .ToList();
+
+            var validUnits = new HashSet<string>(aiList.Select(ai => ai.teammateName), StringComparer.OrdinalIgnoreCase);
+            var validEnemies = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Zombie", "Alien", "Lion", "Boss" };
+            var validLocations = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Left", "Right", "Forward", "Back", "Center" };
+
+            MapManager mapManager = MapManager.Instance;
+            if (mapManager != null)
+            {
+                foreach (var districtName in mapManager.districtDict.Keys)
+                {
+                    validLocations.Add(districtName);
+                }
+            }
+
+            if (cmd.command_units != null)
+            {
+                foreach (var unit in cmd.command_units)
+                {
+                    if (!string.IsNullOrEmpty(unit) && !validUnits.Contains(unit))
+                    {
+                        Debug.Log($"[VALIDATION] Invalid unit detected: {unit} -> Setting action to Error");
+                        cmd.action = AIActionEnum.Error;
+                        return cmd;
+                    }
+                }
+            }
+
+            if (cmd.action == AIActionEnum.Combat && cmd.Parameters != null && !string.IsNullOrEmpty(cmd.Parameters.engage_enemy))
+            {
+                if (!validEnemies.Contains(cmd.Parameters.engage_enemy))
+                {
+                    Debug.Log($"[VALIDATION] Invalid enemy detected: {cmd.Parameters.engage_enemy} -> Setting action to Error");
+                    cmd.action = AIActionEnum.Error;
+                    return cmd;
+                }
+            }
+
+            if (cmd.Parameters != null && !string.IsNullOrEmpty(cmd.Parameters.destination))
+            {
+                if (!validLocations.Contains(cmd.Parameters.destination) && !validUnits.Contains(cmd.Parameters.destination))
+                {
+                    Debug.Log($"[VALIDATION] Invalid destination detected: {cmd.Parameters.destination} -> Setting action to Error");
+                    cmd.action = AIActionEnum.Error;
+                    return cmd;
+                }
+            }
+
+            if (cmd.action == AIActionEnum.Support && cmd.Parameters != null && !string.IsNullOrEmpty(cmd.Parameters.support_target))
+            {
+                if (!validUnits.Contains(cmd.Parameters.support_target) && !cmd.Parameters.support_target.Equals("Player", StringComparison.OrdinalIgnoreCase))
+                {
+                    Debug.Log($"[VALIDATION] Invalid support target detected: {cmd.Parameters.support_target} -> Setting action to Error");
+                    cmd.action = AIActionEnum.Error;
+                    return cmd;
+                }
+            }
+
+            return cmd;
         }
 
         async void onInputFieldSubmit(string message)
         {
             playerText.interactable = false;
             llmCharacter.grammarString = "";
-            
+
+            // 플레이어가 입력한 명령어를 채팅에 추가
+            ChatManager.Instance.AddMessage("Player", message);
+
             List<TeammateAI> aiList = UnitManager.Instance.teammateUnitDict.Values
                 .Select(tc => tc.GetComponent<TeammateAI>())
                 .Where(ai => ai != null)
                 .ToList();
-            
-            //TODO, 할당한 곳에서 가져와야함. MapManager?
+
             MapManager mapManager = MapManager.Instance;
             string districtsName = mapManager.GetDistrictsName();
 
-            // 시간 측정 시작
             float t0 = Time.realtimeSinceStartup;
 
             string json = await llmCharacter.Chat(ConstructStructuredCommandPrompt(message, aiList, districtsName));
-            Debug.Log($"[LLM Raw JSON] {json}");
 
-            // 측정 종료
             float elapsedMs = (Time.realtimeSinceStartup - t0) * 1000f;
-            Debug.Log($"LLM 응답 시간: {elapsedMs:F1} ms");
-
-            // 코드블럭 제거
-            json = json.Trim();
-            if (json.StartsWith("```"))
-            {
-                int firstBrace = json.IndexOf('{');
-                int lastBrace = json.LastIndexOf('}');
-                if (firstBrace >= 0 && lastBrace >= 0)
-                {
-                    json = json.Substring(firstBrace, lastBrace - firstBrace + 1);
-                }
-            }
-
-            // 2) 중괄호 짝 맞추기
-            int openCount = json.Count(c => c == '{');
-            int closeCount = json.Count(c => c == '}');
-            while (closeCount < openCount)
-            {
-                json += "}";
-                closeCount++;
-            }
+            Debug.Log($"[LLM Response Time: {elapsedMs:F1} ms]");
 
             ParsedCommand cmd;
             try
             {
-                cmd = JsonConvert.DeserializeObject<ParsedCommand>(json);
+                cmd = ParseAndCorrectCommand(json);
             }
             catch (System.Exception e)
             {
@@ -224,29 +502,6 @@ namespace LLMUnitySamples
             }
 
             DoCommand(cmd, aiList);
-            /*string unitsText = string.Join(", ", cmd.command_units);
-            string functionName = $"{cmd.action}{cmd.Parameters}";
-            Debug.Log($"[Parsed] target = {unitsText},\n action = {cmd.action},\n params = {cmd.Parameters}");
-
-            // 대사 출력
-            string result = Functions.GetVoiceLine(functionName);
-            AIText.text = $"[To {unitsText}] {result}";
-
-            //행동 주체들
-            // AI 실행
-            foreach (var ai in aiList)
-            {
-                if (cmd.command_units.Contains(ai.teammateName))
-                {
-                    ai.ExecuteCommand(cmd.action, cmd.Parameters);
-                }
-                else if (cmd.command_units.Contains(ai.teammateNameKorean))
-                {
-                    ai.ExecuteCommand(cmd.action, cmd.Parameters);
-                }
-            }
-
-            playerText.interactable = true;*/
         }
 
         public void DoCommand(ParsedCommand cmd, List<TeammateAI> aiList)
@@ -255,9 +510,21 @@ namespace LLMUnitySamples
             string functionName = $"{cmd.action}{cmd.Parameters}";
             Debug.Log($"[Parsed] target = {unitsText},\n action = {cmd.action},\n params = {cmd.Parameters}");
 
-            // 대사 출력
-            string result = Functions.GetVoiceLine(functionName);
-            AIText.text = $"[To {unitsText}] {result}";
+            // DEBUG: Check voice field value
+            string voiceValue = cmd.Parameters?.voice;
+            Debug.Log($"[DEBUG VOICE] Voice field value: '{voiceValue}' | Is null: {voiceValue == null} | Is empty: {string.IsNullOrEmpty(voiceValue)} | Is whitespace: {string.IsNullOrWhiteSpace(voiceValue)}");
+
+            // LLM이 생성한 음성 우선 사용, 없으면 하드코딩된 것 사용
+            string result = !string.IsNullOrEmpty(voiceValue) ? voiceValue : Functions.GetVoiceLine(functionName);
+
+            // 명령받은 각 유닛의 이름으로 채팅에 전송
+            if (cmd.command_units != null && cmd.command_units.Count > 0)
+            {
+                foreach (var unitName in cmd.command_units)
+                {
+                    ChatManager.Instance.AddMessage(unitName, result);
+                }
+            }
 
             //행동 주체들
             // AI 실행

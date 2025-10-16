@@ -25,15 +25,6 @@ public class TeammateAI : MonoBehaviour
         DoVoice(param.voice);
     }
 
-    void SendChat(string message)
-    {
-        ChatManager chat = ChatManager.Instance;
-        if (chat != null)
-        {
-            chat.AddMessage(teammateName, message);
-        }
-    }
-
     void Move(Parameters param)
     {
         //TODO 처리 필요
@@ -98,7 +89,6 @@ public class TeammateAI : MonoBehaviour
         }
 
         Debug.Log(message);
-        SendChat(message);
     }
 
 
@@ -106,7 +96,6 @@ public class TeammateAI : MonoBehaviour
     {
         string message = $"{param.engage_enemy} 공격!";
         Debug.Log($"[{teammateName}] {message}");
-        SendChat(message);
         UnitManager unitManager = UnitManager.Instance;
         // TODO: 공격 대상 지정, 애니메이션 트리거 등
         if (!string.IsNullOrEmpty(param.engage_enemy) && param.engage_enemy != "null")
@@ -128,14 +117,12 @@ public class TeammateAI : MonoBehaviour
     {
         string message = $"힐 중이야. 엄호해줘!";
         Debug.Log($"[{teammateName}] {message}");
-        SendChat(message);
     }
 
     void Scout(Parameters param)
     {
         string message = $"{param.destination} 정찰 중...";
         Debug.Log($"[{teammateName}] {message}");
-        SendChat(message);
         // TODO: 탐색 루트로 이동
     }
 
