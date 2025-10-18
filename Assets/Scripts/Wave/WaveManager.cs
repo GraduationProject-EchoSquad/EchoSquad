@@ -136,10 +136,8 @@ public class WaveManager : Singleton<WaveManager>
         {
             SpawnBoss(wave);
         }
-        else
-        {
-            SpawnEnemiesAsync(wave).Forget();
-        }
+        SpawnEnemiesAsync(wave).Forget();
+        
 
         // 웨이브 종료 조건 (모든 몬스터 사망 또는 플레이어 사망)을 기다림
         await waveCompletionSource.Task;
@@ -164,6 +162,7 @@ public class WaveManager : Singleton<WaveManager>
     {
         // TODO: 휴식 시간 UI 표시 (예: "Next wave in...")
         await UniTask.WaitForSeconds(timeBetweenWaves);
+        Debug.Log("end breakTime!");
     }
 
     // 숫자 → "Wave {n}" → "Fight!" 순으로 TMP 텍스트 교체

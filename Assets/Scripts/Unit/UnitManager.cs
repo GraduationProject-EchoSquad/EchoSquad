@@ -97,7 +97,7 @@ public class UnitManager : Singleton<UnitManager>
         UnitList.Remove(unitController);
         unitTeamTypeDict[unitController.GetUnitTeamType()].Remove(unitController);
         
-        Destroy(unitController);
+        Destroy(unitController.gameObject);
     }
 
 

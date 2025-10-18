@@ -71,7 +71,7 @@ public class PlayerShooter : UnitShooter
 
     public override void Shoot()
     {
-        Debug.Log($"[Shoot] 단발 모드 진입 → hasEnoughDistance={hasEnoughDistance}");
+        //Debug.Log($"[Shoot] 단발 모드 진입 → hasEnoughDistance={hasEnoughDistance}");
 
         // linedUp 체크 제거하고, 사거리(장애물)만 확인
         if (hasEnoughDistance)
