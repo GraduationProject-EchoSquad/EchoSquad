@@ -39,13 +39,15 @@ public class WaveManager : Singleton<WaveManager>
     public float countdownInterval = 1f;
 
     private int currentWaveIndex;
-    private const int MaxWaveIndex = 1;
-    private int enemiesRemaining;
+    private int MaxWaveIndex = 1;
+    public int enemiesRemaining;
     private UniTaskCompletionSource<bool> waveCompletionSource;
 
     protected override void Awake()
     {
         base.Awake();
+
+        MaxWaveIndex = waves.Length;
         
         // TextEffect 컴포넌트 가져오기
         if (countdownText != null)
@@ -59,7 +61,7 @@ public class WaveManager : Singleton<WaveManager>
         }
         
         // 몬스터 사망 이벤트 구독
-        PubSubManager.Instance.Subscribe(PubSubEvent.OnEnemyDeath, (data) => OnEnemyDeath());
+        PubSubManager.Instance.Subscribe(PubSubEvent.OnEnemyDeath, OnEnemyDeath);
     }
 
     private void Start()
@@ -76,7 +78,7 @@ public class WaveManager : Singleton<WaveManager>
     private void UpdateUI()
     {
         // 현재 웨이브와 남은 적의 수 표시
-        UIManager.Instance.UpdateWaveText(currentWaveIndex, enemiesRemaining);
+        //UIManager.Instance.UpdateWaveText(currentWaveIndex, enemiesRemaining);
     }
 
     // 게임의 전체 흐름을 관리하는 메인 루프
@@ -97,11 +99,14 @@ public class WaveManager : Singleton<WaveManager>
                 break; // 게임 루프 종료
             }
 
-            // --- 휴식 시간 시작 ---
-            GameManager.Instance.SetGameState(GameManager.GameState.Break);
-            await BreakTime();
-
             currentWaveIndex++;
+            
+            // --- 휴식 시간 시작 ---
+            if (currentWaveIndex < MaxWaveIndex)
+            {
+                GameManager.Instance.SetGameState(GameManager.GameState.Break);
+                await BreakTime();
+            }
         }
 
         // 모든 웨이브를 클리어했거나 게임 오버 상태
@@ -114,22 +119,19 @@ public class WaveManager : Singleton<WaveManager>
     private async UniTask RunWave()
     {
         waveCompletionSource = new UniTaskCompletionSource<bool>();
-        PubSubManager.Instance.Subscribe(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
+        PubSubManager.Instance.Subscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
 
         Wave wave = waves[currentWaveIndex];
-
-        if (wave.isBossWave)
-        {
-            enemiesRemaining = 1;
-        }
-        else
-        {
-            enemiesRemaining = wave.count;
-        }
-
-        UpdateUI();
         
-        PubSubManager.Instance.Publish(PubSubEvent.OnWaveStart);
+        enemiesRemaining = wave.count;
+        UIManager.Instance.UpdateEnemyCountText(enemiesRemaining);
+        
+        //UpdateUI();
+        
+        PubSubManager.Instance.Publish<OnWaveStartData>(PubSubEvent.OnWaveStart, data =>
+        {
+            data.waveIndex = currentWaveIndex + 1;
+        });
 
         // 몬스터 스폰을 백그라운드에서 진행
         if (wave.isBossWave)
@@ -143,7 +145,7 @@ public class WaveManager : Singleton<WaveManager>
         await waveCompletionSource.Task;
 
         // 다음 웨이브를 위해 이벤트 구독 해제
-        PubSubManager.Instance.Unsubscribe(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
+        PubSubManager.Instance.Unsubscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
     }
 
     private async UniTask SpawnEnemiesAsync(Wave wave)
@@ -238,7 +240,7 @@ public class WaveManager : Singleton<WaveManager>
     private void OnEnemyDeath()
     {
         enemiesRemaining = Mathf.Max(0, enemiesRemaining - 1);
-        UpdateUI();
+        UIManager.Instance.UpdateEnemyCountText(enemiesRemaining);
 
         // 남은 몬스터가 없고, 웨이브가 아직 진행 중이라면 웨이브 종료 처리
         if (enemiesRemaining <= 0 && !waveCompletionSource.Task.Status.IsCompleted())
@@ -248,7 +250,7 @@ public class WaveManager : Singleton<WaveManager>
     }
 
     // 웨이브 진행 중 플레이어가 죽었을 때 호출
-    private void HandlePlayerDeathDuringWave(PubSubDataBase data)
+    private void HandlePlayerDeathDuringWave(OnPlayerDeathData data)
     {
         // 웨이브가 아직 진행 중이라면 웨이브 종료 처리
         if (!waveCompletionSource.Task.Status.IsCompleted())
