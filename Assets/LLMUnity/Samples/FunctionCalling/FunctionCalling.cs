@@ -141,7 +141,7 @@ namespace LLMUnitySamples
                    $"**ACTIONS** - Use exactly one: {actions}\n" +
                    "- Move: go, walk, run, advance, retreat, follow, come, travel, proceed\n" +
                    "- Combat: attack, fight, kill, eliminate, engage, destroy, take out, deal with [enemy]\n" +
-                   "- Support: heal, shield, protect, assist, help, cover, aid\n" +
+                   "- Support: heal, help, cover, aid\n" +
                    "- Scout: scout, reconnaissance, patrol, watch, survey, investigate, check out\n" +
                    "- Error: invalid/impossible commands\n\n" +
 
@@ -176,33 +176,69 @@ namespace LLMUnitySamples
                    "- `area`: The area to scout.\n" +
                    "- `scout_from` / `scout_to`: The start and end points for scouting.\n" +
                    "- `mode`: Special action mode. (e.g., Stealth, Quick)\n" +
-                   "- `voice`: **REQUIRED**. A short natural English confirmation phrase. Examples: \"Moving to Kitchen!\", \"Following you!\", \"Attacking zombie!\". MUST be filled.\n\n" +
+                   "- `voice`: **REQUIRED**. You MUST ONLY use pre-generated voice modules listed below. Combine 1-3 modules for natural responses.\n\n" +
 
-                   "### Pattern Examples\n" +
+                   "### Voice Modules (USE ONLY THESE!)\n" +
+                   "**Acknowledgments (choose 0-1 based on personality)**:\n" +
+                   "- Taciturn/Serious: \"Okay\", \"Got it\", \"Roger\", \"Understood\", \"Alright\"\n" +
+                   "- Moderate: \"Understood!\", \"Got it!\", \"Sure thing!\", \"Okay!\", \"Will do!\"\n" +
+                   "- Lively/Cheerful: \"You got it!\", \"Absolutely!\", \"On it!\", \"Sure thing!\", \"Let's do this!\", \"No problem!\"\n\n" +
+
+                   "**Actions (choose 0-1)**:\n" +
+                   "\"moving\", \"attacking\", \"following\", \"covering\", \"helping\", \"scouting\", \"defending\", \"falling back\", \"engaging\"\n\n" +
+
+                   "**Directions (choose 0-1)**:\n" +
+                   "\"left\", \"right\", \"forward\", \"back\", \"center\"\n\n" +
+
+                   $"**Locations/Districts (if moving to specific place)**:\n" +
+                   $"\"{districtsName.Replace(" | ", "\", \"")}\"\n\n" +
+
+                   "**Teammate/Enemy Names (if needed)**:\n" +
+                   "\"Lena\", \"James\", \"Sara\", \"Player\", \"zombie\", \"alien\", \"enemy\"\n\n" +
+
+                   "**Extras (Cheerful personality only, optional)**:\n" +
+                   "\"Let's go\", \"Here I come\", \"Watch this\", \"No worries\", \"I got this\", \"Easy\"\n\n" +
+
+                   "**CRITICAL RULES**:\n" +
+                   "1. ONLY use exact phrases from the lists above\n" +
+                   "2. Combine modules with '+' symbol: \"Got it!+moving+left\"\n" +
+                   "3. Match personality: Taciturn=short (1 module), Cheerful=longer (2-3 modules)\n" +
+                   "4. District/Location names can be used in combinations: \"Sure thing!+moving+Kitchen\"\n" +
+                   "5. Examples:\n" +
+                   "   - Taciturn: \"Roger\" OR \"Got it+moving+left\"\n" +
+                   "   - Cheerful: \"Absolutely!+moving+left\" OR \"Let's do this!+engaging+enemy\"\n" +
+                   "   - To district: \"Sure thing!+moving\" OR \"Got it!+moving+Kitchen\"\n\n" +
+
+                   "### Pattern Examples (WITH VOICE MODULES)\n" +
                    "**Movement Patterns:**\n" +
-                   $"- '{(AIList.Count > 0 ? AIList[0].teammateName : "Lena")} go Kitchen' / 'send {(AIList.Count > 0 ? AIList[0].teammateName : "Lena")} to Kitchen'\n" +
-                   $"  → {{\"command_units\":[\"{(AIList.Count > 0 ? AIList[0].teammateName : "Lena")}\"],\"action\":\"Move\",\"parameters\":{{\"destination\":\"Kitchen\",\"voice\":\"Okay moving to Kitchen!\"}}}}\n" +
-                   $"- 'James follow me' / 'James come with me'\n" +
-                   "  → {\"command_units\":[\"James\"],\"action\":\"Move\",\"parameters\":{\"follow_target\":\"Player\",\"voice\":\"Following you!\"}}\n\n" +
+                   $"- '{(AIList.Count > 0 ? AIList[0].teammateName : "Lena")} go Kitchen' (Cheerful personality)\n" +
+                   $"  → {{\"command_units\":[\"{(AIList.Count > 0 ? AIList[0].teammateName : "Lena")}\"],\"action\":\"Move\",\"parameters\":{{\"destination\":\"Kitchen\",\"voice\":\"Sure thing!+moving\"}}}}\n" +
+                   $"- 'James follow me' (Taciturn personality)\n" +
+                   "  → {\"command_units\":[\"James\"],\"action\":\"Move\",\"parameters\":{\"follow_target\":\"Player\",\"voice\":\"Roger+following\"}}\n" +
+                   $"- 'Sara go left' (Moderate personality)\n" +
+                   "  → {\"command_units\":[\"Sara\"],\"action\":\"Move\",\"parameters\":{\"destination\":\"Left\",\"voice\":\"Got it!+moving+left\"}}\n\n" +
 
                    "**Combat Patterns:**\n" +
-                   "- 'attack the zombie' / 'kill that zombie' / 'take out the zombie'\n" +
-                   "  → {\"command_units\":[context],\"action\":\"Combat\",\"parameters\":{\"engage_enemy\":\"Zombie\",\"voice\":\"Attacking zombie!\"}}\n\n" +
+                   "- 'attack the zombie' (Cheerful)\n" +
+                   "  → {\"command_units\":[context],\"action\":\"Combat\",\"parameters\":{\"engage_enemy\":\"Zombie\",\"voice\":\"Let's do this!+engaging+zombie\"}}\n" +
+                   "- 'kill that alien' (Taciturn)\n" +
+                   "  → {\"command_units\":[context],\"action\":\"Combat\",\"parameters\":{\"engage_enemy\":\"Alien\",\"voice\":\"Roger+attacking+alien\"}}\n\n" +
 
                    "**Support Patterns:**\n" +
-                   "- 'heal Sara' / 'give Sara medical aid'\n" +
-                   "  → {\"command_units\":[context],\"action\":\"Support\",\"parameters\":{\"support_target\":\"Sara\",\"support_type\":\"Heal\",\"voice\":\"Healing Sara!\"}}\n" +
-                   "- 'help me James' → James executes, Player receives\n" +
-                   "  → {\"command_units\":[\"James\"],\"action\":\"Support\",\"parameters\":{\"support_target\":\"Player\",\"voice\":\"On my way!\"}}\n\n" +
+                   "- 'heal Sara' (Moderate)\n" +
+                   "  → {\"command_units\":[context],\"action\":\"Support\",\"parameters\":{\"support_target\":\"Sara\",\"support_type\":\"Heal\",\"voice\":\"Understood!+helping+Sara\"}}\n" +
+                   "- 'help me James' (Cheerful) → James executes, Player receives\n" +
+                   "  → {\"command_units\":[\"James\"],\"action\":\"Support\",\"parameters\":{\"support_target\":\"Player\",\"voice\":\"On it!+Here I come\"}}\n\n" +
 
                    "**Scout Patterns:**\n" +
-                   "- 'scout Kitchen' / 'check out Kitchen'\n" +
-                   "  → {\"command_units\":[context],\"action\":\"Scout\",\"parameters\":{\"area\":\"Kitchen\",\"voice\":\"Scouting Kitchen!\"}}\n\n" +
+                   "- 'scout Kitchen' (Moderate)\n" +
+                   "  → {\"command_units\":[context],\"action\":\"Scout\",\"parameters\":{\"area\":\"Kitchen\",\"voice\":\"Got it!+scouting\"}}\n\n" +
 
                    "**Error Patterns:**\n" +
-                   "- Multi-step: 'go Kitchen and watch' → {\"command_units\":null,\"action\":\"Error\",\"parameters\":{\"voice\":\"Cannot understand command!\"}}\n" +
-                   "- Invalid: 'go to Mars' / 'John move' / 'Lena dance'\n" +
-                   "  → {\"command_units\":null,\"action\":\"Error\",\"parameters\":{\"voice\":\"Invalid command!\"}}\n\n" +
+                   "- Multi-step: 'go Kitchen and watch'\n" +
+                   "  → {\"command_units\":null,\"action\":\"Error\",\"parameters\":{\"voice\":\"I got this\"}}\n" +
+                   "- Invalid: 'go to Mars' / 'John move'\n" +
+                   "  → {\"command_units\":null,\"action\":\"Error\",\"parameters\":{\"voice\":\"Understood\"}}\n\n" +
 
                    "### Command to Process\n" +
                    $"Command: {playerMessage}";

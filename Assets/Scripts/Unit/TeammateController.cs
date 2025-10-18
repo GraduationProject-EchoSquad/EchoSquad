@@ -2,6 +2,7 @@ using GLTFast.Schema;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.AI;
+using Cysharp.Threading.Tasks;
 
 public class TeammateController : UnitController
 {
@@ -13,6 +14,7 @@ public class TeammateController : UnitController
     [SerializeField] private CinemachineFreeLook camera;
 
     private UnitShooter unitShooter;
+    private VoiceSpeaker voiceSpeaker; // 3D 음성 재생 컴포넌트
 
     private float waitBeforeRelease = 3f; // 멈춘 뒤 몇 초 후 target 제거
     private float stopTimer = 0f;
@@ -37,6 +39,13 @@ public class TeammateController : UnitController
         navMeshAgent.acceleration = accel;
         patrolTimer = patrolInterval;
         homePosition = transform.position;
+
+        // VoiceSpeaker 컴포넌트 초기화
+        voiceSpeaker = GetComponent<VoiceSpeaker>();
+        if (voiceSpeaker == null)
+        {
+            voiceSpeaker = gameObject.AddComponent<VoiceSpeaker>();
+        }
     }
 
 
@@ -46,6 +55,12 @@ public class TeammateController : UnitController
         teammateAI.teammateName = engName;
         teammateAI.teammateNameKorean = korName;
         this.voiceProfile = profile;
+
+        // VoiceSpeaker에 VoiceProfile 설정
+        if (voiceSpeaker != null)
+        {
+            voiceSpeaker.SetVoiceProfile(profile);
+        }
     }
 
     void Update()
@@ -340,16 +355,40 @@ public class TeammateController : UnitController
         camera.gameObject.SetActive(setActive);
     }
 
-    public void DoVoice(string voiceText)
+    /// <summary>
+    /// 음성 재생 (VoiceSpeaker 사용 - 3D 공간 오디오)
+    /// </summary>
+    public async void DoVoice(string voiceText)
     {
-        if (voiceProfile == null)
+        if (voiceSpeaker == null)
         {
-            Debug.LogWarning($"VoiceProfile is not set for {teammateAI.teammateName}. Using default voice.");
-            SparkTTSManager.Instance.CreateStyleVoice(voiceText);
+            Debug.LogError($"[TeammateController] {teammateAI.teammateName}의 VoiceSpeaker가 없습니다!");
             return;
         }
 
-        SparkTTSManager.Instance.CreateStyleVoice(voiceText, voiceProfile.gender, voiceProfile.pitch,
-            voiceProfile.speed);
+        if (voiceProfile == null)
+        {
+            Debug.LogWarning($"[TeammateController] {teammateAI.teammateName}의 VoiceProfile이 설정되지 않았습니다.");
+            return;
+        }
+
+        // VoiceSpeaker를 통해 3D 공간 오디오로 재생 (캐시 우선)
+        await voiceSpeaker.SpeakAsync(voiceText);
+    }
+
+    /// <summary>
+    /// VoiceProfile 업데이트 (TeammateVoiceSetupManager에서 호출)
+    /// </summary>
+    public void UpdateVoiceProfile(VoiceProfile newProfile)
+    {
+        voiceProfile = newProfile;
+
+        // VoiceSpeaker에도 업데이트된 프로필 적용
+        if (voiceSpeaker != null)
+        {
+            voiceSpeaker.SetVoiceProfile(newProfile);
+        }
+
+        Debug.Log($"[TeammateController] {teammateAI.teammateName}의 VoiceProfile 업데이트: Gender={newProfile.gender}, Pitch={newProfile.pitch}, Speed={newProfile.speed}");
     }
 }

@@ -82,10 +82,14 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
 
     void Start()
     {
-        // Initialize factory
-        _voiceFactory = new CharacterVoiceFactory(ExecutionProvider.CUDA);
+        // SparkTTS 시스템 초기화 (로그 레벨 및 최적 메모리 사용 모드 설정)
+        // optimalMemoryUsage: true는 iOS에서 필수, Windows에서도 안정성 및 mel spectrogram 차원 문제 해결을 위해 true 설정
+        CharacterVoiceFactory.Initialize(SparkTTS.Utils.LogLevel.WARNING, optimalMemoryUsage: true);
 
-        Debug.Log("CharacterVoiceDemo initialized. Ready to create voices and generate speech.");
+        // Factory 인스턴스 가져오기 (싱글톤, CPU execution provider 사용)
+        _voiceFactory = CharacterVoiceFactory.Instance;
+
+        Debug.Log("[SparkTTSManager] Initialized with optimal memory usage mode (CPU execution provider).");
     }
 
     /// <summary>
@@ -154,9 +158,12 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
                         }
                         else
                         {
-                            Debug.Log("Style voice not in cache or file. Creating...");
-                            _currentVoice = await _voiceFactory.CreateFromStyleAsync(voiceKey.Gender.ToApiString(),
-                                voiceKey.Pitch.ToApiString(), voiceKey.Speed.ToApiString(), text);
+                            Debug.Log($"Style voice not in cache or file. Creating with Gender={voiceKey.Gender.ToApiString()}, Pitch={voiceKey.Pitch.ToApiString()}, Speed={voiceKey.Speed.ToApiString()}");
+                            _currentVoice = await _voiceFactory.CreateFromStyleAsync(
+                                gender: voiceKey.Gender.ToApiString(),
+                                pitch: voiceKey.Pitch.ToApiString(),
+                                speed: voiceKey.Speed.ToApiString(),
+                                referenceText: "Hello, I am a sample voice.");  // referenceText 필수!
                             if (_currentVoice != null)
                             {
                                 Directory.CreateDirectory(folderPath); // 폴더가 없으면 생성
@@ -226,7 +233,7 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
     }
 
     /// <summary>
-    /// Plays the last generated speech.
+    /// Plays the last generated speech (캐시 사용)
     /// </summary>
     private async UniTask GenerateAndPlaySpeechAsync(string text)
     {
@@ -246,6 +253,65 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
         {
             Debug.LogError("Failed to generate speech.");
         }
+    }
+
+    /// <summary>
+    /// 특정 VoiceProfile + Text로 AudioClip 생성/캐시 (재생 안 함)
+    /// </summary>
+    public async UniTask<AudioClip> GenerateClipAsync(string text, VoiceProfile profile)
+    {
+        if (profile == null) return null;
+
+        // 1. 캐시 확인
+        if (VoiceClipCache.Instance != null)
+        {
+            AudioClip cached = await VoiceClipCache.Instance.LoadClip(profile, text);
+            if (cached != null) return cached;
+        }
+
+        // 2. TTS 생성
+        VoiceKey key = new VoiceKey(profile.gender, profile.pitch, profile.speed);
+
+        if (!_styleVoiceCache.TryGetValue(key, out CharacterVoice voice))
+        {
+            // VoiceProfile 먼저 생성
+            string folderName = $"{profile.gender.ToApiString()}_{profile.pitch.ToApiString()}_{profile.speed.ToApiString()}";
+            string folderPath = Path.Combine(Application.persistentDataPath, folderName);
+
+            if (Directory.Exists(folderPath))
+            {
+                voice = await _voiceFactory.CreateFromFolderAsync(folderPath);
+            }
+            else
+            {
+                voice = await _voiceFactory.CreateFromStyleAsync(
+                    gender: profile.gender.ToApiString(),
+                    pitch: profile.pitch.ToApiString(),
+                    speed: profile.speed.ToApiString(),
+                    referenceText: "Hello");
+
+                if (voice != null)
+                {
+                    Directory.CreateDirectory(folderPath);
+                    await voice.SaveVoiceAsync(folderPath);
+                }
+            }
+
+            if (voice != null) _styleVoiceCache[key] = voice;
+        }
+
+        if (voice == null) return null;
+
+        // 3. 음성 생성
+        AudioClip clip = await voice.GenerateSpeechAsync(text);
+
+        // 4. 캐시에 저장
+        if (clip != null && VoiceClipCache.Instance != null)
+        {
+            await VoiceClipCache.Instance.SaveClip(profile, text, clip);
+        }
+
+        return clip;
     }
 
     /// <summary>

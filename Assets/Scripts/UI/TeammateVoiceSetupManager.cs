@@ -1,0 +1,397 @@
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+// 게임 시작 전 동료 음성 설정 UI 관리
+// UIManager의 Canvas 아래에 AllyStatChoiceUI 프리팹을 생성하고 제어
+public class TeammateVoiceSetupManager : Singleton<TeammateVoiceSetupManager>
+{
+    [Header("UI Prefab")]
+    [SerializeField] private GameObject uiPrefab;  // AllyStatChoiceUI 프리팹
+
+    // 런타임에 생성된 UI Controller
+    private AllyStatChoiceUIController uiController;
+
+    // 동료별 선택된 VoiceProfile 저장
+    private Dictionary<string, VoiceProfile> selectedVoiceProfiles = new Dictionary<string, VoiceProfile>();
+
+    // UI 완료 대기용 TaskCompletionSource
+    private UniTaskCompletionSource setupCompletionSource;
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        // 초기 VoiceProfile 생성 (기본값)
+        string[] teammateNames = { "Lena", "James", "Sara" };
+        foreach (string name in teammateNames)
+        {
+            var profile = ScriptableObject.CreateInstance<VoiceProfile>();
+            profile.gender = VoiceGender.Male;  // 기본값
+            profile.pitch = VoiceProperty.Moderate;
+            profile.speed = VoiceProperty.Moderate;
+            selectedVoiceProfiles[name] = profile;
+        }
+    }
+
+    public async UniTask ShowAndWaitForCompletion()
+    {
+        setupCompletionSource = new UniTaskCompletionSource();
+
+        // MapManager의 district 이름들을 VoiceModules에 등록
+        RegisterDistrictNamesForVoice();
+
+        // UI 생성 및 표시
+        CreateUI();
+        ShowUI();
+
+        // 사용자가 확인 버튼을 누를 때까지 대기
+        await setupCompletionSource.Task;
+
+        // UI 숨김 및 파괴
+        HideUI();
+    }
+
+    /// <summary>
+    /// MapManager의 district 이름들을 VoiceModules에 등록
+    /// </summary>
+    private void RegisterDistrictNamesForVoice()
+    {
+        MapManager mapManager = MapManager.Instance;
+        if (mapManager == null || mapManager.districtDict == null)
+        {
+            Debug.LogWarning("[TeammateVoiceSetupManager] MapManager or districtDict is null!");
+            return;
+        }
+
+        List<string> districtNames = new List<string>(mapManager.districtDict.Keys);
+        VoiceModules.RegisterDistrictNames(districtNames);
+    }
+
+    // UI 프리팹을 UIManager의 Canvas 아래에 Instantiate
+    private void CreateUI()
+    {
+        if (uiController != null) return; // 이미 생성됨
+
+        // UIManager로부터 메인 Canvas 가져오기
+        Canvas mainCanvas = UIManager.Instance.GetMainCanvas();
+        if (mainCanvas == null)
+        {
+            Debug.LogError("[TeammateVoiceSetupManager] Cannot find Main Canvas from UIManager!");
+            return;
+        }
+
+        // UI 프리팹을 메인 Canvas의 자식으로 인스턴스화
+        if (uiPrefab != null)
+        {
+            // Instantiate 직후 비활성화 (Shift UI 컴포넌트 초기화 문제 방지)
+            GameObject uiInstance = Instantiate(uiPrefab, mainCanvas.transform);
+            uiInstance.SetActive(false);
+
+            // RectTransform 풀스크린으로 설정
+            RectTransform rectTransform = uiInstance.GetComponent<RectTransform>();
+            if (rectTransform != null)
+            {
+                rectTransform.anchorMin = Vector2.zero;
+                rectTransform.anchorMax = Vector2.one;
+                rectTransform.offsetMin = Vector2.zero;
+                rectTransform.offsetMax = Vector2.zero;
+                Debug.Log("[TeammateVoiceSetupManager] RectTransform set to fullscreen");
+            }
+
+            uiController = uiInstance.GetComponent<AllyStatChoiceUIController>();
+
+            if (uiController != null)
+            {
+                // 확인 버튼 이벤트 연결
+                uiController.OnConfirmClicked = OnConfirmButtonClicked;
+                Debug.Log("[TeammateVoiceSetupManager] UI prefab created under UIManager's Canvas");
+            }
+            else
+            {
+                Debug.LogError("[TeammateVoiceSetupManager] Cannot find AllyStatChoiceUIController component!");
+            }
+        }
+        else
+        {
+            Debug.LogError("[TeammateVoiceSetupManager] UI Prefab is not assigned!");
+        }
+    }
+
+    private void ShowUI()
+    {
+        // HUD Panel 숨김
+        UIManager.Instance.SetHUDActive(false);
+
+        if (uiController != null)
+        {
+            Debug.Log("[TeammateVoiceSetupManager] Activating AllyStatChoiceUI");
+            uiController.gameObject.SetActive(true);
+            uiController.SetProgressText("Select your teammates' personalities");
+        }
+        else
+        {
+            Debug.LogError("[TeammateVoiceSetupManager] uiController is null!");
+        }
+
+        // 커서 표시 (음성 설정을 위해)
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        Debug.Log("[TeammateVoiceSetupManager] AllyStatChoiceUI shown");
+    }
+
+    private void HideUI()
+    {
+        if (uiController != null)
+        {
+            Destroy(uiController.gameObject);
+            uiController = null;
+            Debug.Log("[TeammateVoiceSetupManager] AllyStatChoiceUI destroyed");
+        }
+
+        // HUD Panel 다시 표시
+        UIManager.Instance.SetHUDActive(true);
+
+        // 커서 다시 숨김 (게임플레이를 위해)
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = false;
+    }
+
+    private async void OnConfirmButtonClicked()
+    {
+        // 버튼 비활성화 (중복 클릭 방지)
+        uiController?.SetConfirmButtonInteractable(false);
+
+        // UI Controller에서 모든 설정값 가져오기
+        var settings = uiController?.GetAllSettings();
+        if (settings != null)
+        {
+            foreach (var kvp in settings)
+            {
+                string teammateName = kvp.Key;
+                var (gender, liveliness, mood) = kvp.Value;
+
+                if (selectedVoiceProfiles.ContainsKey(teammateName))
+                {
+                    var profile = selectedVoiceProfiles[teammateName];
+                    profile.gender = gender;
+                    profile.speed = ConvertToVoiceProperty(liveliness);  // 활발함 → Speed
+                    profile.pitch = ConvertToVoiceProperty(mood);        // 분위기 → Pitch
+
+                    Debug.Log($"{teammateName} voice settings: {profile.gender}, Pitch:{profile.pitch}, Speed:{profile.speed}");
+                }
+            }
+        }
+
+        // VoiceProfile을 UnitManager에 적용
+        ApplyVoiceProfilesToTeammates();
+
+        // 백그라운드에서 TTS 파일 생성 시작
+        await PreGenerateVoiceFiles();
+
+        // OnPreparationComplete 이벤트 발행
+        PubSubManager.Instance.Publish(PubSubEvent.OnPreparationComplete);
+
+        // UniTask 완료 처리
+        setupCompletionSource?.TrySetResult();
+
+        Debug.Log("Teammate voice setup completed!");
+    }
+
+    /// <summary>
+    /// 슬라이더 값(0~4)을 VoiceProperty enum으로 변환
+    /// </summary>
+    private VoiceProperty ConvertToVoiceProperty(int sliderValue)
+    {
+        switch (sliderValue)
+        {
+            case 0: return VoiceProperty.VeryLow;
+            case 1: return VoiceProperty.Low;
+            case 2: return VoiceProperty.Moderate;
+            case 3: return VoiceProperty.High;
+            case 4: return VoiceProperty.VeryHigh;
+            default: return VoiceProperty.Moderate;
+        }
+    }
+
+    /// <summary>
+    /// 설정된 VoiceProfile을 동료들에게 적용
+    /// </summary>
+    private void ApplyVoiceProfilesToTeammates()
+    {
+        foreach (var kvp in selectedVoiceProfiles)
+        {
+            string teammateName = kvp.Key;
+            VoiceProfile profile = kvp.Value;
+
+            UnitManager.Instance.ApplyTeammateVoiceProfile(teammateName, profile);
+        }
+    }
+
+    /// <summary>
+    /// 선택된 VoiceProfile로 미리 TTS 파일 생성
+    /// </summary>
+    private async UniTask PreGenerateVoiceFiles()
+    {
+        // Preview 버튼 비활성화 (음성 생성 중 충돌 방지)
+        uiController?.SetPreviewButtonsInteractable(false);
+
+        uiController?.SetProgressText("Preparing voice generation...");
+
+        int totalTeammates = selectedVoiceProfiles.Count;
+        int completed = 0;
+
+        foreach (var kvp in selectedVoiceProfiles)
+        {
+            string teammateName = kvp.Key;
+            VoiceProfile profile = kvp.Value;
+
+            uiController?.SetProgressText($"Generating {teammateName}'s voice... ({completed + 1}/{totalTeammates})");
+
+            // 진행률 콜백 추가
+            var progressCallback = new System.Action<int, int>((current, total) =>
+            {
+                int percentage = (int)((float)current / total * 100);
+                uiController?.SetProgressText($"Generating {teammateName}'s voice... {current}/{total} ({percentage}%)");
+            });
+
+            // VoicePreGenerator를 통해 백그라운드 생성
+            await VoicePreGenerator.Instance.GenerateVoiceForTeammate(teammateName, profile, progressCallback);
+
+            completed++;
+            uiController?.SetProgressText($"{teammateName} completed! ({completed}/{totalTeammates})");
+            await UniTask.Delay(300); // 완료 메시지 잠깐 보여주기
+
+            Debug.Log($"{teammateName} voice file generation completed ({completed}/{totalTeammates})");
+        }
+
+        uiController?.SetProgressText("All voice files generated!");
+
+        // Preview 버튼 다시 활성화 (생성 완료)
+        uiController?.SetPreviewButtonsInteractable(true);
+
+        // 잠깐 대기 (사용자에게 완료 메시지 보여주기)
+        await UniTask.Delay(1000);
+    }
+
+    public VoiceProfile GetTeammateVoiceProfile(string teammateName)
+    {
+        return selectedVoiceProfiles.TryGetValue(teammateName, out var profile) ? profile : null;
+    }
+}
+
+// 개별 동료의 음성 설정 UI 아이템 (Inspector에서 각 동료별로 할당)
+[System.Serializable]
+public class TeammateVoiceItem
+{
+    [Header("Teammate Info")]
+    public string teammateName;              // 동료 이름 (Lena, James, Sara)
+    public VoiceGender gender;               // 고정 Gender (Inspector에서 설정)
+    public TextMeshProUGUI nameText;         // 이름 표시
+
+    [Header("Personality Sliders")]
+    [Tooltip("활발함: 0(과묵함) ~ 4(수다스러움) → Speed")]
+    public Slider livelinessSlider;          // 활발함 슬라이더 (0~4)
+    public TextMeshProUGUI livelinessValueText;  // 활발함 수치 표시
+
+    [Tooltip("분위기: 0(진지함) ~ 4(명랑함) → Pitch")]
+    public Slider moodSlider;                // 분위기 슬라이더 (0~4)
+    public TextMeshProUGUI moodValueText;    // 분위기 수치 표시
+
+    [Header("Preview Button (Optional)")]
+    public Button previewButton;             // 미리듣기 버튼
+
+    public void Initialize()
+    {
+        // 슬라이더 값 변경 시 텍스트 업데이트
+        if (livelinessSlider != null)
+        {
+            livelinessSlider.onValueChanged.AddListener(UpdateLivelinessText);
+            livelinessSlider.minValue = 0;
+            livelinessSlider.maxValue = 4;
+            livelinessSlider.wholeNumbers = true;
+            livelinessSlider.value = 2; // 기본값
+            UpdateLivelinessText(2);
+        }
+
+        if (moodSlider != null)
+        {
+            moodSlider.onValueChanged.AddListener(UpdateMoodText);
+            moodSlider.minValue = 0;
+            moodSlider.maxValue = 4;
+            moodSlider.wholeNumbers = true;
+            moodSlider.value = 2; // 기본값
+            UpdateMoodText(2);
+        }
+
+        // 미리듣기 버튼 이벤트 연결
+        if (previewButton != null)
+        {
+            previewButton.onClick.AddListener(OnPreviewButtonClicked);
+        }
+    }
+
+    // 미리듣기 버튼 클릭 시 "안녕하세요" TTS 재생
+    private void OnPreviewButtonClicked()
+    {
+        VoiceProperty pitch = ConvertSliderToVoiceProperty(GetMoodValue());
+        VoiceProperty speed = ConvertSliderToVoiceProperty(GetLivelinessValue());
+
+        Debug.Log($"[TeammateVoiceItem] Preview voice for {teammateName}: Gender={gender}, Pitch={pitch}, Speed={speed}");
+
+        // SparkTTS로 "안녕하세요" 음성 생성 및 재생
+        SparkTTSManager.Instance.CreateStyleVoice("Hello", gender, pitch, speed);
+    }
+
+    // 슬라이더 값을 VoiceProperty로 변환
+    private VoiceProperty ConvertSliderToVoiceProperty(int value)
+    {
+        switch (value)
+        {
+            case 0: return VoiceProperty.VeryLow;
+            case 1: return VoiceProperty.Low;
+            case 2: return VoiceProperty.Moderate;
+            case 3: return VoiceProperty.High;
+            case 4: return VoiceProperty.VeryHigh;
+            default: return VoiceProperty.Moderate;
+        }
+    }
+
+    private void UpdateLivelinessText(float value)
+    {
+        if (livelinessValueText == null) return;
+
+        string[] labels = { "Taciturn", "Quiet", "Moderate", "Lively", "Talkative" };
+        int index = Mathf.Clamp((int)value, 0, 4);
+        livelinessValueText.text = labels[index];
+    }
+
+    private void UpdateMoodText(float value)
+    {
+        if (moodValueText == null) return;
+
+        string[] labels = { "Serious", "Calm", "Moderate", "Bright", "Cheerful" };
+        int index = Mathf.Clamp((int)value, 0, 4);
+        moodValueText.text = labels[index];
+    }
+
+    public VoiceGender GetSelectedGender()
+    {
+        return gender; // Inspector에서 설정한 고정값 반환
+    }
+
+    public int GetLivelinessValue()
+    {
+        if (livelinessSlider == null) return 2;
+        return Mathf.Clamp((int)livelinessSlider.value, 0, 4);
+    }
+
+    public int GetMoodValue()
+    {
+        if (moodSlider == null) return 2;
+        return Mathf.Clamp((int)moodSlider.value, 0, 4);
+    }
+}

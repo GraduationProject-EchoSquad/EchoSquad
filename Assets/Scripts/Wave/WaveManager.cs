@@ -46,31 +46,18 @@ public class WaveManager : Singleton<WaveManager>
     protected override void Awake()
     {
         base.Awake();
-        
+
         // TextEffect 컴포넌트 가져오기
         if (countdownText != null)
             countdownEffect = countdownText.GetComponent<TextEffect>();
 
-        // Intro_Controller를 찾아서 이벤트에 핸들러 등록
-        Intro_Controller intro = Intro_Controller.Instance;
-        if (intro != null)
-        {
-            intro.OnIntroFinished += HandleIntroFinished;
-        }
-        
         // 몬스터 사망 이벤트 구독
         PubSubManager.Instance.Subscribe(PubSubEvent.OnEnemyDeath, (data) => OnEnemyDeath());
     }
 
     private void Start()
     {
-        
-    }
-    private void HandleIntroFinished()
-    {
-        GameManager.Instance.SetGameState(GameManager.GameState.Wave);
-        // 인트로 끝나면 게임 루프 시작
-        GameLoop().Forget();
+
     }
 
     private void UpdateUI()
@@ -79,11 +66,9 @@ public class WaveManager : Singleton<WaveManager>
         UIManager.Instance.UpdateWaveText(currentWaveIndex, enemiesRemaining);
     }
 
-    // 게임의 전체 흐름을 관리하는 메인 루프
-    private async UniTaskVoid GameLoop()
+    // GameManager에서 호출하는 웨이브 시작 메서드
+    public async UniTask StartWaves()
     {
-        UnitManager.Instance.InitSpawnUnit();
-
         while (currentWaveIndex < MaxWaveIndex)
         {
             // --- 웨이브 시작 ---

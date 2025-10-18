@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 // 점수와 게임 오버 여부, 게임 UI를 관리하는 게임 매니저
+// 게임의 전체 흐름을 총괄
 public class GameManager : Singleton<GameManager>
 {
     public enum GameState
     {
         Start,
+        Preparation,  // 동료 능력치 조절 단계
         Wave,
         Break,
         End,
-    } 
+    }
 
     private int score; // 현재 게임 점수
 
@@ -26,6 +29,41 @@ public class GameManager : Singleton<GameManager>
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
         isTest = false;
+
+        // Intro_Controller의 인트로 완료 이벤트 구독
+        Intro_Controller.Instance.OnIntroFinished += HandleIntroFinished;
+    }
+
+    private void HandleIntroFinished()
+    {
+        Debug.Log("[GameManager] Intro 완료 - 게임 흐름 시작");
+        GameFlowController().Forget();
+    }
+
+    // 게임의 전체 흐름 총괄: Intro → Preparation → Wave → End
+    private async UniTaskVoid GameFlowController()
+    {
+        // 1. Preparation 단계: 동료 음성 설정
+        SetGameState(GameState.Preparation);
+        Debug.Log("[GameManager] Preparation 단계 시작");
+
+        await TeammateVoiceSetupManager.Instance.ShowAndWaitForCompletion();
+
+        Debug.Log("[GameManager] Preparation 단계 완료 - 유닛 스폰");
+        UnitManager.Instance.InitSpawnUnit();
+
+        // 2. Wave 단계: WaveManager에게 웨이브 진행 위임
+        SetGameState(GameState.Wave);
+        Debug.Log("[GameManager] Wave 단계 시작 - WaveManager에 위임");
+
+        await WaveManager.Instance.StartWaves();
+
+        // 3. 모든 웨이브 완료 또는 게임 오버
+        if (CurrentGameState != GameState.End)
+        {
+            Debug.Log("[GameManager] 모든 웨이브 클리어!");
+            EndGame();
+        }
     }
 
     public void SetGameState(GameState NewGameState)

@@ -174,4 +174,19 @@ public class UnitManager : Singleton<UnitManager>
     {
         return playerUnit;
     }
+
+    // 특정 동료에게 VoiceProfile 적용 (TeammateVoiceSetupManager에서 호출)
+    public void ApplyTeammateVoiceProfile(string teammateName, VoiceProfile profile)
+    {
+        if (teammateUnitDict.TryGetValue(teammateName, out TeammateController teammate))
+        {
+            // TeammateController의 VoiceProfile 업데이트
+            teammate.UpdateVoiceProfile(profile);
+            Debug.Log($"[UnitManager] {teammateName}에게 VoiceProfile 적용 완료");
+        }
+        else
+        {
+            Debug.LogWarning($"[UnitManager] {teammateName} 동료를 찾을 수 없습니다.");
+        }
+    }
 }

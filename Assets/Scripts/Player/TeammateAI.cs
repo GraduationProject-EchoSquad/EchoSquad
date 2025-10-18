@@ -1,6 +1,7 @@
 using System;
 using LLMUnitySamples;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 public class TeammateAI : MonoBehaviour
 {
@@ -126,8 +127,42 @@ public class TeammateAI : MonoBehaviour
         // TODO: 탐색 루트로 이동
     }
 
-    void DoVoice(string voiceText)
+    async void DoVoice(string voiceText)
     {
-        unitController.DoVoice(voiceText);
+        // voice 필드가 '+' 구분자로 모듈이 조합되어 있는지 확인
+        if (string.IsNullOrEmpty(voiceText))
+        {
+            Debug.LogWarning($"[{teammateName}] Voice text is null or empty");
+            return;
+        }
+
+        // '+' 기호로 분리 (예: "Roger+moving+left")
+        if (voiceText.Contains("+"))
+        {
+            string[] modules = voiceText.Split('+');
+
+            // 공백 제거
+            for (int i = 0; i < modules.Length; i++)
+            {
+                modules[i] = modules[i].Trim();
+            }
+
+            // VoiceSpeaker의 모듈 조합 재생 사용
+            VoiceSpeaker speaker = unitController.GetComponent<VoiceSpeaker>();
+            if (speaker != null)
+            {
+                await speaker.SpeakModulesAsync(modules);
+                Debug.Log($"[{teammateName}] Voice modules played: {string.Join(" + ", modules)}");
+            }
+            else
+            {
+                Debug.LogWarning($"[{teammateName}] VoiceSpeaker component not found!");
+            }
+        }
+        else
+        {
+            // 단일 모듈 또는 일반 텍스트 (하위 호환성)
+            unitController.DoVoice(voiceText);
+        }
     }
 }

@@ -9,6 +9,7 @@ public enum PubSubEvent
     OnEnemyDeath,
     OnScoreUpdated,
     OnWaveStart,
+    OnPreparationComplete,  // 동료 능력치 설정 완료
 }
 
 public class PubSubDataBase

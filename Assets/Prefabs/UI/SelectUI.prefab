@@ -139,10 +139,20 @@ PrefabInstance:
       propertyPath: m_text
       value: Control with voice
       objectReference: {fileID: 0}
+    - target: {fileID: 114006289933988594, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
+        type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
+      objectReference: {fileID: 0}
     - target: {fileID: 114092187645851752, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: m_text
       value: VOICE ver
+      objectReference: {fileID: 0}
+    - target: {fileID: 114092187645851752, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
+        type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
       objectReference: {fileID: 0}
     - target: {fileID: 114877467147342542, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
@@ -383,10 +393,20 @@ PrefabInstance:
       propertyPath: m_text
       value: Control with UI
       objectReference: {fileID: 0}
+    - target: {fileID: 114006289933988594, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
+        type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
+      objectReference: {fileID: 0}
     - target: {fileID: 114092187645851752, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: m_text
       value: UI ver
+      objectReference: {fileID: 0}
+    - target: {fileID: 114092187645851752, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
+        type: 3}
+      propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
+      value: 1801810542
       objectReference: {fileID: 0}
     - target: {fileID: 224122581392039928, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
