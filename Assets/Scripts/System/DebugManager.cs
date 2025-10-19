@@ -36,10 +36,17 @@ public class DebugManager : Singleton<DebugManager>
 
     public void SkipToNextWave()
     {
-        if (GameManager.Instance.CurrentGameState == GameManager.GameState.Wave)
+        WaveManager.Instance.enemiesRemaining = 0;
+        
+        foreach (var unitController in UnitManager.Instance.GetAliveEnemies(UnitManager.Instance.GetPlayerUnit()))
+        {
+            unitController.HandleDeath();
+        }
+
+        /*if (GameManager.Instance.CurrentGameState == GameManager.GameState.Wave)
         {
             Debug.Log("[Debug] Skipping to the next wave.");
             WaveManager.Instance.ForceEndWave(true);
-        }
+        }*/
     }
 }

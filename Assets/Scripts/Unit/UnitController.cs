@@ -48,7 +48,7 @@ public class UnitController : MonoBehaviour
         unitTeamType = newUnitTeamType;
     }
 
-    protected virtual async UniTaskVoid HandleDeath()
+    public virtual async UniTaskVoid HandleDeath()
     {
         ChangeUnitState(EUnitState.Die);
     }

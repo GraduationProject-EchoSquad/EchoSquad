@@ -38263,6 +38263,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: -17
       objectReference: {fileID: 0}
+    - target: {fileID: 8970737853080788084, guid: d0cad84e4064147469b75ebe8b4556bb,
+        type: 3}
+      propertyPath: m_TextComponent
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -44013,10 +44018,25 @@ MonoBehaviour:
     - {fileID: 1740722884}
     - {fileID: 1667829911}
     - {fileID: 1879873406}
+  - enemyPrefab: {fileID: 1510129015077551741, guid: 32aafcecb007f1f46a227de5e7b0bd14,
+      type: 3}
+    count: 10
+    spawnInterval: 5
+    isBossWave: 1
+    bossPrefab: {fileID: 3354316289118794396, guid: 5701b381e6ba73d4b8f53c6432da5b90,
+      type: 3}
+    spawnPoints:
+    - {fileID: 960073198}
+    - {fileID: 983752670}
+    - {fileID: 234321631}
+    - {fileID: 1740722884}
+    - {fileID: 1667829911}
+    - {fileID: 1879873406}
   timeBetweenWaves: 5
   countdownText: {fileID: 201295192}
   countdownStart: 5
   countdownInterval: 1
+  enemiesRemaining: 0
 --- !u!4 &1847054896
 Transform:
   m_ObjectHideFlags: 0

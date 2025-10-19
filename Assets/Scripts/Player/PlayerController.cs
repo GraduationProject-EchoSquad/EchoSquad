@@ -24,7 +24,7 @@ public class PlayerController : UnitController
         Cursor.visible = false;
     }
 
-    protected override async UniTaskVoid HandleDeath()
+    public override async UniTaskVoid HandleDeath()
     {
         base.HandleDeath();
         playerMovement.enabled = false;

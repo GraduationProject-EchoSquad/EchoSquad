@@ -324,7 +324,7 @@ GameObject:
   - component: {fileID: 790358660814241113}
   - component: {fileID: 790680937358669197}
   m_Layer: 5
-  m_Name: Enemy Wave Text
+  m_Name: Wave Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -346,8 +346,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 20, y: 36.19}
-  m_SizeDelta: {x: 300, y: 300}
+  m_AnchoredPosition: {x: 20, y: 167.23874}
+  m_SizeDelta: {x: 300, y: 37.9025}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &610238170303745593
 CanvasRenderer:
@@ -668,6 +668,7 @@ RectTransform:
   - {fileID: 608922750966669393}
   - {fileID: 608249536664982595}
   - {fileID: 608299275657588033}
+  - {fileID: 7858360875975205106}
   - {fileID: 608293291498659213}
   - {fileID: 824135604488611635}
   - {fileID: 3428559296762329973}
