@@ -47,6 +47,9 @@ public class WaveManager : Singleton<WaveManager>
     {
         base.Awake();
 
+        // Wave 배열 길이로 MaxWaveIndex 초기화
+        MaxWaveIndex = waves.Length;
+
         // TextEffect 컴포넌트 가져오기
         if (countdownText != null)
             countdownEffect = countdownText.GetComponent<TextEffect>();
