@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -18,7 +19,8 @@ public class UnitController : MonoBehaviour
         Idle,
         Scout, // 정찰
         Move, // 정찰
-        Die
+        Die,
+        Combat
     }
 
     /*public enum EUnitType
@@ -35,10 +37,10 @@ public class UnitController : MonoBehaviour
 
     protected virtual void Start()
     {
-        unitState = EUnitState.Idle;
+        ChangeUnitState(EUnitState.Idle);
         animator = GetComponentInChildren<Animator>();
         LivingEntity = GetComponent<LivingEntity>();
-        LivingEntity.OnDeath += HandleDeath;
+        LivingEntity.OnDeath += () => HandleDeath().Forget();
     }
 
     public void Init(EUnitTeamType newUnitTeamType)
@@ -46,7 +48,7 @@ public class UnitController : MonoBehaviour
         unitTeamType = newUnitTeamType;
     }
 
-    protected virtual void HandleDeath()
+    public virtual async UniTaskVoid HandleDeath()
     {
         ChangeUnitState(EUnitState.Die);
     }

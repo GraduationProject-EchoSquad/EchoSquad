@@ -18,7 +18,7 @@ public class UnitShooter : MonoBehaviour
     protected float waitingTimeForReleasingAim = 2.5f;
     protected float lastFireInputTime;
 
-    private UnitController unit;
+    public UnitController unit { get; private set; }
     private UnitController aimTargetUnit;
 
     [Header("Visibility Setting")]
@@ -82,7 +82,7 @@ public class UnitShooter : MonoBehaviour
         //Debug.Log($"[Shoot] 단발 모드 진입 → hasEnoughDistance={hasEnoughDistance}");
 
         // linedUp 체크 제거하고, 사거리(장애물)만 확인
-        if (aimTargetUnit != null && hasEnoughDistance)
+        if (aimTargetUnit != null && hasEnoughDistance && IsVisibleTarget(aimTargetUnit))
         {
             //Debug.Log("[Shoot] hasEnoughDistance == true → gun.Fire 호출");
             bool fired = gun.Fire(aimTargetUnit.transform.position);
@@ -99,6 +99,24 @@ public class UnitShooter : MonoBehaviour
         }
     }
 
+    public bool IsVisibleTarget(UnitController targetController)
+    {
+        Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
+        
+        Vector3 dir = targetController.transform.position - eyePos;
+        float distSqr = dir.sqrMagnitude;
+        if (distSqr > viewDistance * viewDistance) return false;
+        if (Vector3.Angle(transform.forward, dir) > viewAngle * 0.5f) return false;
+
+        if (Physics.Raycast(eyePos, dir.normalized, out var hit, Mathf.Sqrt(distSqr), ~excludeTarget))
+        {
+            var hitCtrl = hit.collider.GetComponentInParent<UnitController>();
+            if (hitCtrl != targetController) return false;
+        }
+
+        return true;
+    }
+
     public void Reload()
     {
         // 재장전 입력 감지시 재장전
@@ -111,7 +129,7 @@ public class UnitShooter : MonoBehaviour
         {
             if (aimTargetUnit.IsDead())
             {
-                aimTargetUnit = null;
+                SetAimTargetUnit(null);
             }
             else
             {
@@ -120,10 +138,10 @@ public class UnitShooter : MonoBehaviour
         }
 
         //aimTargetUnit = UnitManager.Instance.GetNearestEnemyUnit(unit, 10f);
-        aimTargetUnit = UnitManager.Instance
-        .GetVisibleEnemies(unit, viewDistance, viewAngle, eyeHeight, excludeTarget)
+        SetAimTargetUnit(UnitManager.Instance
+        .GetVisibleEnemies(this, viewDistance, viewAngle, eyeHeight, excludeTarget)
         .OrderBy(e => (e.transform.position - transform.position).sqrMagnitude)
-        .FirstOrDefault();
+        .FirstOrDefault());
     }
 
     // 애니메이터의 IK 갱신
@@ -149,5 +167,10 @@ public class UnitShooter : MonoBehaviour
     public UnitController GetAimTargetUnit()
     {
         return aimTargetUnit;
+    }
+    
+    public void SetAimTargetUnit(UnitController targetController)
+    {
+        aimTargetUnit = targetController;
     }
 }

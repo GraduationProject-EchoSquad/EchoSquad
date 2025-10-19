@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 using static Unity.Collections.Unicode;
@@ -28,6 +29,11 @@ public class EnemyController : UnitController
 
     void Update()
     {
+        if (IsDead())
+        {
+            return;
+        }
+        
         UpdateAttackTarget();   // 근처 적 확인
                                 // 공격 대상이 있으면 그걸 추적
 
@@ -113,11 +119,17 @@ public class EnemyController : UnitController
         }
     }
     
-    protected override void HandleDeath()
+    public override async UniTaskVoid HandleDeath()
     {
         base.HandleDeath();
+        agent.enabled = false;
         animator.SetTrigger("Die");
+        PubSubManager.Instance.Publish(PubSubEvent.OnEnemyDeath);
         Debug.Log("Enemy died!");
-        Destroy(gameObject, 2f);
+        //Destroy(gameObject, 2f);
+
+        await UniTask.WaitForSeconds(2f);
+        
+        UnitManager.Instance.DeleteUnit(this);
     }
 }

@@ -12,6 +12,5 @@ public class ChatManager : Singleton<ChatManager>
         GameObject TextClone = Instantiate(TextChat, chatPanel);
 
         TextClone.GetComponent<TextMeshProUGUI>().text = $"<b>{sender}</b>: {message}";
-
     }
 }

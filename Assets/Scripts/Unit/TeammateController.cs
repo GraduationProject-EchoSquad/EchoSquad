@@ -57,8 +57,50 @@ public class TeammateController : UnitController
 
         HandleMovement();
 
+        if (unitState == EUnitState.Scout || unitState == EUnitState.Idle)
+        {
+            // Idle 또는 Scout 중에 타겟을 발견하면 즉시 전투 상태로 전환
+            if (unitShooter.GetAimTargetUnit() != null)
+            {
+                ChangeUnitState(EUnitState.Combat);
+                return;
+            }
+
+            if (unitState == EUnitState.Scout)
+            {
+                SetCamera(false);
+                if (unitShooter.GetAimTargetUnit() != null) // 타겟 발견시 순찰 중단
+                {
+                    if (navMeshAgent.hasPath)
+                    {
+                        navMeshAgent.ResetPath(); // 목적지 초기화
+                        ChangeUnitState(EUnitState.Idle);
+                    }
+
+                    return;
+                }
+
+                if (IsNavArrivedTargetPosition())
+                {
+                    ChangeUnitState(EUnitState.Idle);
+                }
+            }
+
+            else if (unitState == EUnitState.Idle)
+            {
+                SetCamera(false);
+                patrolTimer -= Time.deltaTime;
+
+
+                if (patrolTimer <= 0f)
+                {
+                    PickPatrolPoint();
+                    patrolTimer = patrolInterval;
+                }
+            }
+        }
         //정찰상태
-        if (unitState == EUnitState.Scout)
+        /*if (unitState == EUnitState.Scout)
         {
             SetCamera(false);
             if (unitShooter.GetAimTargetUnit() != null) // 타겟 발견시 순찰 중단
@@ -89,7 +131,7 @@ public class TeammateController : UnitController
                 PickPatrolPoint();
                 patrolTimer = patrolInterval;
             }
-        }
+        }*/
         //LLM 이동 명령 수행하는 상태
         else if (unitState == EUnitState.Move)
         {
@@ -101,6 +143,29 @@ public class TeammateController : UnitController
             {
                 homePosition = transform.position;
                 ChangeUnitState(EUnitState.Idle);
+            }
+        } //전투 상태
+        else if (unitState == EUnitState.Combat)
+        {
+            var target = unitShooter.GetAimTargetUnit();
+            if (target == null || target.IsDead())
+            {
+                // 타겟을 잃으면 Idle 상태로 복귀
+                ChangeUnitState(EUnitState.Idle);
+                return;
+            }
+
+            // 타겟이 시야에 있는지 확인
+            if (unitShooter.IsVisibleTarget(target))
+            {
+                // 시야에 있으면 이동을 멈추고 타겟을 바라봄
+                navMeshAgent.ResetPath();
+                transform.LookAt(target.transform.position);
+            }
+            else
+            {
+                // 시야에 없으면 타겟의 위치로 이동 (추적)
+                navMeshAgent.SetDestination(target.transform.position);
             }
         }
 
@@ -261,6 +326,11 @@ public class TeammateController : UnitController
     public TeammateAI GetTeammateAI()
     {
         return teammateAI;
+    }
+
+    public UnitShooter GetUnitShooter()
+    {
+        return unitShooter;
     }
 
 

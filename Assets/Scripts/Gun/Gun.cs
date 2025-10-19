@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -87,7 +87,7 @@ public class Gun : MonoBehaviour
 
     private void OnDisable()
     {
-        StopAllCoroutines();
+        // UniTask는 GameObject가 비활성화되면 자동으로 취소됨
     }
 
     public static float GetRandomNormalDistribution(float mean, float standard)
@@ -124,10 +124,10 @@ public class Gun : MonoBehaviour
         }
         else
         {
-            if (state != State.Ready)
+            /*if (state != State.Ready)
                 Debug.Log($"[Fire] 발사 불가: state != Ready ({state})");
             else
-                Debug.Log($"[Fire] 발사 불가: 아직 쿨다운 중 (Time.time={Time.time:F3} < {lastFireTime + timeBetFire:F3})");
+                Debug.Log($"[Fire] 발사 불가: 아직 쿨다운 중 (Time.time={Time.time:F3} < {lastFireTime + timeBetFire:F3})");*/
         }
 
         return false;
@@ -180,7 +180,7 @@ public class Gun : MonoBehaviour
         }
 
         // 발사 이펙트 재생 시작
-        StartCoroutine(ShotEffect(hitPosition));
+        ShotEffect(hitPosition).Forget();
 
         // 남은 탄환의 수를 -1
         magAmmo--;
@@ -190,7 +190,7 @@ public class Gun : MonoBehaviour
     }
 
     // 발사 이펙트와 소리를 재생하고 총알 궤적을 그린다
-    private IEnumerator ShotEffect(Vector3 hitPosition)
+    private async UniTaskVoid ShotEffect(Vector3 hitPosition)
     {
         // 총구 화염 효과 재생
         muzzleFlashEffect.Play();
@@ -208,7 +208,7 @@ public class Gun : MonoBehaviour
         bulletLineRenderer.enabled = true;
 
         // 0.03초 동안 잠시 처리를 대기
-        yield return new WaitForSeconds(0.03f);
+        await UniTask.WaitForSeconds(0.03f);
 
         // 라인 렌더러를 비활성화하여 총알 궤적을 지운다
         bulletLineRenderer.enabled = false;
@@ -224,12 +224,12 @@ public class Gun : MonoBehaviour
             return false;
 
         // 재장전 처리 시작
-        StartCoroutine(ReloadRoutine());
+        ReloadRoutine().Forget();
         return true;
     }
 
     // 실제 재장전 처리를 진행
-    private IEnumerator ReloadRoutine()
+    private async UniTaskVoid ReloadRoutine()
     {
         // 현재 상태를 재장전 중 상태로 전환
         state = State.Reloading;
@@ -237,7 +237,7 @@ public class Gun : MonoBehaviour
         gunAudioPlayer.PlayOneShot(reloadClip);
 
         // 재장전 소요 시간 만큼 처리를 쉬기
-        yield return new WaitForSeconds(reloadTime);
+        await UniTask.WaitForSeconds(reloadTime);
 
         // 탄창에 채울 탄약을 계산한다
         var ammoToFill = magCapacity - magAmmo;

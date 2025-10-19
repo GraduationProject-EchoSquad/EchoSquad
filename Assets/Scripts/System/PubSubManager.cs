@@ -17,12 +17,22 @@ public class PubSubDataBase
 
 public class OnPlayerDeathData : PubSubDataBase
 {
-    public int liveCount { get; private set; }
+    public int liveCount;
 }
 
-public class PubSubManager : Singleton<PubSubManager>
+public class OnWaveStartData : PubSubDataBase
 {
-   // 싱글톤 인스턴스
+    public int waveIndex;
+}
+
+public class OnRemainEnemyCountChangeData : PubSubDataBase
+{
+    public int remainEnemyCount;
+}
+
+public class PubSubManager
+{
+    #region Singleton
     private static PubSubManager _instance;
     public static PubSubManager Instance
     {
@@ -35,57 +45,146 @@ public class PubSubManager : Singleton<PubSubManager>
             return _instance;
         }
     }
+    #endregion
 
-    // 이벤트를 저장할 딕셔너리
-    // Key: PubSubEvent enum
-    // Value: 해당 이벤트에 등록된 Action들 (object는 모든 타입의 파라미터를 받기 위함)
-    private Dictionary<PubSubEvent, Action<PubSubDataBase>> _eventDictionary = new Dictionary<PubSubEvent, Action<PubSubDataBase>>();
+    private readonly Dictionary<PubSubEvent, Delegate> _eventDictionary = new Dictionary<PubSubEvent, Delegate>();
+
+    #region Subscribe (구독)
 
     /// <summary>
-    /// 이벤트 구독 (Subscribe)
+    /// 데이터가 있는 이벤트를 구독합니다.
     /// </summary>
+    /// <typeparam name="T">전달받을 데이터의 타입 (PubSubDataBase 상속)</typeparam>
     /// <param name="eventType">구독할 이벤트 타입</param>
-    /// <param name="listener">실행할 메서드</param>
-    public void Subscribe(PubSubEvent eventType, Action<PubSubDataBase> listener)
+    /// <param name="listener">이벤트 발생 시 호출될 메서드</param>
+    public void Subscribe<T>(PubSubEvent eventType, Action<T> listener) where T : PubSubDataBase
     {
-        if (_eventDictionary.ContainsKey(eventType))
+        if (_eventDictionary.TryGetValue(eventType, out var existingDelegate))
         {
-            _eventDictionary[eventType] += listener;
+            // 이미 다른 타입의 리스너가 등록되어 있는지 확인 (선택적이지만 안정성을 높임)
+            if (existingDelegate != null && existingDelegate.GetType() != typeof(Action<T>))
+            {
+                Debug.LogError($"[PubSubManager] 구독 실패: 이벤트 '{eventType}'에 다른 데이터 타입({existingDelegate.GetType().GetGenericArguments()[0].Name})이 이미 등록되어 있습니다.");
+                return;
+            }
+            _eventDictionary[eventType] = Delegate.Combine(existingDelegate, listener);
         }
         else
         {
-            _eventDictionary.Add(eventType, listener);
+            _eventDictionary[eventType] = listener;
         }
     }
 
     /// <summary>
-    /// 이벤트 구독 취소 (Unsubscribe)
+    /// 데이터가 없는 이벤트를 구독합니다.
     /// </summary>
-    /// <param name="eventType">구독 취소할 이벤트 타입</param>
-    /// <param name="listener">제거할 메서드</param>
-    public void Unsubscribe(PubSubEvent eventType, Action<PubSubDataBase> listener)
+    /// <param name="eventType">구독할 이벤트 타입</param>
+    /// <param name="listener">이벤트 발생 시 호출될 메서드</param>
+    public void Subscribe(PubSubEvent eventType, Action listener)
     {
-        if (_instance == null || !_eventDictionary.ContainsKey(eventType)) return;
-
-        _eventDictionary[eventType] -= listener;
-
-        // 더 이상 구독자가 없으면 딕셔너리에서 제거 (메모리 관리)
-        if (_eventDictionary[eventType] == null)
+        if (_eventDictionary.TryGetValue(eventType, out var existingDelegate))
         {
-            _eventDictionary.Remove(eventType);
+            _eventDictionary[eventType] = Delegate.Combine(existingDelegate, listener);
+        }
+        else
+        {
+            _eventDictionary[eventType] = listener;
+        }
+    }
+
+    #endregion
+
+    #region Unsubscribe (구독 취소)
+
+    /// <summary>
+    /// 데이터가 있는 이벤트 구독을 취소합니다.
+    /// </summary>
+    public void Unsubscribe<T>(PubSubEvent eventType, Action<T> listener) where T : PubSubDataBase
+    {
+        if (_eventDictionary.TryGetValue(eventType, out var existingDelegate))
+        {
+            var newDelegate = Delegate.Remove(existingDelegate, listener);
+            if (newDelegate == null)
+            {
+                _eventDictionary.Remove(eventType);
+            }
+            else
+            {
+                _eventDictionary[eventType] = newDelegate;
+            }
         }
     }
 
     /// <summary>
-    /// 이벤트 발행 (Publish)
+    /// 데이터가 없는 이벤트 구독을 취소합니다.
     /// </summary>
-    /// <param name="eventType">발행할 이벤트 타입</param>
-    /// <param name="data">전달할 파라미터</param>
-    public void Publish(PubSubEvent eventType, PubSubDataBase data = null)
+    public void Unsubscribe(PubSubEvent eventType, Action listener)
     {
-        if (_eventDictionary.TryGetValue(eventType, out Action<PubSubDataBase> thisEvent))
+        if (_eventDictionary.TryGetValue(eventType, out var existingDelegate))
         {
-            thisEvent?.Invoke(data);
+            var newDelegate = Delegate.Remove(existingDelegate, listener);
+            if (newDelegate == null)
+            {
+                _eventDictionary.Remove(eventType);
+            }
+            else
+            {
+                _eventDictionary[eventType] = newDelegate;
+            }
         }
     }
+
+    #endregion
+
+    #region Publish (발행)
+    
+    public void Publish<T>(PubSubEvent eventType, Action<T> initializer) where T : PubSubDataBase, new()
+    {
+        // 1. 기본 생성자로 데이터 객체를 생성합니다.
+        var data = new T();
+
+        // 2. initializer 액션을 호출하여 사용자 코드에서 데이터를 설정합니다.
+        initializer?.Invoke(data);
+
+        // 3. 기존 Publish 메서드를 호출하여 최종적으로 이벤트를 발행합니다.
+        Publish(eventType, data);
+    }
+
+    /// <summary>
+    /// 데이터가 있는 이벤트를 발행합니다.
+    /// </summary>
+    public void Publish<T>(PubSubEvent eventType, T data) where T : PubSubDataBase
+    {
+        if (_eventDictionary.TryGetValue(eventType, out var existingDelegate))
+        {
+            // Action<T> 타입의 리스너만 찾아서 호출
+            foreach (var handler in existingDelegate.GetInvocationList())
+            {
+                if (handler is Action<T> action)
+                {
+                    action.Invoke(data);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 데이터가 없는 이벤트를 발행합니다.
+    /// </summary>
+    public void Publish(PubSubEvent eventType)
+    {
+        if (_eventDictionary.TryGetValue(eventType, out var existingDelegate))
+        {
+            // Action 타입의 리스너만 찾아서 호출
+            foreach (var handler in existingDelegate.GetInvocationList())
+            {
+                if (handler is Action action)
+                {
+                    action.Invoke();
+                }
+            }
+        }
+    }
+
+    #endregion
 }
