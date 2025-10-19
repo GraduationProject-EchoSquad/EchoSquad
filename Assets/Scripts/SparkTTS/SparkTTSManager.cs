@@ -82,14 +82,14 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
 
     void Start()
     {
-        // SparkTTS 시스템 초기화 (로그 레벨 및 최적 메모리 사용 모드 설정)
-        // optimalMemoryUsage: true는 iOS에서 필수, Windows에서도 안정성 및 mel spectrogram 차원 문제 해결을 위해 true 설정
-        CharacterVoiceFactory.Initialize(SparkTTS.Utils.LogLevel.WARNING, optimalMemoryUsage: true);
+        // SparkTTS 시스템 초기화 (로그 레벨 및 GPU 사용 모드 설정)
+        // optimalMemoryUsage: false로 설정하여 GPU execution provider 사용
+        CharacterVoiceFactory.Initialize(SparkTTS.Utils.LogLevel.WARNING, optimalMemoryUsage: false);
 
-        // Factory 인스턴스 가져오기 (싱글톤, CPU execution provider 사용)
+        // Factory 인스턴스 가져오기 (싱글톤, GPU execution provider 사용)
         _voiceFactory = CharacterVoiceFactory.Instance;
 
-        Debug.Log("[SparkTTSManager] Initialized with optimal memory usage mode (CPU execution provider).");
+        Debug.Log("[SparkTTSManager] Initialized with GPU execution provider for faster performance.");
     }
 
     /// <summary>
