@@ -119,11 +119,12 @@ public class EnemyController : UnitController
         }
     }
     
-    protected override async UniTaskVoid HandleDeath()
+    public override async UniTaskVoid HandleDeath()
     {
         base.HandleDeath();
         agent.enabled = false;
         animator.SetTrigger("Die");
+        PubSubManager.Instance.Publish(PubSubEvent.OnEnemyDeath);
         Debug.Log("Enemy died!");
         //Destroy(gameObject, 2f);
 

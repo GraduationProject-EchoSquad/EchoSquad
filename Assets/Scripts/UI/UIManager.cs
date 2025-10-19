@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -15,6 +16,7 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private Text scoreText;
     [SerializeField] private Text ammoText;
     [SerializeField] private Text waveText;
+    [SerializeField] private Text enemyText;
 
     private void Awake()
     {
@@ -24,7 +26,13 @@ public class UIManager : Singleton<UIManager>
 
     private void Start()
     {
-        PubSubManager.Instance.Subscribe(PubSubEvent.OnPlayerDeath, UpdateLifeText);
+        PubSubManager.Instance.Subscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath,
+            data => UpdateLifeText(data.liveCount));
+        PubSubManager.Instance.Subscribe<OnWaveStartData>(PubSubEvent.OnWaveStart,
+            data => UpdateWaveText(data.waveIndex));
+        /*PubSubManager.Instance.Subscribe(PubSubEvent.OnEnemyDeath,
+            () => UpdateEnemyCountText(UnitManager.Instance.GetAliveEnemies(UnitManager.Instance.GetPlayerUnit())
+                .Count()));*/
     }
 
     // Shift UI의 UIElementSound가 사용할 전역 "UI Audio" AudioSource 생성
@@ -73,29 +81,27 @@ public class UIManager : Singleton<UIManager>
     {
         scoreText.text = "Score : " + newScore;
     }
-    
-    public void UpdateWaveText(int waves, int count)
+
+    public void UpdateWaveText(int waves)
     {
-        waveText.text = "Wave : " + waves + "\nEnemy Left : " + count;
+        waveText.text = "Wave : " + waves;
     }
 
-    private void UpdateLifeText(PubSubDataBase data)
+    public void UpdateEnemyCountText(int count)
     {
-        if (data is OnPlayerDeathData onPlayerDeathData)
-        {
-            UpdateLifeText(onPlayerDeathData.liveCount);
-        }
+        enemyText.text = "Enemy Left : " + count;
     }
+
     public void UpdateLifeText(int count)
     {
         lifeText.text = "Life : " + count;
     }
-    
+
     public void SetActiveGameoverUI(bool active)
     {
         gameoverUI.SetActive(active);
     }
-    
+
     public void GameRestart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
