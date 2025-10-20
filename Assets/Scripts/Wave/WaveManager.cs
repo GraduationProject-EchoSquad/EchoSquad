@@ -28,19 +28,10 @@ public class WaveManager : Singleton<WaveManager>
     [Header("Time Between Waves (s)")]
     public float timeBetweenWaves = 5f;
 
-    [Header("Countdown Text")]
-    public TextMeshProUGUI countdownText;   // drag in inspector
-    private TextEffect countdownEffect;     // EasyTextEffects component
-
-    [Header("Countdown Start")]
-    public int countdownStart = 5;
-
-    [Header("Countdown Interval (s)")]
-    public float countdownInterval = 1f;
-
     private int currentWaveIndex;
     private int MaxWaveIndex = 1;
     public int enemiesRemaining;
+
     private UniTaskCompletionSource<bool> waveCompletionSource;
 
     protected override void Awake()
@@ -49,10 +40,6 @@ public class WaveManager : Singleton<WaveManager>
 
         // Wave 배열 길이로 MaxWaveIndex 초기화
         MaxWaveIndex = waves.Length;
-
-        // TextEffect 컴포넌트 가져오기
-        if (countdownText != null)
-            countdownEffect = countdownText.GetComponent<TextEffect>();
 
         // 몬스터 사망 이벤트 구독
         PubSubManager.Instance.Subscribe(PubSubEvent.OnEnemyDeath, OnEnemyDeath);
@@ -63,26 +50,23 @@ public class WaveManager : Singleton<WaveManager>
 
     }
 
-    private void UpdateUI()
-    {
-        // 현재 웨이브와 남은 적의 수 표시
-        //UIManager.Instance.UpdateWaveText(currentWaveIndex, enemiesRemaining);
-    }
-
     // GameManager에서 호출하는 웨이브 시작 메서드
-    public async UniTask StartWaves()
+    public async UniTask<bool> StartWaves()
     {
         while (currentWaveIndex < MaxWaveIndex)
         {
             // --- 웨이브 시작 ---
             GameManager.Instance.SetGameState(GameManager.GameState.Wave);
-            await PlayCountdownText();
+            CountdownUI countdownUI = await UIManager.Instance.GetUI<CountdownUI>(UIManager.EUIData.Countdown);
+            countdownUI.gameObject.SetActive(true);
+            await countdownUI.PlayCountdownText(currentWaveIndex);
             await RunWave();
 
             // 플레이어가 모든 생명을 잃었는지 확인 (PlayerController가 EndGame 호출)
             if (GameManager.Instance.CurrentGameState == GameManager.GameState.End)
             {
-                break; // 게임 루프 종료
+                return false;
+                //break; // 게임 루프 종료
             }
 
             currentWaveIndex++;
@@ -95,11 +79,8 @@ public class WaveManager : Singleton<WaveManager>
             }
         }
 
-        // 모든 웨이브를 클리어했거나 게임 오버 상태
-        if (GameManager.Instance.CurrentGameState != GameManager.GameState.End)
-        {
-            GameManager.Instance.EndGame(); // "You Win" 시나리오
-        }
+        //승리
+        return true;
     }
 
     private async UniTask RunWave()
@@ -108,15 +89,11 @@ public class WaveManager : Singleton<WaveManager>
         PubSubManager.Instance.Subscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
 
         Wave wave = waves[currentWaveIndex];
-        
-        enemiesRemaining = wave.count;
-        UIManager.Instance.UpdateEnemyCountText(enemiesRemaining);
-        
-        //UpdateUI();
+        SetEnemiesRemaining(wave.count);
         
         PubSubManager.Instance.Publish<OnWaveStartData>(PubSubEvent.OnWaveStart, data =>
         {
-            data.waveIndex = currentWaveIndex + 1;
+            data.WaveIndex = currentWaveIndex + 1;
         });
 
         // 몬스터 스폰을 백그라운드에서 진행
@@ -153,54 +130,6 @@ public class WaveManager : Singleton<WaveManager>
         Debug.Log("end breakTime!");
     }
 
-    // 숫자 → "Wave {n}" → "Fight!" 순으로 TMP 텍스트 교체
-    private async UniTask PlayCountdownText()
-    {
-        if (countdownText == null)
-        {
-            return;
-        }
-
-        // (1) 5,4,3,2,1 카운트
-        for (int i = countdownStart; i > 0; i--)
-        {
-            // 예: "<link=wave+fadein+movein>5</link>"
-            countdownText.text = $"<link=wave+fadein+movein>{i}</link>";
-            // 태그 해석 갱신
-            if (countdownEffect != null)
-            {
-                countdownEffect.UpdateStyleInfos();
-                countdownEffect.Refresh(); // 필요한 경우 Refresh() 호출
-            }
-            await UniTask.WaitForSeconds(countdownInterval);
-        }
-
-        // (2) "Wave {번호}" 표시 (currentWaveIndex가 0부터 시작하므로 +1)
-        int waveNumber = currentWaveIndex + 1;
-        countdownText.text = $"<link=wave+fadein+movein>Wave {waveNumber}</link>";
-        if (countdownEffect != null)
-        {
-            countdownEffect.UpdateStyleInfos();
-            countdownEffect.Refresh();
-        }
-        await UniTask.WaitForSeconds(countdownInterval);
-
-        // (3) "Fight!" 표시
-        countdownText.text = $"<b><size=250px><link=gradient+wave+rotate+scale>Start!</link></size></b>";
-        if (countdownEffect != null)
-        {
-            countdownEffect.UpdateStyleInfos();
-            countdownEffect.Refresh();
-        }
-        await UniTask.WaitForSeconds(countdownInterval);
-
-        // (4) 텍스트 숨김
-        countdownText.text = string.Empty;
-        if (countdownText.gameObject.activeSelf)
-            countdownText.gameObject.SetActive(false);
-       
-    }
-
     private void SpawnEnemy(Wave wave)
     {
         Transform spawnPoint = wave.spawnPoints[Random.Range(0, wave.spawnPoints.Length)];
@@ -225,14 +154,23 @@ public class WaveManager : Singleton<WaveManager>
     // 몬스터가 죽을 때마다 호출
     private void OnEnemyDeath()
     {
-        enemiesRemaining = Mathf.Max(0, enemiesRemaining - 1);
-        UIManager.Instance.UpdateEnemyCountText(enemiesRemaining);
+        SetEnemiesRemaining(enemiesRemaining - 1);
 
         // 남은 몬스터가 없고, 웨이브가 아직 진행 중이라면 웨이브 종료 처리
         if (enemiesRemaining <= 0 && !waveCompletionSource.Task.Status.IsCompleted())
         {
             waveCompletionSource.TrySetResult(true); // 웨이브 성공으로 종료
         }
+    }
+
+    // 웨이브 진행 중 플레이어가 죽었을 때 호출
+    private void SetEnemiesRemaining(int count)
+    {
+        enemiesRemaining = Mathf.Max(0, count);
+        PubSubManager.Instance.Publish<OnRemainEnemyCountChangeData>(PubSubEvent.OnRemainEnemyCountChange, data =>
+        {
+            data.remainEnemyCount = enemiesRemaining;
+        });
     }
 
     // 웨이브 진행 중 플레이어가 죽었을 때 호출

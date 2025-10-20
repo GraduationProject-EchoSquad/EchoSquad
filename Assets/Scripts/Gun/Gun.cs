@@ -34,7 +34,34 @@ public class Gun : MonoBehaviour
     public float fireDistance = 100f; // 사정거리
 
     public int ammoRemain = 100; // 남은 전체 탄약
+
+    public void SetAmmoRemain(int NewAmmoRemain)
+    {
+        ammoRemain = NewAmmoRemain;
+        if (gunHolder is PlayerShooter)
+        {
+            // UI 매니저의 탄약 텍스트에 탄창의 탄약과 남은 전체 탄약을 표시
+            PubSubManager.Instance.Publish<OnAmmoUpdatedData>(PubSubEvent.OnAmmoUpdated, data =>
+            {
+                data.MagAmmo = magAmmo;
+                data.AmmoRemain = ammoRemain;
+            });
+        }
+    }
     public int magAmmo; // 현재 탄창에 남아있는 탄약
+    public void SetMagAmmo(int NewMagAmmo)
+    {
+        magAmmo = NewMagAmmo;
+        // UI 매니저의 탄약 텍스트에 탄창의 탄약과 남은 전체 탄약을 표시
+        if (gunHolder is PlayerShooter)
+        {
+            PubSubManager.Instance.Publish<OnAmmoUpdatedData>(PubSubEvent.OnAmmoUpdated, data =>
+            {
+                data.MagAmmo = magAmmo;
+                data.AmmoRemain = ammoRemain;
+            });
+        }
+    }
     public int magCapacity = 30; // 탄창 용량
 
     public float timeBetFire = 0.12f; // 총알 발사 간격
@@ -78,7 +105,8 @@ public class Gun : MonoBehaviour
     {
         currentSpread = 0;
         // 현재 탄창을 가득채우기
-        magAmmo = magCapacity;
+        //magAmmo = magCapacity;
+        SetMagAmmo(magCapacity);
         // 총의 현재 상태를 총을 쏠 준비가 된 상태로 변경
         state = State.Ready;
         // 마지막으로 총을 쏜 시점을 초기화
@@ -183,7 +211,8 @@ public class Gun : MonoBehaviour
         ShotEffect(hitPosition).Forget();
 
         // 남은 탄환의 수를 -1
-        magAmmo--;
+        //magAmmo--;
+        SetMagAmmo(magAmmo-1);
         if (magAmmo <= 0)
             // 탄창에 남은 탄약이 없다면, 총의 현재 상태를 Empty으로 갱신
             state = State.Empty;
@@ -247,9 +276,11 @@ public class Gun : MonoBehaviour
         if (ammoRemain < ammoToFill) ammoToFill = ammoRemain;
 
         // 탄창을 채운다
-        magAmmo += ammoToFill;
+        SetMagAmmo(magAmmo + ammoToFill);
+        //magAmmo += ammoToFill;
         // 남은 탄약에서, 탄창에 채운만큼 탄약을 뺸다
-        ammoRemain -= ammoToFill;
+        SetAmmoRemain(ammoRemain - ammoToFill);
+        //ammoRemain -= ammoToFill;
 
         // 총의 현재 상태를 발사 준비된 상태로 변경
         state = State.Ready;

@@ -1,38 +1,91 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {
-    [Header("Canvas")]
-    [SerializeField] private Canvas mainCanvas;          // Main UI Canvas
+    [Header("Canvas")] [SerializeField] private Canvas mainCanvas; // Main UI Canvas
 
-    [Header("HUD Elements")]
-    [SerializeField] private GameObject hudPanel;        // HUD Panel (Panel GameObject under Canvas)
-    [SerializeField] private GameObject gameoverUI;
-    [SerializeField] private Text lifeText;
-    [SerializeField] private Text scoreText;
-    [SerializeField] private Text ammoText;
-    [SerializeField] private Text waveText;
-    [SerializeField] private Text enemyText;
+    public enum EUIData
+    {
+        None,
+
+        
+        //Panel
+        Title,
+        HUD,
+        TeamVoiceSetUp,
+        GameOver,
+
+        //Popup
+
+        //Object
+        Countdown
+    }
+
+    public enum EUIType
+    {
+        None,
+
+        Panel,
+
+        Popup
+    }
+
+    public static Dictionary<EUIData, string> UIMetaData = new Dictionary<EUIData, string>()
+    {
+        { EUIData.Title, "Prefabs/UI/TitleUI.prefab" },
+        { EUIData.HUD, "Prefabs/UI/HUD.prefab" },
+        { EUIData.TeamVoiceSetUp, "Prefabs/UI/AllyStatChoiceUI.prefab" },
+        { EUIData.GameOver, "Prefabs/UI/GameoverUI.prefab" }, // GameOverUI 프리팹 경로 추가
+        
+        { EUIData.Countdown, "Prefabs/UI/CountdownText.prefab" }, // GameOverUI 프리팹 경로 추가
+    };
+
+    public static Dictionary<EUIData, UIBase> UIDict = new Dictionary<EUIData, UIBase>();
+
+    private async UniTask<T> LoadUI<T>(EUIData UIData) where T : UIBase
+    {
+        T step = await ResourceController.Instance.GetAsync<T>(UIMetaData[UIData], mainCanvas.transform);
+        //await UniTask.NextFrame();
+
+        //step.gameObject.SetActive(true);
+
+        return step;
+    }
+    
+    public async UniTask<T> GetUI<T>(EUIData UIData) where T : UIBase
+    {
+        if (UIDict.ContainsKey(UIData) == false)
+        {
+            T loadedUI = await LoadUI<T>(UIData);
+            UIDict.Add(UIData, loadedUI);
+        }
+
+        //UIDict[UIData].gameObject.SetActive(true);
+
+        return (T)UIDict[UIData];
+    }
+
 
     private void Awake()
     {
         // Shift UI를 위한 전역 "UI Audio" AudioSource 생성
         CreateUIAudioIfNeeded();
+        
+        // 게임 시작 시 필요한 UI 미리 로드
+        PreloadGameUI().Forget();
     }
 
-    private void Start()
+    private async UniTaskVoid PreloadGameUI()
     {
-        PubSubManager.Instance.Subscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath,
-            data => UpdateLifeText(data.liveCount));
-        PubSubManager.Instance.Subscribe<OnWaveStartData>(PubSubEvent.OnWaveStart,
-            data => UpdateWaveText(data.waveIndex));
-        /*PubSubManager.Instance.Subscribe(PubSubEvent.OnEnemyDeath,
-            () => UpdateEnemyCountText(UnitManager.Instance.GetAliveEnemies(UnitManager.Instance.GetPlayerUnit())
-                .Count()));*/
+        // GameOverUI를 미리 로드하고 비활성화 상태로 둡니다.
+        (await GetUI<TitleUI>(EUIData.Title)).gameObject.SetActive(true);
+        //await GetUI<GameOverUI>(EUIData.GameOver);
     }
 
     // Shift UI의 UIElementSound가 사용할 전역 "UI Audio" AudioSource 생성
@@ -60,46 +113,6 @@ public class UIManager : Singleton<UIManager>
     public Canvas GetMainCanvas()
     {
         return mainCanvas;
-    }
-
-    // HUD Panel 표시/숨김
-    public void SetHUDActive(bool active)
-    {
-        if (hudPanel != null)
-        {
-            hudPanel.SetActive(active);
-            Debug.Log($"[UIManager] HUD Panel {(active ? "shown" : "hidden")}");
-        }
-    }
-
-    public void UpdateAmmoText(int magAmmo, int remainAmmo)
-    {
-        ammoText.text = magAmmo + "/" + remainAmmo;
-    }
-
-    public void UpdateScoreText(int newScore)
-    {
-        scoreText.text = "Score : " + newScore;
-    }
-
-    public void UpdateWaveText(int waves)
-    {
-        waveText.text = "Wave : " + waves;
-    }
-
-    public void UpdateEnemyCountText(int count)
-    {
-        enemyText.text = "Enemy Left : " + count;
-    }
-
-    public void UpdateLifeText(int count)
-    {
-        lifeText.text = "Life : " + count;
-    }
-
-    public void SetActiveGameoverUI(bool active)
-    {
-        gameoverUI.SetActive(active);
     }
 
     public void GameRestart()

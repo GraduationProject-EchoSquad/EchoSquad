@@ -2,6 +2,7 @@ using System.Linq;
 using LLMUnitySamples;
 using UnityEngine;
 
+#if UNITY_EDITOR
 public class DebugManager : Singleton<DebugManager>
 {
     [SerializeField] private ParsedCommand Command;
@@ -50,3 +51,4 @@ public class DebugManager : Singleton<DebugManager>
         }*/
     }
 }
+#endif

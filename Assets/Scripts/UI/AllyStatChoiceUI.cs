@@ -5,7 +5,7 @@ using TMPro;
 
 // AllyStatChoiceUI 프리팹에 부착되는 UI 컨트롤러
 // TeammateVoiceSetupManager가 이 컨트롤러를 통해 UI 제어
-public class AllyStatChoiceUIController : MonoBehaviour
+public class AllyStatChoiceUI : UIBase
 {
     [Header("UI Elements")]
     public TextMeshProUGUI progressText;

@@ -2,7 +2,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class Intro_Controller : Singleton<Intro_Controller>
+public class IntroController : Singleton<IntroController>
 {
     // 인트로가 끝났을 때 호출할 이벤트
     public event Action OnIntroFinished;
@@ -28,6 +28,7 @@ public class Intro_Controller : Singleton<Intro_Controller>
 
     private void Start()
     {
+        OnIntroFinished += GameManager.Instance.HandleIntroFinished;
         if (doIntro == false)
         {
             OnIntroFinished?.Invoke();

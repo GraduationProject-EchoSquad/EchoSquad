@@ -20,8 +20,9 @@ public class PlayerController : UnitController
         playerAudioPlayer = GetComponent<AudioSource>();
         playerHealth = LivingEntity as PlayerHealth;
 
-        UIManager.Instance.UpdateLifeText(lifeRemains);
         Cursor.visible = false;
+        
+        SetLifeRemains(3);
     }
 
     public override async UniTaskVoid HandleDeath()
@@ -32,19 +33,26 @@ public class PlayerController : UnitController
 
         if (lifeRemains > 0)
         {
-            lifeRemains--;
+            SetLifeRemains(lifeRemains - 1);
 
-            PubSubManager.Instance.Publish(PubSubEvent.OnPlayerDeath);
+
             //UIManager.Instance.UpdateLifeText(lifeRemains);
             await UniTask.WaitForSeconds(3f);
             Respawn();
         }
         else
         {
-            GameManager.Instance.EndGame();
+            GameManager.Instance.EndGame(false);
         }
 
         Cursor.visible = true;
+    }
+
+    public void SetLifeRemains(int NewLifeRemains)
+    {
+        lifeRemains = NewLifeRemains;
+        PubSubManager.Instance.Publish<OnLifeChangedData>(PubSubEvent.OnLifeChanged,
+            data => data.LiveCount = lifeRemains);
     }
 
     public void Respawn()
@@ -56,7 +64,7 @@ public class PlayerController : UnitController
         playerMovement.enabled = true;
         playerShooter.enabled = true;
 
-        playerShooter.gun.ammoRemain = 120;
+        playerShooter.gun.SetAmmoRemain(120);
 
         Cursor.visible = false;
     }
@@ -80,7 +88,7 @@ public class PlayerController : UnitController
 
     public void ForceDeadImmediately()
     {
-        lifeRemains = 0;
+        SetLifeRemains(0);
         LivingEntity.Die();
     }
 #endif

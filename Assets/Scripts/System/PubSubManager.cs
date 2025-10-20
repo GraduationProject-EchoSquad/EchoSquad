@@ -5,11 +5,16 @@ using UnityEngine;
 public enum PubSubEvent
 {
     OnPlayerDeath,
+    OnLifeChanged,
     OnEnemySpawn,
     OnEnemyDeath,
     OnScoreUpdated,
     OnWaveStart,
+    OnRemainEnemyCountChange,
     OnPreparationComplete,  // 동료 능력치 설정 완료
+    OnAmmoUpdated,
+    
+    OnGameEnd
 }
 
 public class PubSubDataBase
@@ -18,17 +23,38 @@ public class PubSubDataBase
 
 public class OnPlayerDeathData : PubSubDataBase
 {
-    public int liveCount;
+    
+}
+
+public class OnLifeChangedData : PubSubDataBase
+{
+    public int LiveCount;
 }
 
 public class OnWaveStartData : PubSubDataBase
 {
-    public int waveIndex;
+    public int WaveIndex;
+}
+
+public class OnScoreUpdatedData : PubSubDataBase
+{
+    public int Score;
+}
+
+public class OnAmmoUpdatedData : PubSubDataBase
+{
+    public int MagAmmo;
+    public int AmmoRemain;
 }
 
 public class OnRemainEnemyCountChangeData : PubSubDataBase
 {
     public int remainEnemyCount;
+}
+
+public class OnGameEndData : PubSubDataBase
+{
+    public bool IsWin;
 }
 
 public class PubSubManager

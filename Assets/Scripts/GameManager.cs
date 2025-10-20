@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Cysharp.Threading.Tasks;
 
 // 점수와 게임 오버 여부, 게임 UI를 관리하는 게임 매니저
@@ -29,12 +30,9 @@ public class GameManager : Singleton<GameManager>
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
         isTest = false;
-
-        // Intro_Controller의 인트로 완료 이벤트 구독
-        Intro_Controller.Instance.OnIntroFinished += HandleIntroFinished;
     }
 
-    private void HandleIntroFinished()
+    public void HandleIntroFinished()
     {
         Debug.Log("[GameManager] Intro 완료 - 게임 흐름 시작");
         GameFlowController().Forget();
@@ -47,7 +45,12 @@ public class GameManager : Singleton<GameManager>
         SetGameState(GameState.Preparation);
         Debug.Log("[GameManager] Preparation 단계 시작");
 
-        await TeammateVoiceSetupManager.Instance.ShowAndWaitForCompletion();
+        //TODO 임시 주석처리
+        //await TeammateVoiceSetupManager.Instance.ShowAndWaitForCompletion();
+        
+        // HUD Panel 숨김
+        HUDUI hudUI = await UIManager.Instance.GetUI<HUDUI>(UIManager.EUIData.HUD);
+        hudUI.gameObject.SetActive(true);
 
         Debug.Log("[GameManager] Preparation 단계 완료 - 유닛 스폰");
         UnitManager.Instance.InitSpawnUnit();
@@ -56,13 +59,13 @@ public class GameManager : Singleton<GameManager>
         SetGameState(GameState.Wave);
         Debug.Log("[GameManager] Wave 단계 시작 - WaveManager에 위임");
 
-        await WaveManager.Instance.StartWaves();
+        bool isWin = await WaveManager.Instance.StartWaves();
 
         // 3. 모든 웨이브 완료 또는 게임 오버
         if (CurrentGameState != GameState.End)
         {
             Debug.Log("[GameManager] 모든 웨이브 클리어!");
-            EndGame();
+            EndGame(isWin);
         }
     }
 
@@ -88,17 +91,18 @@ public class GameManager : Singleton<GameManager>
             // 점수 추가
             score += newScore;
             // 점수 UI 텍스트 갱신
-            UIManager.Instance.UpdateScoreText(score);
+            PubSubManager.Instance.Publish<OnScoreUpdatedData>(PubSubEvent.OnScoreUpdated, data => data.Score = score);
+            //UIManager.Instance.UpdateScoreText(score);
         }
     }
 
     // 게임 오버 처리
-    public void EndGame()
+    public void EndGame(bool isWin)
     {
         // 게임 오버 상태를 참으로 변경
         SetGameState(GameState.End);
-        // 게임 오버 UI를 활성화
-        UIManager.Instance.SetActiveGameoverUI(true);
+        
+        PubSubManager.Instance.Publish<OnGameEndData>(PubSubEvent.OnGameEnd, data => data.IsWin = isWin);
     }
 
     public bool IsGameControllable()
