@@ -95,7 +95,9 @@ Once all prerequisites are installed and all models are downloaded and placed in
 
 
 ## Trailer
-[게임의 실제 플레이 모습을 담은 영상을 보여줍니다.]
+Click on the image below to watch the game trailer.
+
+[![Echo Squad Trailer](https://img.youtube.com/vi/WveVS0yvggg/hqdefault.jpg)](https://www.youtube.com/watch?v=WveVS0yvggg)
 
 
 ## System Overview
@@ -103,7 +105,16 @@ Once all prerequisites are installed and all models are downloaded and placed in
 
 
 ## Reference
-[개발에 사용된 외부 라이브러리나 참고 자료의 출처를 밝힙니다.]
+This project was developed using several key open-source libraries. We extend our gratitude to the original authors for their contributions to the community.
+
+* **LLM (Llama):** [LLMUnity](https://github.com/undreamai/LLMUnity)
+    * An integration of Large Language Models in Unity, used for AI companion dialogue.
+* **STT (OpenAI Whisper):** [whisper.unity](https://github.com/Macoron/whisper.unity)
+    * A Unity wrapper for `whisper.cpp` used to implement the real-time voice command (STT) functionality.
+* **TTS (Spark TTS):** [Spark-TTS-Unity](https://github.com/arghyasur1991/Spark-TTS-Unity)
+    * A high-performance Text-to-Speech library for Unity, providing the AI companion's voice.
+* **Asynchronous Programming:** [UniTask](https://github.com/Cysharp/UniTask)
+    * An efficient, allocation-free async/await integration for Unity, used to manage various asynchronous operations.
 
 
 ## License
@@ -113,7 +124,7 @@ Once all prerequisites are installed and all models are downloaded and placed in
 ## Team
 
 | Name | Role | GitHub |
-|------|------|--------|
-| 이지민 | 개발 | [@github_id](https://github.com/github_id) |
-| 이진환 | 개발 | [@github_id](https://github.com/github_id) |
-| 김현정 | 개발 | [@github_id](https://github.com/github_id) |
+|------|------|:---|
+| Jimin Lee | Development | [@ljm008jjang](https://github.com/ljm008jjang) |
+| Jinhwan Lee | Development | [@Growcompany](https://github.com/Growcompany) |
+| Hyeonjeong Kim | Development | [@KHyeonxJ](https://github.com/KHyeonxJ) |
