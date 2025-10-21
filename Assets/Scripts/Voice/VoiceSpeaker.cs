@@ -14,7 +14,8 @@ public class VoiceSpeaker : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         audioSource.playOnAwake = false;
-        audioSource.spatialBlend = 1f; // 3D 사운드
+        audioSource.spatialBlend = 0f; // 2D 사운드 (거리 무관, 동일 볼륨)
+        audioSource.volume = 1f; // 최대 볼륨
     }
 
     /// <summary>

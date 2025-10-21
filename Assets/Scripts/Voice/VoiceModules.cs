@@ -26,18 +26,22 @@ public static class VoiceModules
         { "L_C", new[] { "You got it!", "Absolutely!", "On it!", "Sure thing!", "Let's do this!", "No problem!" } }
     };
 
-    // === 행동 동사 ===
+    // === 행동 동사 (AIActionEnum 기반) ===
     public static readonly Dictionary<string, string> Actions = new()
     {
+        // Move 관련
         { "Moving", "moving" },
-        { "Attacking", "attacking" },
         { "Following", "following" },
+
+        // Combat 관련
+        { "Attacking", "attacking" },
+        { "Engaging", "engaging" },
+        { "Fighting", "fighting" },
+
+        // Support 관련
         { "Covering", "covering" },
         { "Helping", "helping" },
-        { "Scouting", "scouting" },
-        { "Defending", "defending" },
-        { "Retreating", "falling back" },
-        { "Engaging", "engaging" }
+        { "Supporting", "supporting" }
     };
 
     // === 방향/위치 ===
@@ -53,8 +57,8 @@ public static class VoiceModules
     // === 대상 (동료 이름들) ===
     public static readonly string[] TeammateNames = new[] { "Lena", "James", "Sara", "Player" };
 
-    // === 적 이름 ===
-    public static readonly string[] EnemyNames = new[] { "zombie", "zombies", "alien", "aliens", "enemy", "enemies" };
+    // === 적 이름 (실제 게임에서 사용) ===
+    public static readonly string[] EnemyNames = new[] { "Boss", "boss", "Zombie", "zombie", "zombies", "enemy", "enemies" };
 
     // === 추가 수식어 (Talkative+Cheerful 전용) ===
     public static readonly string[] Extras = new[]
@@ -65,6 +69,14 @@ public static class VoiceModules
         "No worries",
         "I got this",
         "Easy"
+    };
+
+    // === 연결어 (자연스러운 문장 조합용) ===
+    public static readonly string[] Connectors = new[]
+    {
+        "to",      // "moving to Kitchen"
+        "you",     // "following you"
+        "the"      // "attacking the boss"
     };
 
     // === District 이름들 (MapManager에서 동적으로 추가) ===
@@ -143,10 +155,42 @@ public static class VoiceModules
         // 추가 수식어
         modules.AddRange(Extras);
 
+        // 연결어
+        modules.AddRange(Connectors);
+
         // District 이름들 (MapManager에서 등록된 것)
         modules.AddRange(districtNames);
 
         // 중복 제거
         return new List<string>(new HashSet<string>(modules));
+    }
+
+    /// <summary>
+    /// LLM 프롬프트용 Voice Modules 설명 생성 (Acknowledgments만)
+    /// </summary>
+    public static string GetVoiceModulesPrompt()
+    {
+        string prompt = "### Voice Modules (USE ONLY THESE!)\n" +
+                       "**Acknowledgments (choose 0-1 based on personality)**:\n";
+
+        // Taciturn/Serious
+        if (Acknowledgments.TryGetValue("T_S", out var ts))
+        {
+            prompt += $"- Taciturn/Serious: {string.Join(", ", System.Array.ConvertAll(ts, s => $"\"{s}\""))}\n";
+        }
+
+        // Moderate
+        if (Acknowledgments.TryGetValue("M", out var m))
+        {
+            prompt += $"- Moderate: {string.Join(", ", System.Array.ConvertAll(m, s => $"\"{s}\""))}\n";
+        }
+
+        // Lively/Cheerful
+        if (Acknowledgments.TryGetValue("L_C", out var lc))
+        {
+            prompt += $"- Lively/Cheerful: {string.Join(", ", System.Array.ConvertAll(lc, s => $"\"{s}\""))}\n";
+        }
+
+        return prompt;
     }
 }

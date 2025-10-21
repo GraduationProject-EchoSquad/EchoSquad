@@ -366,8 +366,24 @@ public class TeammateController : UnitController
             return;
         }
 
-        // VoiceSpeaker를 통해 3D 공간 오디오로 재생 (캐시 우선)
-        await voiceSpeaker.SpeakAsync(voiceText);
+        // '+' 기호로 모듈이 조합되어 있는지 확인
+        if (voiceText.Contains("+"))
+        {
+            // 모듈 조합 재생 (예: "Sure thing!+moving")
+            string[] modules = voiceText.Split('+');
+            for (int i = 0; i < modules.Length; i++)
+            {
+                modules[i] = modules[i].Trim();
+            }
+
+            // VoiceSpeaker의 모듈 조합 재생 사용
+            await voiceSpeaker.SpeakModulesAsync(modules);
+        }
+        else
+        {
+            // 단일 텍스트 재생
+            await voiceSpeaker.SpeakAsync(voiceText);
+        }
     }
 
     /// <summary>
@@ -377,11 +393,18 @@ public class TeammateController : UnitController
     {
         voiceProfile = newProfile;
 
-        // VoiceSpeaker에도 업데이트된 프로필 적용
-        if (voiceSpeaker != null)
+        // VoiceSpeaker가 아직 생성 안 되었으면 생성 (Start() 이전에 호출될 수 있음)
+        if (voiceSpeaker == null)
         {
-            voiceSpeaker.SetVoiceProfile(newProfile);
+            voiceSpeaker = GetComponent<VoiceSpeaker>();
+            if (voiceSpeaker == null)
+            {
+                voiceSpeaker = gameObject.AddComponent<VoiceSpeaker>();
+            }
         }
+
+        // VoiceSpeaker에 프로필 적용
+        voiceSpeaker.SetVoiceProfile(newProfile);
 
         Debug.Log($"[TeammateController] {teammateAI.teammateName}의 VoiceProfile 업데이트: Gender={newProfile.gender}, Pitch={newProfile.pitch}, Speed={newProfile.speed}");
     }

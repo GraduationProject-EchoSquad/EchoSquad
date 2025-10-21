@@ -20,17 +20,33 @@ public class TeammateVoiceSetupManager : Singleton<TeammateVoiceSetupManager>
     protected override void Awake()
     {
         base.Awake();
+    }
 
-        // 초기 VoiceProfile 생성 (기본값)
-        string[] teammateNames = { "Lena", "James", "Sara" };
-        foreach (string name in teammateNames)
+    /// <summary>
+    /// UI가 생성된 후 동료 이름 기반으로 VoiceProfile 초기화 (기본값)
+    /// 실제 슬라이더 값은 OnConfirmButtonClicked()에서 적용됨
+    /// </summary>
+    private void InitializeVoiceProfiles()
+    {
+        if (ui == null) return;
+
+        var settings = ui.GetAllSettings();
+        foreach (var kvp in settings)
         {
-            var profile = ScriptableObject.CreateInstance<VoiceProfile>();
-            profile.gender = VoiceGender.Male; // 기본값
-            profile.pitch = VoiceProperty.Moderate;
-            profile.speed = VoiceProperty.Moderate;
-            selectedVoiceProfiles[name] = profile;
+            string teammateName = kvp.Key;
+
+            if (!selectedVoiceProfiles.ContainsKey(teammateName))
+            {
+                // 기본값으로 VoiceProfile 생성 (나중에 슬라이더 값으로 덮어씀)
+                var profile = ScriptableObject.CreateInstance<VoiceProfile>();
+                profile.gender = VoiceGender.Male;
+                profile.pitch = VoiceProperty.Moderate;
+                profile.speed = VoiceProperty.Moderate;
+                selectedVoiceProfiles[teammateName] = profile;
+            }
         }
+
+        Debug.Log($"[TeammateVoiceSetupManager] Initialized {selectedVoiceProfiles.Count} VoiceProfiles with default values");
     }
 
     public async UniTask ShowAndWaitForCompletion()
@@ -40,8 +56,8 @@ public class TeammateVoiceSetupManager : Singleton<TeammateVoiceSetupManager>
         // MapManager의 district 이름들을 VoiceModules에 등록
         RegisterDistrictNamesForVoice();
 
-        // UI 생성 및 표시
-        CreateUI();
+        // UI 생성 및 표시 (CreateUI 완료 대기)
+        await CreateUI();
         ShowUI();
 
         // 사용자가 확인 버튼을 누를 때까지 대기
@@ -68,7 +84,7 @@ public class TeammateVoiceSetupManager : Singleton<TeammateVoiceSetupManager>
     }
 
     // UI 프리팹을 UIManager의 Canvas 아래에 Instantiate
-    private async UniTaskVoid CreateUI()
+    private async UniTask CreateUI()
     {
         if (ui != null) return; // 이미 생성됨
 
@@ -111,13 +127,14 @@ public class TeammateVoiceSetupManager : Singleton<TeammateVoiceSetupManager>
 
     private async UniTaskVoid ShowUI()
     {
-
-
         if (ui != null)
         {
             Debug.Log("[TeammateVoiceSetupManager] Activating AllyStatChoiceUI");
             ui.gameObject.SetActive(true);
             ui.SetProgressText("Select your teammates' personalities");
+
+            // UI가 생성되었으므로 동료 이름 기반으로 VoiceProfile 초기화
+            InitializeVoiceProfiles();
         }
         else
         {
@@ -172,9 +189,6 @@ public class TeammateVoiceSetupManager : Singleton<TeammateVoiceSetupManager>
             }
         }
 
-        // VoiceProfile을 UnitManager에 적용
-        ApplyVoiceProfilesToTeammates();
-
         // 백그라운드에서 TTS 파일 생성 시작
         await PreGenerateVoiceFiles();
 
@@ -206,13 +220,16 @@ public class TeammateVoiceSetupManager : Singleton<TeammateVoiceSetupManager>
     /// <summary>
     /// 설정된 VoiceProfile을 동료들에게 적용
     /// </summary>
-    private void ApplyVoiceProfilesToTeammates()
+    public void ApplyVoiceProfilesToTeammates()
     {
+        Debug.Log($"[TeammateVoiceSetupManager] ApplyVoiceProfilesToTeammates called. Profiles count: {selectedVoiceProfiles.Count}");
+
         foreach (var kvp in selectedVoiceProfiles)
         {
             string teammateName = kvp.Key;
             VoiceProfile profile = kvp.Value;
 
+            Debug.Log($"[TeammateVoiceSetupManager] Applying profile to {teammateName}: Gender={profile.gender}, Pitch={profile.pitch}, Speed={profile.speed}");
             UnitManager.Instance.ApplyTeammateVoiceProfile(teammateName, profile);
         }
     }

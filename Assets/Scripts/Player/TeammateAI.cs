@@ -20,10 +20,10 @@ public class TeammateAI : MonoBehaviour
             Combat(param);
         else if (action == AIActionEnum.Support)
             Support(param);
-        else if (action == AIActionEnum.Scout)
-            Scout(param);
 
-        DoVoice(param.voice);
+        // Voice를 자연스럽게 조합
+        string naturalVoice = BuildNaturalVoice(action, param);
+        DoVoice(naturalVoice);
     }
 
     void Move(Parameters param)
@@ -127,6 +127,93 @@ public class TeammateAI : MonoBehaviour
         // TODO: 탐색 루트로 이동
     }
 
+    /// <summary>
+    /// LLM의 voice 모듈과 parameters를 조합해서 자연스러운 음성 생성
+    /// </summary>
+    string BuildNaturalVoice(AIActionEnum action, Parameters param)
+    {
+        if (string.IsNullOrEmpty(param.voice))
+        {
+            return "Okay"; // 기본값
+        }
+
+        string voice = param.voice;
+
+        // Action별로 자연스러운 문장 추가
+        switch (action)
+        {
+            case AIActionEnum.Move:
+                // follow_target이 있으면 "following [target]" 추가
+                if (!string.IsNullOrEmpty(param.follow_target) && param.follow_target != "null")
+                {
+                    string target = param.follow_target.Equals("Player", StringComparison.OrdinalIgnoreCase)
+                        ? "you"
+                        : param.follow_target;
+
+                    // "Roger+following" → "Roger+following+you"
+                    if (!voice.Contains(target, StringComparison.OrdinalIgnoreCase))
+                    {
+                        voice += $"+{target}";
+                    }
+                }
+                // destination이 있으면 "to [destination]" 추가
+                else if (!string.IsNullOrEmpty(param.destination) && param.destination != "null")
+                {
+                    string dest = param.destination;
+
+                    // 방향인 경우 (Left, Right, Forward, Back) - 이미 voice에 포함되어 있을 수 있음
+                    if (dest.Equals("Left", StringComparison.OrdinalIgnoreCase) ||
+                        dest.Equals("Right", StringComparison.OrdinalIgnoreCase) ||
+                        dest.Equals("Forward", StringComparison.OrdinalIgnoreCase) ||
+                        dest.Equals("Back", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // 방향은 이미 voice에 있으면 추가 안 함
+                        if (!voice.Contains(dest, StringComparison.OrdinalIgnoreCase))
+                        {
+                            voice += $"+{dest.ToLower()}";
+                        }
+                    }
+                    else
+                    {
+                        // District나 다른 장소면 "to [place]" 추가
+                        voice += $"+to+{dest}";
+                    }
+                }
+                break;
+
+            case AIActionEnum.Combat:
+                // engage_enemy가 있으면 enemy 이름 추가
+                if (!string.IsNullOrEmpty(param.engage_enemy) && param.engage_enemy != "null")
+                {
+                    string enemy = param.engage_enemy.ToLower();
+
+                    // "Let's do this!+engaging" → "Let's do this!+engaging+zombie"
+                    if (!voice.Contains(enemy, StringComparison.OrdinalIgnoreCase))
+                    {
+                        voice += $"+{enemy}";
+                    }
+                }
+                break;
+
+            case AIActionEnum.Support:
+                // support_target이 있으면 대상 추가
+                if (!string.IsNullOrEmpty(param.support_target) && param.support_target != "null")
+                {
+                    string target = param.support_target.Equals("Player", StringComparison.OrdinalIgnoreCase)
+                        ? "you"
+                        : param.support_target;
+
+                    if (!voice.Contains(target, StringComparison.OrdinalIgnoreCase))
+                    {
+                        voice += $"+{target}";
+                    }
+                }
+                break;
+        }
+
+        return voice;
+    }
+
     async void DoVoice(string voiceText)
     {
         // voice 필드가 '+' 구분자로 모듈이 조합되어 있는지 확인
@@ -136,33 +223,7 @@ public class TeammateAI : MonoBehaviour
             return;
         }
 
-        // '+' 기호로 분리 (예: "Roger+moving+left")
-        if (voiceText.Contains("+"))
-        {
-            string[] modules = voiceText.Split('+');
-
-            // 공백 제거
-            for (int i = 0; i < modules.Length; i++)
-            {
-                modules[i] = modules[i].Trim();
-            }
-
-            // VoiceSpeaker의 모듈 조합 재생 사용
-            VoiceSpeaker speaker = unitController.GetComponent<VoiceSpeaker>();
-            if (speaker != null)
-            {
-                await speaker.SpeakModulesAsync(modules);
-                Debug.Log($"[{teammateName}] Voice modules played: {string.Join(" + ", modules)}");
-            }
-            else
-            {
-                Debug.LogWarning($"[{teammateName}] VoiceSpeaker component not found!");
-            }
-        }
-        else
-        {
-            // 단일 모듈 또는 일반 텍스트 (하위 호환성)
-            unitController.DoVoice(voiceText);
-        }
+        // TeammateController의 DoVoice() 사용 (VoiceProfile이 설정되어 있음)
+        unitController.DoVoice(voiceText);
     }
 }
