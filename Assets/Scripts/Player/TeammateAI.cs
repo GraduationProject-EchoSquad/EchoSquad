@@ -23,6 +23,14 @@ public class TeammateAI : MonoBehaviour
 
         // Voice를 자연스럽게 조합
         string naturalVoice = BuildNaturalVoice(action, param);
+
+        // 채팅에 응답 메시지 추가 ('+' 기호를 공백으로 변환)
+        if (!string.IsNullOrEmpty(naturalVoice))
+        {
+            string chatMessage = naturalVoice.Replace("+", " ");
+            ChatManager.Instance?.AddMessage(teammateName, chatMessage);
+        }
+
         DoVoice(naturalVoice);
     }
 

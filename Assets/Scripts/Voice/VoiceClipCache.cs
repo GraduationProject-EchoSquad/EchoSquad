@@ -24,13 +24,13 @@ public class VoiceClipCache : Singleton<VoiceClipCache>
     }
 
     /// <summary>
-    /// 캐시 키 생성: "male_moderate_moderate/Hello"
+    /// 캐시 키 생성: "male_moderate_moderate/hello" (소문자로 정규화)
     /// </summary>
     private string GetCacheKey(VoiceProfile profile, string text)
     {
         string profileKey = $"{profile.gender.ToApiString()}_{profile.pitch.ToApiString()}_{profile.speed.ToApiString()}";
-        // 텍스트를 파일명 안전하게 변환
-        string safeText = text.Replace(" ", "_").Replace("!", "").Replace("?", "").Replace(",", "");
+        // 텍스트를 파일명 안전하게 변환 (대소문자 무시를 위해 소문자로 변환)
+        string safeText = text.ToLower().Replace(" ", "_").Replace("!", "").Replace("?", "").Replace(",", "");
         if (safeText.Length > 50) safeText = safeText.Substring(0, 50); // 길이 제한
         return $"{profileKey}/{safeText}";
     }

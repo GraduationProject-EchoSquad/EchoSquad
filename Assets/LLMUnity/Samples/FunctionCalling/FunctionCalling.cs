@@ -98,6 +98,7 @@ namespace LLMUnitySamples
                 // 동료 이름 오인식
                 { "lina", "Lena" },
                 { "lena", "Lena" },
+                { "Elena", "Lena" },
 
                 // 기타 자주 틀리는 단어
                 { "a tack", "attack" },
@@ -576,18 +577,6 @@ namespace LLMUnitySamples
             // DEBUG: Check voice field value
             string voiceValue = cmd.Parameters?.voice;
             Debug.Log($"[DEBUG VOICE] Voice field value: '{voiceValue}' | Is null: {voiceValue == null} | Is empty: {string.IsNullOrEmpty(voiceValue)} | Is whitespace: {string.IsNullOrWhiteSpace(voiceValue)}");
-
-            // 명령받은 각 유닛의 음성 응답을 채팅에 표시
-            if (cmd.command_units != null && cmd.command_units.Count > 0 && !string.IsNullOrEmpty(cmd.Parameters?.voice))
-            {
-                // voice 모듈을 자연스러운 텍스트로 변환 ('+' 기호를 공백으로)
-                string voiceText = cmd.Parameters.voice.Replace("+", " ");
-
-                foreach (var unitName in cmd.command_units)
-                {
-                    ChatManager.Instance.AddMessage(unitName, voiceText);
-                }
-            }
 
             //행동 주체들
             // AI 실행
