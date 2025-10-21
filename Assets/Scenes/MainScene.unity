@@ -26273,8 +26273,8 @@ MonoBehaviour:
         z: 0
       Rotation:
         value:
-          x: 0.27733296
-          y: 9.720198e-10
+          x: 0.27733293
+          y: 0
           z: 0.07121054
           w: 0.9581312
     m_MetaData:
@@ -52611,7 +52611,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4332744576534981228
 RectTransform:
   m_ObjectHideFlags: 0
@@ -54218,7 +54218,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7624911027257481554
 Transform:
   m_ObjectHideFlags: 0

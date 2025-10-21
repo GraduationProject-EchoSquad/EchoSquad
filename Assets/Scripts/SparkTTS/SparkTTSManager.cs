@@ -83,10 +83,8 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
     void Start()
     {
         // SparkTTS 로그 레벨 설정
-        CharacterVoiceFactory.Initialize(SparkTTS.Utils.LogLevel.WARNING, optimalMemoryUsage: false);
-
-        // CUDA execution provider를 사용하는 Factory 인스턴스 생성 (싱글톤 사용 안 함)
-        _voiceFactory = new CharacterVoiceFactory(SparkTTS.Models.ExecutionProvider.CUDA);
+        CharacterVoiceFactory.Initialize(SparkTTS.Utils.LogLevel.INFO, optimalMemoryUsage: false, ExecutionProvider.CUDA);
+        _voiceFactory = CharacterVoiceFactory.Instance;
 
         Debug.Log("[SparkTTSManager] Initialized with CUDA execution provider for GPU acceleration.");
     }
@@ -122,7 +120,7 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
         }
     }
 
-    private async UniTask ProcessQueueAsync()
+    private async UniTaskVoid ProcessQueueAsync()
     {
         if (_isGenerating)
         {

@@ -4,6 +4,7 @@ using LLMUnity;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine.Serialization;
@@ -103,7 +104,7 @@ namespace LLMUnitySamples
 
         void Start()
         {
-            playerText.onSubmit.AddListener(onInputFieldSubmit);
+            playerText.onSubmit.AddListener((message) => onInputFieldSubmit(message).Forget());
             playerText.Select();
             llmCharacter.grammarString = ""; // 자유 입력 모드
         }
@@ -500,8 +501,13 @@ namespace LLMUnitySamples
 
             return cmd;
         }
-
-        async void onInputFieldSubmit(string message)
+        
+        /// <summary>
+        /// 플레이어의 입력 필드 제출 시 호출되는 비동기 메서드입니다.
+        /// LLM에 명령을 보내고, 응답을 파싱하여 게임 내 AI 유닛에 명령을 실행합니다.
+        /// </summary>
+        /// <param name="message">플레이어가 입력한 명령어 텍스트입니다.</param>
+        async UniTaskVoid onInputFieldSubmit(string message)
         {
             playerText.interactable = false;
             llmCharacter.grammarString = "";
@@ -539,7 +545,12 @@ namespace LLMUnitySamples
 
             DoCommand(cmd, aiList);
         }
-
+        
+        /// <summary>
+        /// 파싱된 명령(ParsedCommand)을 기반으로 게임 내 AI 유닛에 실제 명령을 실행하는 메서드입니다.
+        /// </summary>
+        /// <param name="cmd">LLM으로부터 파싱된 명령 객체입니다.</param>
+        /// <param name="aiList">현재 활성화된 모든 팀원 AI 유닛 목록입니다.</param>
         public void DoCommand(ParsedCommand cmd, List<TeammateAI> aiList)
         {
             string unitsText = string.Join(", ", cmd.command_units);

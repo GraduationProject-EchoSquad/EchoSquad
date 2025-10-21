@@ -14,6 +14,7 @@ public class TeammateController : UnitController
     [SerializeField] private CinemachineFreeLook camera;
 
     private UnitShooter unitShooter;
+    [SerializeField]
     private VoiceSpeaker voiceSpeaker; // 3D 음성 재생 컴포넌트
 
     private float waitBeforeRelease = 3f; // 멈춘 뒤 몇 초 후 target 제거
@@ -39,13 +40,6 @@ public class TeammateController : UnitController
         navMeshAgent.acceleration = accel;
         patrolTimer = patrolInterval;
         homePosition = transform.position;
-
-        // VoiceSpeaker 컴포넌트 초기화
-        voiceSpeaker = GetComponent<VoiceSpeaker>();
-        if (voiceSpeaker == null)
-        {
-            voiceSpeaker = gameObject.AddComponent<VoiceSpeaker>();
-        }
     }
 
 
