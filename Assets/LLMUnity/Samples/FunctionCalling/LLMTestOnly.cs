@@ -784,11 +784,6 @@ namespace LLMUnitySamples
                 case AIActionEnum.Support:
                     if (!string.IsNullOrEmpty(parameters.support_target)) return parameters.support_target;
                     return "Unknown";
-                case AIActionEnum.Scout:
-                    if (!string.IsNullOrEmpty(parameters.scout_from) && !string.IsNullOrEmpty(parameters.scout_to)) return $"{parameters.scout_from}→{parameters.scout_to}";
-                    if (!string.IsNullOrEmpty(parameters.area)) return parameters.area;
-                     if (!string.IsNullOrEmpty(parameters.engage_enemy)) return parameters.engage_enemy;
-                    return "Unknown";
                 default: return "Unknown";
             }
         }
@@ -823,11 +818,6 @@ namespace LLMUnitySamples
                         return $"Provide {supportType} to {parameters.support_target}";
                     }
                     return $"Provide {supportType}";
-                case AIActionEnum.Scout:
-                    string modeText = !string.IsNullOrEmpty(parameters.mode) ? $" {parameters.mode.ToLower()}" : "";
-                    if (!string.IsNullOrEmpty(parameters.scout_from) && !string.IsNullOrEmpty(parameters.scout_to)) return $"Scout{modeText} from {parameters.scout_from} to {parameters.scout_to}";
-                    if (!string.IsNullOrEmpty(parameters.area)) return $"Scout{modeText} {parameters.area} area";
-                    return $"Scout{modeText}";
                 case AIActionEnum.Error:
                     return $"Invalid command - cannot execute";
                 default:

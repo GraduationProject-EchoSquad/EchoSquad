@@ -26,9 +26,6 @@ namespace LLMUnitySamples
         public string engage_enemy;
         public string support_target;
         public string support_type;
-        public string area;
-        public string scout_from;
-        public string scout_to;
         public string mode;
         public string voice;
 
@@ -39,9 +36,6 @@ namespace LLMUnitySamples
                    $"    \"engage_enemy\": \"{engage_enemy}\",\n" +
                    $"    \"support_target\": \"{support_target}\",\n" +
                    $"    \"support_type\": \"{support_type}\",\n" +
-                   $"    \"area\": \"{area}\",\n" +
-                   $"    \"scout_from\": \"{scout_from}\",\n" +
-                   $"    \"scout_to\": \"{scout_to}\",\n" +
                    $"    \"mode\": \"{mode}\",\n" +
                    $"    \"voice\": \"{voice}\"";
         }
@@ -52,47 +46,7 @@ namespace LLMUnitySamples
         Move,
         Combat,
         Support,
-        Scout,
         Error
-    }
-
-    public static class Functions
-    {
-        static System.Random random = new System.Random();
-
-        static readonly Dictionary<string, string[]> voiceLines = new()
-        {
-            { "AttackLeft", new[] { "좌측 공격 돌입!", "좌측 적 제압 간다!", "공격 시작, 좌측으로 간다!" } },
-            { "AttackRight", new[] { "우측 전진!", "우측 밀어붙인다!", "공격 개시, 우측으로!" } },
-            { "AttackCenter", new[] { "중앙 돌격!", "중앙 적 진입, 바로 가!", "중앙 공격 개시!" } },
-            { "AttackForward", new[] { "전방으로 돌격!", "앞으로 밀어붙여!", "전면 공격 간다!" } },
-            { "AttackBack", new[] { "후방 정리 간다!", "뒤쪽 적 처리하러 가!", "뒤에서 온다, 내가 간다!" } },
-
-            { "DefendLeft", new[] { "좌측 방어 맡을게!", "적들 좌측이야, 내가 막아!", "좌측 고정!" } },
-            { "DefendRight", new[] { "우측 방어 간다!", "우측 적 많아, 내가 처리할게!", "우측은 내가 맡는다!" } },
-            { "DefendCenter", new[] { "중앙 수비 들어간다.", "중앙 위험해, 내가 막는다!", "중앙 방어 중!" } },
-            { "DefendForward", new[] { "전방 지킨다!", "앞쪽 방어는 나한테 맡겨!", "전면 방어 진입!" } },
-            { "DefendBack", new[] { "뒤는 내가 맡는다!", "후방 지켜야 돼, 내가 갈게!", "후방 지원 들어간다!" } },
-
-            { "ScoutLeft", new[] { "좌측 정찰 중...", "조용히 좌측 살펴볼게.", "정찰 개시, 좌측!" } },
-            { "ScoutRight", new[] { "우측 상황 파악 중!", "우측 확인 들어간다.", "정찰 시작, 우측!" } },
-            { "ScoutCenter", new[] { "중앙 시야 확보 중.", "중앙 감시 간다.", "중앙 정찰 진행 중." } },
-            { "ScoutForward", new[] { "전방 확인 중...", "앞쪽 정찰 중이야.", "앞에 뭐 있나 보고 올게!" } },
-            { "ScoutBack", new[] { "후방 정찰 중...", "뒤쪽 확인하고 올게.", "뒤에 뭐 있나 본다!" } },
-
-            { "HealNone", new[] { "힐 중이야, 엄호해줘!", "치료 들어간다. 잠깐만!", "회복 중... 부탁해!" } },
-
-            // Error 케이스들
-            { "Error", new[] { "명령을 이해할 수 없어!", "뭔 소리야? 다시 말해봐.", "그런 명령은 실행할 수 없어!" } }
-        };
-
-        public static string GetVoiceLine(string functionName)
-        {
-            if (voiceLines.TryGetValue(functionName, out var lines))
-                return lines[random.Next(lines.Length)];
-
-            return $"[{functionName}] 명령 실행 중...";
-        }
     }
 
     public class FunctionCalling : Singleton<FunctionCalling>
@@ -127,6 +81,66 @@ namespace LLMUnitySamples
             string AINames = string.Join(" | ", uniqueNames);
             return AINames;
         }
+        private string PreprocessCommand(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return input;
+
+            // 1. STT 오류 수정 (음성 인식 오인식)
+            var sttCorrections = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                // 적 이름 오인식
+                { "pose", "Boss" },
+                { "post", "Boss" },
+                { "boss", "Boss" },
+
+                // 동료 이름 오인식
+                { "lina", "Lena" },
+                { "lena", "Lena" },
+
+                // 기타 자주 틀리는 단어
+                { "a tack", "attack" },
+                { "fallow", "follow" },
+            };
+
+            // 2. 액션 동의어 통일 (LLM 전에 미리 처리)
+            var actionCorrections = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "attack", "combat" },
+                { "engage", "combat" },
+                { "fight", "combat" },
+                { "kill", "combat" },
+                { "eliminate", "combat" },
+
+                { "follow", "move" },
+                { "go", "move" },
+
+                { "heal", "support" },
+                { "shield", "support" },
+                { "protect", "support" },
+            };
+
+            // 모든 수정 사항 병합
+            var allCorrections = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var pair in sttCorrections)
+                allCorrections[pair.Key] = pair.Value;
+            foreach (var pair in actionCorrections)
+                allCorrections[pair.Key] = pair.Value;
+
+            // 단어 경계를 고려한 치환
+            foreach (var pair in allCorrections)
+            {
+                string pattern = $@"\b{System.Text.RegularExpressions.Regex.Escape(pair.Key)}\b";
+                input = System.Text.RegularExpressions.Regex.Replace(
+                    input,
+                    pattern,
+                    pair.Value,
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+            }
+
+            return input;
+        }
 
         string ConstructStructuredCommandPrompt(string playerMessage, List<TeammateAI> AIList, string districtsName)
         {
@@ -136,13 +150,22 @@ namespace LLMUnitySamples
             return "### Core Rules\n" +
                    "You are a military command parser. Parse natural language into structured commands.\n\n" +
 
-                   "**OUTPUT FORMAT**: Single JSON object only. No explanations.\n\n" +
+                   "**OUTPUT FORMAT**: Single JSON object only. No explanations. MUST include ALL fields:\n" +
+                   "```json\n" +
+                   "{\n" +
+                   "  \"command_units\": [\"UnitName\"],  // REQUIRED: Array of unit names \n" +
+                   "  \"action\": \"Move\",               // REQUIRED: Action type\n" +
+                   "  \"parameters\": {                  // REQUIRED: Object with parameters\n" +
+                   "    \"destination\": \"value\",      // Optional parameter\n" +
+                   "    \"voice\": \"Roger+following\"   // REQUIRED: Voice response\n" +
+                   "  }\n" +
+                   "}\n" +
+                   "```\n\n" +
 
                    $"**ACTIONS** - Use exactly one: {actions}\n" +
                    "- Move: go, walk, run, advance, retreat, follow, come, travel, proceed\n" +
                    "- Combat: attack, fight, kill, eliminate, engage, destroy, take out, deal with [enemy]\n" +
                    "- Support: heal, help, cover, aid\n" +
-                   "- Scout: scout, reconnaissance, patrol, watch, survey, investigate, check out\n" +
                    "- Error: invalid/impossible commands\n\n" +
 
                    "**ENTITY RECOGNITION**\n" +
@@ -150,12 +173,21 @@ namespace LLMUnitySamples
                    "- 'me/myself/I' → 'Player'\n" +
                    $"- 'all/everyone/everybody' → [{string.Join(",", AIList.Select(ai => $"\"{ai.teammateName}\""))}]\n" +
                    $"- Locations: {districtsName}, Left, Right, Forward, Back\n" +
-                   "- Enemies: Zombie, Alien, Lion, Boss\n\n" +
+                   "- Enemies: Zombie, Boss\n\n" +
+
+                   "**PARAMETERS RULE (CRITICAL!)**\n" +
+                   $"- If target is a PERSON ({unitNames}, Player) → use `follow_target` or `support_target`\n" +
+                   $"- If target is a LOCATION ({districtsName}, Left, Right, Forward, Back) → use `destination`\n" +
+                   "- NEVER use both `destination` and `follow_target` at the same time!\n" +
+                   "- Examples:\n" +
+                   "  - 'Lena move me' → follow_target: 'Player' (NOT destination!)\n" +
+                   "  - 'James follow Player' → follow_target: 'Player'\n" +
+                   "  - 'Sara go Kitchen' → destination: 'Kitchen'\n\n" +
 
                    "**CRITICAL: 'me' PATTERN HANDLING**\n" +
+                   "- 'move me James' → command_units: ['James'], follow_target: 'Player'\n" +
                    "- 'help me James' → command_units: ['James'], support_target: 'Player'\n" +
                    "- 'heal me Sara' → command_units: ['Sara'], support_target: 'Player'\n" +
-                   "- 'I need X from Y' → command_units: ['Y'], target: 'Player'\n" +
                    "- RULE: The unit AFTER 'me' or 'from' executes the command\n\n" +
 
                    "**ERROR CONDITIONS**\n" +
@@ -166,38 +198,10 @@ namespace LLMUnitySamples
                    "- Multi-step commands (X and Y, X but Y)\n" +
                    "- Vague commands without clear action\n\n" +
 
-                   "### Parameters\n" +
-                   "Use each parameter only for its specified role. If not used, set it to `null`.\n" +
-                   "- `destination`: Use for moving to a location (Kitchen) or a direction (Left). For following a unit, use `follow_target` instead.\n" +
-                   "- `follow_target`: Use ONLY for 'follow' commands. If this value is set, `destination` MUST be `null`.\n" +
-                   "- `engage_enemy`: The name of the enemy to engage. (e.g., Zombie, Alien, Lion, Boss)\n" +
-                   "- `support_target`: The target to receive support.\n" +
-                   "- `support_type`: The type of support. (e.g., Heal, Shield)\n" +
-                   "- `area`: The area to scout.\n" +
-                   "- `scout_from` / `scout_to`: The start and end points for scouting.\n" +
-                   "- `mode`: Special action mode. (e.g., Stealth, Quick)\n" +
-                   "- `voice`: **REQUIRED**. You MUST ONLY use pre-generated voice modules listed below. Combine 1-3 modules for natural responses.\n\n" +
-
-                   "### Voice Modules (USE ONLY THESE!)\n" +
-                   "**Acknowledgments (choose 0-1 based on personality)**:\n" +
-                   "- Taciturn/Serious: \"Okay\", \"Got it\", \"Roger\", \"Understood\", \"Alright\"\n" +
-                   "- Moderate: \"Understood!\", \"Got it!\", \"Sure thing!\", \"Okay!\", \"Will do!\"\n" +
-                   "- Lively/Cheerful: \"You got it!\", \"Absolutely!\", \"On it!\", \"Sure thing!\", \"Let's do this!\", \"No problem!\"\n\n" +
-
-                   "**Actions (choose 0-1)**:\n" +
-                   "\"moving\", \"attacking\", \"following\", \"covering\", \"helping\", \"scouting\", \"defending\", \"falling back\", \"engaging\"\n\n" +
-
-                   "**Directions (choose 0-1)**:\n" +
-                   "\"left\", \"right\", \"forward\", \"back\", \"center\"\n\n" +
+                   VoiceModules.GetVoiceModulesPrompt() + "\n" +
 
                    $"**Locations/Districts (if moving to specific place)**:\n" +
                    $"\"{districtsName.Replace(" | ", "\", \"")}\"\n\n" +
-
-                   "**Teammate/Enemy Names (if needed)**:\n" +
-                   "\"Lena\", \"James\", \"Sara\", \"Player\", \"zombie\", \"alien\", \"enemy\"\n\n" +
-
-                   "**Extras (Cheerful personality only, optional)**:\n" +
-                   "\"Let's go\", \"Here I come\", \"Watch this\", \"No worries\", \"I got this\", \"Easy\"\n\n" +
 
                    "**CRITICAL RULES**:\n" +
                    "1. ONLY use exact phrases from the lists above\n" +
@@ -230,10 +234,6 @@ namespace LLMUnitySamples
                    "- 'help me James' (Cheerful) → James executes, Player receives\n" +
                    "  → {\"command_units\":[\"James\"],\"action\":\"Support\",\"parameters\":{\"support_target\":\"Player\",\"voice\":\"On it!+Here I come\"}}\n\n" +
 
-                   "**Scout Patterns:**\n" +
-                   "- 'scout Kitchen' (Moderate)\n" +
-                   "  → {\"command_units\":[context],\"action\":\"Scout\",\"parameters\":{\"area\":\"Kitchen\",\"voice\":\"Got it!+scouting\"}}\n\n" +
-
                    "**Error Patterns:**\n" +
                    "- Multi-step: 'go Kitchen and watch'\n" +
                    "  → {\"command_units\":null,\"action\":\"Error\",\"parameters\":{\"voice\":\"I got this\"}}\n" +
@@ -246,12 +246,24 @@ namespace LLMUnitySamples
 
         private ParsedCommand ParseAndCorrectCommand(string json)
         {
+            // LLM이 잘못된 Action으로 해석했을 때 매칭이 되는 Action으로 바꿔주는 작업
             var actionSynonyms = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                { "Attack", "Combat" }, { "Engage", "Combat" }, { "Fight", "Combat" }, { "Kill", "Combat" }, { "Eliminate", "Combat" },
-                { "Follow", "Move" }, { "Go", "Move" },
-                { "Heal", "Support" }, { "Shield", "Support" }, { "Protect", "Support" },
-                { "Watch", "Scout" }, { "Reconnaissance", "Scout" }
+                  // Combat 관련
+                  { "Attack", "Combat" },     // Attack → Combat
+                  { "Engage", "Combat" },     // Engage → Combat
+                  { "Fight", "Combat" },      // Fight → Combat
+                  { "Kill", "Combat" },       // Kill → Combat
+                  { "Eliminate", "Combat" },  // Eliminate → Combat
+
+                  // Move 관련
+                  { "Follow", "Move" },       // Follow → Move
+                  { "Go", "Move" },           // Go → Move
+
+                  // Support 관련
+                  { "Heal", "Support" },      // Heal → Support
+                  { "Shield", "Support" },    // Shield → Support
+                  { "Protect", "Support" },   // Protect → Support
             };
 
             if (string.IsNullOrWhiteSpace(json)) return new ParsedCommand();
@@ -443,7 +455,7 @@ namespace LLMUnitySamples
                 .ToList();
 
             var validUnits = new HashSet<string>(aiList.Select(ai => ai.teammateName), StringComparer.OrdinalIgnoreCase);
-            var validEnemies = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Zombie", "Alien", "Lion", "Boss" };
+            var validEnemies = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Zombie", "Boss" };
             var validLocations = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Left", "Right", "Forward", "Back", "Center" };
 
             MapManager mapManager = MapManager.Instance;
@@ -506,6 +518,10 @@ namespace LLMUnitySamples
             playerText.interactable = false;
             llmCharacter.grammarString = "";
 
+            // STT 오류 및 동의어 전처리
+            message = PreprocessCommand(message);
+            Debug.Log($"[PREPROCESSED] {message}");
+
             // 플레이어가 입력한 명령어를 채팅에 추가
             ChatManager.Instance.AddMessage("Player", message);
 
@@ -550,15 +566,15 @@ namespace LLMUnitySamples
             string voiceValue = cmd.Parameters?.voice;
             Debug.Log($"[DEBUG VOICE] Voice field value: '{voiceValue}' | Is null: {voiceValue == null} | Is empty: {string.IsNullOrEmpty(voiceValue)} | Is whitespace: {string.IsNullOrWhiteSpace(voiceValue)}");
 
-            // LLM이 생성한 음성 우선 사용, 없으면 하드코딩된 것 사용
-            string result = !string.IsNullOrEmpty(voiceValue) ? voiceValue : Functions.GetVoiceLine(functionName);
-
-            // 명령받은 각 유닛의 이름으로 채팅에 전송
-            if (cmd.command_units != null && cmd.command_units.Count > 0)
+            // 명령받은 각 유닛의 음성 응답을 채팅에 표시
+            if (cmd.command_units != null && cmd.command_units.Count > 0 && !string.IsNullOrEmpty(cmd.Parameters?.voice))
             {
+                // voice 모듈을 자연스러운 텍스트로 변환 ('+' 기호를 공백으로)
+                string voiceText = cmd.Parameters.voice.Replace("+", " ");
+
                 foreach (var unitName in cmd.command_units)
                 {
-                    ChatManager.Instance.AddMessage(unitName, result);
+                    ChatManager.Instance.AddMessage(unitName, voiceText);
                 }
             }
 
