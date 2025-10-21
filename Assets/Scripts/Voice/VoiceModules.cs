@@ -129,6 +129,7 @@ public static class VoiceModules
 
     /// <summary>
     /// 모든 필요한 TTS 모듈 조각들 추출 (사전 생성용)
+    /// 대소문자 통일을 위해 모두 소문자로 변환
     /// </summary>
     public static List<string> GetAllModules()
     {
@@ -161,8 +162,9 @@ public static class VoiceModules
         // District 이름들 (MapManager에서 등록된 것)
         modules.AddRange(districtNames);
 
-        // 중복 제거
-        return new List<string>(new HashSet<string>(modules));
+        // 중복 제거 및 소문자 변환 (캐시 키와 일치시키기 위함)
+        var uniqueModules = new HashSet<string>(modules, System.StringComparer.OrdinalIgnoreCase);
+        return new List<string>(uniqueModules).ConvertAll(s => s.ToLower());
     }
 
     /// <summary>
