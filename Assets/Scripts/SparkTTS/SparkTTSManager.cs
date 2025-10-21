@@ -150,19 +150,22 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
                             $"{voiceKey.Gender.ToApiString()}_{voiceKey.Pitch.ToApiString()}_{voiceKey.Speed.ToApiString()}";
                         string folderPath = Path.Combine(Application.persistentDataPath, folderName);
 
-                        if (Directory.Exists(folderPath))
+                        string globalTokensFilePath = Path.Combine(folderPath, "global_tokens.bin");
+
+                        if (Directory.Exists(folderPath) && File.Exists(globalTokensFilePath))
                         {
                             Debug.Log($"Loading style voice from folder: {folderPath}");
                             _currentVoice = await _voiceFactory.CreateFromFolderAsync(folderPath);
                         }
                         else
                         {
-                            Debug.Log($"Style voice not in cache or file. Creating with Gender={voiceKey.Gender.ToApiString()}, Pitch={voiceKey.Pitch.ToApiString()}, Speed={voiceKey.Speed.ToApiString()}");
+                            // If folder doesn't exist or is incomplete, create it
+                            Debug.Log($"Style voice not in cache or file (or incomplete). Creating with Gender={voiceKey.Gender.ToApiString()}, Pitch={voiceKey.Pitch.ToApiString()}, Speed={voiceKey.Speed.ToApiString()}");
                             _currentVoice = await _voiceFactory.CreateFromStyleAsync(
                                 gender: voiceKey.Gender.ToApiString(),
                                 pitch: voiceKey.Pitch.ToApiString(),
                                 speed: voiceKey.Speed.ToApiString(),
-                                referenceText: "Hello, I am a sample voice.");  // referenceText 필수!
+                                referenceText: "The quick brown fox jumps over the lazy dog.");  // referenceText 필수!
                             if (_currentVoice != null)
                             {
                                 Directory.CreateDirectory(folderPath); // 폴더가 없으면 생성
@@ -277,17 +280,20 @@ public class SparkTTSManager : Singleton<SparkTTSManager>
             string folderName = $"{profile.gender.ToApiString()}_{profile.pitch.ToApiString()}_{profile.speed.ToApiString()}";
             string folderPath = Path.Combine(Application.persistentDataPath, folderName);
 
-            if (Directory.Exists(folderPath))
+            string globalTokensFilePath = Path.Combine(folderPath, "global_tokens.bin");
+
+            if (Directory.Exists(folderPath) && File.Exists(globalTokensFilePath))
             {
                 voice = await _voiceFactory.CreateFromFolderAsync(folderPath);
             }
             else
             {
+                // If folder doesn't exist or is incomplete, create it
                 voice = await _voiceFactory.CreateFromStyleAsync(
                     gender: profile.gender.ToApiString(),
                     pitch: profile.pitch.ToApiString(),
                     speed: profile.speed.ToApiString(),
-                    referenceText: "Hello");
+                    referenceText: "The quick brown fox jumps over the lazy dog.");
 
                 if (voice != null)
                 {
