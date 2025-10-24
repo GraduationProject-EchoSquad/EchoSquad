@@ -14,12 +14,13 @@ public class UIManager : Singleton<UIManager>
     {
         None,
 
-        
+
         //Panel
         Title,
         HUD,
         TeamVoiceSetUp,
         GameOver,
+        Shop,
 
         //Popup
 
@@ -42,7 +43,8 @@ public class UIManager : Singleton<UIManager>
         { EUIData.HUD, "Prefabs/UI/HUD.prefab" },
         { EUIData.TeamVoiceSetUp, "Prefabs/UI/AllyStatChoiceUI.prefab" },
         { EUIData.GameOver, "Prefabs/UI/GameoverUI.prefab" }, // GameOverUI 프리팹 경로 추가
-        
+        { EUIData.Shop, "Prefabs/UI/ShopUI.prefab" }, // ShopUI 프리팹 경로 추가
+
         { EUIData.Countdown, "Prefabs/UI/CountdownText.prefab" }, // GameOverUI 프리팹 경로 추가
     };
 
@@ -69,6 +71,39 @@ public class UIManager : Singleton<UIManager>
         //UIDict[UIData].gameObject.SetActive(true);
 
         return (T)UIDict[UIData];
+    }
+
+    /// <summary>
+    /// UI를 표시합니다 (async)
+    /// </summary>
+    public async UniTask<T> Show<T>(EUIData UIData) where T : UIBase
+    {
+        T ui = await GetUI<T>(UIData);
+        ui.gameObject.SetActive(true);
+        return ui;
+    }
+
+    /// <summary>
+    /// UI를 숨깁니다 (async)
+    /// </summary>
+    public async UniTask Hide<T>(EUIData UIData) where T : UIBase
+    {
+        if (UIDict.ContainsKey(UIData))
+        {
+            UIDict[UIData].gameObject.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// UI가 로드되어 있는지 확인하고, 로드되어 있으면 가져옵니다 (sync)
+    /// </summary>
+    public T Get<T>(EUIData UIData) where T : UIBase
+    {
+        if (UIDict.ContainsKey(UIData))
+        {
+            return (T)UIDict[UIData];
+        }
+        return null;
     }
 
 

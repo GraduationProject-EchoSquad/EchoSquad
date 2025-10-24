@@ -13,7 +13,10 @@ public enum PubSubEvent
     OnRemainEnemyCountChange,
     OnPreparationComplete,  // 동료 능력치 설정 완료
     OnAmmoUpdated,
-    
+    OnMoneyChanged,         // 돈 변경
+    OnItemPurchased,        // 아이템 구매 성공
+    OnPurchaseFailed,       // 구매 실패
+
     OnGameEnd
 }
 
@@ -23,7 +26,15 @@ public class PubSubDataBase
 
 public class OnPlayerDeathData : PubSubDataBase
 {
-    
+
+}
+
+public class OnEnemyDeathData : PubSubDataBase
+{
+    public GameObject Enemy;
+    public EnemyType EnemyType;
+    public int MoneyReward;
+    public int ScoreReward;
 }
 
 public class OnLifeChangedData : PubSubDataBase
@@ -55,6 +66,22 @@ public class OnRemainEnemyCountChangeData : PubSubDataBase
 public class OnGameEndData : PubSubDataBase
 {
     public bool IsWin;
+}
+
+public class OnMoneyChangedData : PubSubDataBase
+{
+    public int Money;
+}
+
+public class OnItemPurchasedData : PubSubDataBase
+{
+    public string ItemId;
+    public string ItemName;
+}
+
+public class OnPurchaseFailedData : PubSubDataBase
+{
+    public string Reason;
 }
 
 public class PubSubManager
@@ -91,7 +118,9 @@ public class PubSubManager
             // 이미 다른 타입의 리스너가 등록되어 있는지 확인 (선택적이지만 안정성을 높임)
             if (existingDelegate != null && existingDelegate.GetType() != typeof(Action<T>))
             {
-                Debug.LogError($"[PubSubManager] 구독 실패: 이벤트 '{eventType}'에 다른 데이터 타입({existingDelegate.GetType().GetGenericArguments()[0].Name})이 이미 등록되어 있습니다.");
+                var args = existingDelegate.GetType().GetGenericArguments();
+                string typeName = args.Length > 0 ? args[0].Name : existingDelegate.GetType().Name;
+                Debug.LogError($"[PubSubManager] 구독 실패: 이벤트 '{eventType}'에 다른 데이터 타입({typeName})이 이미 등록되어 있습니다.");
                 return;
             }
             _eventDictionary[eventType] = Delegate.Combine(existingDelegate, listener);

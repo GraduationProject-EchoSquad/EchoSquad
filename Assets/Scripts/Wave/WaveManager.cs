@@ -42,7 +42,7 @@ public class WaveManager : Singleton<WaveManager>
         MaxWaveIndex = waves.Length;
 
         // 몬스터 사망 이벤트 구독
-        PubSubManager.Instance.Subscribe(PubSubEvent.OnEnemyDeath, OnEnemyDeath);
+        PubSubManager.Instance.Subscribe<OnEnemyDeathData>(PubSubEvent.OnEnemyDeath, OnEnemyDeath);
     }
 
     private void Start()
@@ -152,7 +152,7 @@ public class WaveManager : Singleton<WaveManager>
     }
 
     // 몬스터가 죽을 때마다 호출
-    private void OnEnemyDeath()
+    private void OnEnemyDeath(OnEnemyDeathData data)
     {
         SetEnemiesRemaining(enemiesRemaining - 1);
 

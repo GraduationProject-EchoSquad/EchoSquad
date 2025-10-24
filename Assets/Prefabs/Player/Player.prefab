@@ -160,8 +160,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: -5, y: 0}
-  m_SizeDelta: {x: -20, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1822510201074115723
 GameObject:
@@ -220,7 +220,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1852215011948341700}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.57972753, y: 0.15615724, z: -0.11437823, w: 0.791485}
+  m_LocalRotation: {x: 0.57972753, y: 0.15615721, z: -0.11437819, w: 0.7914851}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -732,7 +732,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4951491762058695250}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.57972753, y: 0.15615724, z: -0.11437823, w: 0.791485}
+  m_LocalRotation: {x: 0.57972753, y: 0.15615721, z: -0.11437819, w: 0.7914851}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1026,6 +1026,7 @@ MonoBehaviour:
   moveHorizontalAxisName: Horizontal
   moveVerticalAxisName: Vertical
   reloadButtonName: Reload
+  interactButtonName: Interact
 --- !u!114 &329228167401307993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1102,7 +1103,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5031951649460978938}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.57972753, y: 0.15615726, z: -0.11437824, w: 0.791485}
+  m_LocalRotation: {x: 0.57972753, y: 0.15615723, z: -0.114378214, w: 0.791485}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1206,7 +1207,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3275192547999181454
 CanvasRenderer:
@@ -1397,7 +1398,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -20, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6066757928483447087
 GameObject:
@@ -2023,7 +2024,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 80, y: 15}
+  m_SizeDelta: {x: 60, y: 15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8180105892980166662
 MonoBehaviour:
@@ -2072,7 +2073,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.712
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []

@@ -47,11 +47,7 @@ public class LivingEntity : MonoBehaviour, IDamageable
         dead = false;
         // 체력을 시작 체력으로 초기화
         health = startingHealth;
-        if (healthSlider != null)
-        {
-            healthSlider.maxValue = startingHealth; // LivingEntity에서 정의된 최대 체력
-            healthSlider.value = health;            // LivingEntity에서 현재 체력(health 필드)
-        }
+
         UpdateUI();
     }
 
@@ -64,6 +60,8 @@ public class LivingEntity : MonoBehaviour, IDamageable
 
         // 데미지만큼 체력 감소
         health -= damageMessage.amount;
+
+        UpdateUI();
 
         // 체력이 0 이하 && 아직 죽지 않았다면 사망 처리 실행
         if (health <= 0) Die();
@@ -78,9 +76,24 @@ public class LivingEntity : MonoBehaviour, IDamageable
 
         // 체력 추가
         health += newHealth;
+
+        // 체력이 최대 체력을 넘지 않도록 제한
+        health = Mathf.Min(health, startingHealth);
+
         UpdateUI();
     }
-    
+
+    // 최대 체력을 증가시키는 별도 메서드 추가
+    public void IncreaseMaxHealth(float amount)
+    {
+        if (dead) return;
+
+        // 1. 최대 체력 증가
+        startingHealth += amount;
+
+        // 2. UI 업데이트 (RestoreHealth에서 이미 호출되지만, maxValue 변경을 위해 한번 더 호출)
+        UpdateUI();
+    }
 
     // 사망 처리
     public virtual void Die()
@@ -95,6 +108,7 @@ public class LivingEntity : MonoBehaviour, IDamageable
     protected void UpdateUI()
     {
         if (healthSlider != null)
+            healthSlider.maxValue = startingHealth;
             healthSlider.value = health;  // LivingEntity에서 관리하는 현재 체력
     }
 }

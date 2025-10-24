@@ -14,8 +14,10 @@ public enum EnemyType
 public class EnemyController : UnitController
 {
     public EnemyType enemyType;
+    public int moneyReward = 50;  // 처치 시 보상 금액
+    public int scoreReward = 100; // 처치 시 보상 점수
     public float attackRange = 1f;
-    private Transform moveTarget;  
+    private Transform moveTarget;
     private Transform attackTarget;
     private NavMeshAgent agent;
     private float attackCooldown = 1f;
@@ -124,12 +126,21 @@ public class EnemyController : UnitController
         base.HandleDeath();
         agent.enabled = false;
         animator.SetTrigger("Die");
-        PubSubManager.Instance.Publish(PubSubEvent.OnEnemyDeath);
+
+        // 몬스터 정보와 함께 죽음 이벤트 발행
+        PubSubManager.Instance.Publish<OnEnemyDeathData>(PubSubEvent.OnEnemyDeath, data =>
+        {
+            data.Enemy = gameObject;
+            data.EnemyType = enemyType;
+            data.MoneyReward = moneyReward;
+            data.ScoreReward = scoreReward;
+        });
+
         Debug.Log("Enemy died!");
         //Destroy(gameObject, 2f);
 
         await UniTask.WaitForSeconds(2f);
-        
+
         UnitManager.Instance.DeleteUnit(this);
     }
 }

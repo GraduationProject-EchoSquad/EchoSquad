@@ -10,6 +10,7 @@ public class PlayerInput : MonoBehaviour
     public string moveHorizontalAxisName = "Horizontal"; // 좌우 회전을 위한 입력축 이름
     public string moveVerticalAxisName = "Vertical"; // 앞뒤 움직임을 위한 입력축 이름
     public string reloadButtonName = "Reload"; // 재장전을 위한 입력 버튼 이름
+    public string interactButtonName = "Interact"; // 상호작용을 위한 입력 버튼 이름
 
     // 값 할당은 내부에서만 가능
 
@@ -18,6 +19,7 @@ public class PlayerInput : MonoBehaviour
     public bool subFire { get; private set; } // 마우스 우클릭
     public bool reload { get; private set; } // 감지된 재장전 입력값
     public bool jump { get; private set; }
+    public bool interact { get; private set; } // 감지된 상호작용 입력값
     
 
     // 매프레임 사용자 입력을 감지
@@ -31,6 +33,7 @@ public class PlayerInput : MonoBehaviour
             fire = false;
             reload = false;
             jump = false;
+            interact = false;
             return;
         }
 
@@ -41,5 +44,6 @@ public class PlayerInput : MonoBehaviour
         fire = Input.GetButton(fireButtonName);
         subFire = Input.GetButton(subFireButtonName);
         reload = Input.GetButtonDown(reloadButtonName);
+        interact = Input.GetButtonDown(interactButtonName);
     }
 }
