@@ -43,6 +43,7 @@ public class WaveManager : Singleton<WaveManager>
 
         // 몬스터 사망 이벤트 구독
         PubSubManager.Instance.Subscribe<OnEnemyDeathData>(PubSubEvent.OnEnemyDeath, OnEnemyDeath);
+        PubSubManager.Instance.Subscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
     }
 
     private void Start()
@@ -86,7 +87,7 @@ public class WaveManager : Singleton<WaveManager>
     private async UniTask RunWave()
     {
         waveCompletionSource = new UniTaskCompletionSource<bool>();
-        PubSubManager.Instance.Subscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
+        
 
         Wave wave = waves[currentWaveIndex];
         SetEnemiesRemaining(wave.count);
@@ -105,10 +106,15 @@ public class WaveManager : Singleton<WaveManager>
         
 
         // 웨이브 종료 조건 (모든 몬스터 사망 또는 플레이어 사망)을 기다림
-        await waveCompletionSource.Task;
+        bool isSuccess = await waveCompletionSource.Task;
+
+        if (isSuccess == false)
+        {
+            GameManager.Instance.EndGame(false);
+        }
 
         // 다음 웨이브를 위해 이벤트 구독 해제
-        PubSubManager.Instance.Unsubscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
+        //PubSubManager.Instance.Unsubscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
     }
 
     private async UniTask SpawnEnemiesAsync(Wave wave)

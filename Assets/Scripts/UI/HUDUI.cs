@@ -22,6 +22,9 @@ public class HUDUI : UIBase
             data => UpdateEnemyCountText(data.remainEnemyCount));
         PubSubManager.Instance.Subscribe<OnAmmoUpdatedData>(PubSubEvent.OnAmmoUpdated,
             data => UpdateAmmoText(data.MagAmmo, data.AmmoRemain));
+        
+        PubSubManager.Instance.Subscribe<OnGameEndData>(PubSubEvent.OnGameEnd,
+            data => gameObject.SetActive(false));
     }
 
     public void UpdateAmmoText(int magAmmo, int remainAmmo)

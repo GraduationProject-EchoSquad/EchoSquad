@@ -230,7 +230,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8083206709443778821
 RectTransform:
   m_ObjectHideFlags: 0
@@ -303,6 +303,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resultText: {fileID: 8261135813488285407}
+  TitleButton: {fileID: 8261291492220248525}
 --- !u!1 &8302295219646015289
 GameObject:
   m_ObjectHideFlags: 0
@@ -381,4 +382,4 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Restart
+  m_Text: Title

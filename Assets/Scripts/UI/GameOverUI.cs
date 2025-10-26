@@ -1,15 +1,19 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameOverUI : UIBase
 {
     [SerializeField] private Text resultText;
+    [SerializeField] private Button TitleButton;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        PubSubManager.Instance.Subscribe<OnGameEndData>(PubSubEvent.OnGameEnd, ShowGameOverUI);
+        TitleButton.onClick.AddListener(() => OnClickTitle());
     }
+    
     private void ShowGameOverUI(OnGameEndData data)
     {
         gameObject.SetActive(true);
@@ -22,5 +26,11 @@ public class GameOverUI : UIBase
         {
             resultText.text = "GAME OVER";
         }
+    }
+
+    private async UniTaskVoid OnClickTitle()
+    {
+        await SceneController.Instance.LoadSceneAsync(SceneController.ESceneData.Title,LoadSceneMode.Single);
+        gameObject.SetActive(false);
     }
 }

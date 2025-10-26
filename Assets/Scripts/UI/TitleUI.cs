@@ -28,8 +28,9 @@ public class TitleUI : UIBase
     async UniTaskVoid OpenStartPanel()
     {
         startButton.interactable = false;
-        await SceneController.Instance.LoadSceneAsync(SceneController.ESceneData.Main);
+        await SceneController.Instance.LoadSceneAsync(SceneController.ESceneData.Main, LoadSceneMode.Single);
         gameObject.SetActive(false);
+        startButton.interactable = true;
 
         /*gameObject.SetActive(false);
         startPanel.SetActive(true);*/
