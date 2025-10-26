@@ -45,7 +45,7 @@ public class TeammateAI : MonoBehaviour
         //follow target
         if (!string.IsNullOrEmpty(param.follow_target) && param.follow_target != "null")
         {
-            if (string.Equals(param.follow_target,"Player",  StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(param.follow_target, "Player", StringComparison.OrdinalIgnoreCase))
             {
                 unitController.SetFollowUnit(unitManager.GetPlayerUnit());
             }
@@ -109,7 +109,7 @@ public class TeammateAI : MonoBehaviour
         // TODO: 공격 대상 지정, 애니메이션 트리거 등
         if (!string.IsNullOrEmpty(param.engage_enemy) && param.engage_enemy != "null")
         {
-            if (string.Equals(param.engage_enemy,"Boss", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(param.engage_enemy, "Boss", StringComparison.OrdinalIgnoreCase))
             {
                 BossController bossController = unitManager.GetBossController();
                 if (bossController == null)
@@ -117,7 +117,19 @@ public class TeammateAI : MonoBehaviour
                     Debug.LogWarning("No Boss!");
                     return;
                 }
+
                 unitController.GetUnitShooter().SetAimTargetUnit(bossController);
+            }
+            else if (string.Equals(param.engage_enemy, "nearestTarget", StringComparison.OrdinalIgnoreCase))
+            {
+                UnitController nearestEnemyUnit = unitManager.GetNearestEnemyUnit(unitManager.GetPlayerUnit());
+                if (nearestEnemyUnit == null)
+                {
+                    Debug.LogWarning("No Enemy!");
+                    return;
+                }
+
+                unitController.GetUnitShooter().SetAimTargetUnit(nearestEnemyUnit);
             }
         }
     }
@@ -126,6 +138,20 @@ public class TeammateAI : MonoBehaviour
     {
         string message = $"힐 중이야. 엄호해줘!";
         Debug.Log($"[{teammateName}] {message}");
+        if (!string.IsNullOrEmpty(param.support_target) && param.support_target != "null")
+        {
+            if (string.Equals(param.support_target, "Player", StringComparison.OrdinalIgnoreCase))
+            {
+                PlayerController playerUnit = UnitManager.Instance.GetPlayerUnit();
+                if (playerUnit == null)
+                {
+                    Debug.LogWarning("No playerUnit!");
+                    return;
+                }
+
+                unitController.SetFollowHealUnit(playerUnit);
+            }
+        }
     }
 
     void Scout(Parameters param)
@@ -187,6 +213,7 @@ public class TeammateAI : MonoBehaviour
                         voice += $"+to+{dest}";
                     }
                 }
+
                 break;
 
             case AIActionEnum.Combat:
@@ -201,6 +228,7 @@ public class TeammateAI : MonoBehaviour
                         voice += $"+{enemy}";
                     }
                 }
+
                 break;
 
             case AIActionEnum.Support:
@@ -216,6 +244,7 @@ public class TeammateAI : MonoBehaviour
                         voice += $"+{target}";
                     }
                 }
+
                 break;
         }
 

@@ -177,7 +177,17 @@ public class TeammateController : UnitController
                 navMeshAgent.SetDestination(target.transform.position);
             }
         }
+        else if (unitState == EUnitState.Supprot)
+        {
+            if (followTarget == null)
+            {
+                ChangeUnitState(EUnitState.Idle);
+                return;
+            }
+            
+            FollowTarget();
 
+        }
         /*if (IsNavArrivedTargetPosition())
         {
             if (!navMeshAgent.hasPath || navMeshAgent.velocity.sqrMagnitude == 0f)
@@ -284,6 +294,13 @@ public class TeammateController : UnitController
         ChangeUnitState(EUnitState.Move);
         SetCamera(true);
     }
+    
+    public void SetFollowHealUnit(UnitController followUnitController)
+    {
+        followTarget = followUnitController;
+        ChangeUnitState(EUnitState.Supprot);
+        SetCamera(true);
+    }
 
     private void FollowTarget()
     {
@@ -309,6 +326,10 @@ public class TeammateController : UnitController
                 {
                     homePosition = transform.position;
                     Debug.Log("타겟 도착 후 3초 경과 → 타겟 해제");
+                    if (unitState == EUnitState.Supprot)
+                    {
+                        DoHeal(followTarget);
+                    }
                     followTarget = null;
                     stopTimer = 0f;
                     ChangeUnitState(EUnitState.Idle);
@@ -330,6 +351,12 @@ public class TeammateController : UnitController
     public bool IsNavArrivedTargetPosition()
     {
         return !navMeshAgent.pathPending && navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance;
+    }
+
+    void DoHeal(UnitController targetUnit)
+    {
+        var health = targetUnit.GetComponent<LivingEntity>();
+        health.RestoreHealth(100);
     }
 
     public TeammateAI GetTeammateAI()

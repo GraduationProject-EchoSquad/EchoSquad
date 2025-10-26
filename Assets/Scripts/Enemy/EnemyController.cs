@@ -105,11 +105,17 @@ public class EnemyController : UnitController
         animator.SetTrigger("Attack");
         if (attackTarget != null)
         {
-            PlayerHP health = attackTarget.GetComponent<PlayerHP>();
+            PlayerHealth health = attackTarget.GetComponent<PlayerHealth>();
             if (health != null)
             {
                 int damage = (enemyType == EnemyType.Monster) ? 20 : 10;
-                health.TakeDamage(damage);
+                DamageMessage damageMessage;
+
+                damageMessage.damager = gameObject;
+                damageMessage.amount = damage;
+                damageMessage.hitPoint = attackTarget.transform.position;
+                damageMessage.hitNormal = Vector3.up;
+                health.ApplyDamage(damageMessage);
             }
 
             // 룬 체력 스크립트 작성 후 주석 해제
