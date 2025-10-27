@@ -3014,7 +3014,7 @@ MonoBehaviour:
   enemyType: 2
   moneyReward: 300
   scoreReward: 300
-  attackRange: 4
+  attackRange: 2
 --- !u!1 &8658231281914553643
 GameObject:
   m_ObjectHideFlags: 0

@@ -14403,7 +14403,7 @@ MonoBehaviour:
   enemyType: 3
   moneyReward: 50
   scoreReward: 100
-  attackRange: 5
+  attackRange: 2
 --- !u!136 &518107552579827387
 CapsuleCollider:
   m_ObjectHideFlags: 0

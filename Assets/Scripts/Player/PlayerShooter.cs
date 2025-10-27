@@ -54,12 +54,13 @@ public class PlayerShooter : UnitShooter
 
     private void Update()
     {
-        // 1) 카메라 계산 부분을 무시하고 상체 ‘들기’에 대응되는 최소값(예: 0.8f)만 넘겨주기
-        float camY = playerCamera.transform.position.y;
-        float animAngle = Mathf.InverseLerp(0f, 20f, camY);
-        // camY=6 → animAngle=0  /  camY=8 → animAngle=0.5  /  camY=10 → animAngle=1
+        // 카메라 높이 기반 발사각 변경 기능 비활성화 - 정면으로 고정
+        // float camY = playerCamera.transform.position.y;
+        // float animAngle = Mathf.InverseLerp(0f, 20f, camY);
+
+        // 정면(수평) 발사각으로 고정
+        float animAngle = 0.5f;
         unitAnimator.SetFloat("Angle", animAngle);
-        //playerAnimator.SetFloat("Angle", fixedAngle);
 
         if (!playerInput.fire && Time.time >= lastFireInputTime + waitingTimeForReleasingAim)
         {

@@ -39,13 +39,21 @@ public class EnemyController : UnitController
 
     void Update()
     {
-        if (IsDead() || isAttacking)
+        if (IsDead())
         {
             return;
         }
 
+        // 공격 중에는 이동 로직 실행 안 함
+        if (isAttacking)
+        {
+            // 공격 중에는 확실하게 멈춤
+            agent.isStopped = true;
+            animator.SetBool("Run", false);
+            return;
+        }
+
         UpdateAttackTarget();   // 근처 적 확인
-                                // 공격 대상이 있으면 그걸 추적
 
         // 공격 대상이 있는지, 그리고 사거리 내에 있는지 확인
         float dist = Mathf.Infinity;
@@ -83,16 +91,19 @@ public class EnemyController : UnitController
         else // 공격 사거리 밖에 있거나 공격 대상이 없는 경우
         {
             agent.isStopped = false; // 이동 재개
+            animator.SetBool("Run", false); // 일단 false로 초기화
 
             // 이동 타겟 설정 (적 또는 룬)
             moveTarget = attackTarget != null ? attackTarget : FindNearestRune();
 
             if (moveTarget != null)
+            {
                 agent.SetDestination(moveTarget.position);
 
-            // isStopped가 false일 때만 Run 애니메이션 활성화
-            bool isMoving = agent.velocity.magnitude > 0.1f && !agent.isStopped;
-            animator.SetBool("Run", isMoving);
+                // NavMeshAgent가 실제로 움직이고 있는지 확인
+                bool isMoving = agent.velocity.sqrMagnitude > 0.01f;
+                animator.SetBool("Run", isMoving);
+            }
         }
     }
 
@@ -140,6 +151,7 @@ public class EnemyController : UnitController
     {
         isAttacking = true;
         agent.isStopped = true;
+        animator.SetBool("Run", false); // 확실하게 Run 애니메이션 종료
 
         if (enemyType == EnemyType.HandAlien)
         {
@@ -174,6 +186,8 @@ public class EnemyController : UnitController
             animator.SetTrigger("Attack");
             currentAttackDamage = (enemyType == EnemyType.Zombie) ? 20 : 10;
         }
+
+        Debug.Log($"[{enemyType}] Attack started - isAttacking: {isAttacking}");
     }
 
     // [애니메이션 이벤트]에서 호출하는 데미지 적용 함수
@@ -205,6 +219,8 @@ public class EnemyController : UnitController
     public void OnAttackAnimationEnd()
     {
         isAttacking = false; // 👈 공격 종료 (Update 로직 다시 활성화)
+        agent.isStopped = false; // 이동 재개 가능하도록
+        Debug.Log($"[{enemyType}] Attack ended - isAttacking: {isAttacking}");
     }
 
     public override async UniTaskVoid HandleDeath()
@@ -228,5 +244,42 @@ public class EnemyController : UnitController
         await UniTask.WaitForSeconds(2f);
 
         UnitManager.Instance.DeleteUnit(this);
+    }
+
+    // 감지 범위와 공격 범위를 시각화하기 위한 Gizmo
+    void OnDrawGizmosSelected()
+    {
+        // 감지 범위 (3f) - 노란색 원
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, 3f);
+
+        // 공격 범위 (attackRange) - 빨간색 원
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+
+        // 플레이 모드일 때만 추가 정보 표시
+        if (Application.isPlaying)
+        {
+            // 현재 공격 대상이 있으면 선으로 연결
+            if (attackTarget != null)
+            {
+                Gizmos.color = Color.magenta;
+                Gizmos.DrawLine(transform.position, attackTarget.position);
+            }
+
+            // 현재 이동 목표가 있으면 녹색 선으로 연결
+            if (moveTarget != null && moveTarget != attackTarget)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawLine(transform.position, moveTarget.position);
+            }
+
+            // 공격 중이면 빨간색 구체 표시
+            if (isAttacking)
+            {
+                Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
+                Gizmos.DrawSphere(transform.position + Vector3.up * 2f, 0.3f);
+            }
+        }
     }
 }
