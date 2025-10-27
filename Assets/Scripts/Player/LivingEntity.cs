@@ -7,17 +7,16 @@ using UnityEngine.UI;
 // 체력, 데미지 받아들이기, 사망 기능, 사망 이벤트를 제공
 public class LivingEntity : MonoBehaviour, IDamageable
 {
-    [Header("UI")]
-    public Slider healthSlider;      // 인스펙터에서 연결
-    public TextMeshProUGUI nameText;      // 인스펙터에서 연결
-    public UnitController UnitController;      // 인스펙터에서 연결
-    
+    [Header("UI")] public Slider healthSlider; // 인스펙터에서 연결
+    public TextMeshProUGUI nameText; // 인스펙터에서 연결
+    public UnitController UnitController; // 인스펙터에서 연결
+
     public float startingHealth = 100f; // 시작 체력
     public float health { get; protected set; } // 현재 체력
     public bool dead { get; protected set; } // 사망 상태
-    
+
     public event Action OnDeath; // 사망시 발동할 이벤트
-    
+
     private const float minTimeBetDamaged = 0.1f;
     private float lastDamagedTime;
 
@@ -37,6 +36,10 @@ public class LivingEntity : MonoBehaviour, IDamageable
         if (UnitController is TeammateController teammateController)
         {
             nameText.text = teammateController.GetTeammateAI().teammateName;
+        }
+        else if (UnitController is EnemyController enemyController)
+        {
+            nameText.text = enemyController.enemyType.ToString();
         }
     }
 
@@ -68,7 +71,7 @@ public class LivingEntity : MonoBehaviour, IDamageable
 
         return true;
     }
-    
+
     // 체력을 회복하는 기능
     public void RestoreHealth(float newHealth)
     {
@@ -104,11 +107,11 @@ public class LivingEntity : MonoBehaviour, IDamageable
         // 사망 상태를 참으로 변경
         dead = true;
     }
-    
+
     protected void UpdateUI()
     {
         if (healthSlider != null)
             healthSlider.maxValue = startingHealth;
-            healthSlider.value = health;  // LivingEntity에서 관리하는 현재 체력
+        healthSlider.value = health; // LivingEntity에서 관리하는 현재 체력
     }
 }

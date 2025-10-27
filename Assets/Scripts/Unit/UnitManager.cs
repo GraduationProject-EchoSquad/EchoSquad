@@ -9,8 +9,10 @@ public class UnitManager : Singleton<UnitManager>
     //TODO 리소스 관리 따로 필요?
     [SerializeField] private PlayerController PlayerUnitPrefab;
     [SerializeField] private TeammateController TeammateUnitPrefab;
-    [Header("Teammate Voice Profiles")]
-    [SerializeField] private VoiceProfile lenaVoiceProfile;
+
+    [Header("Teammate Voice Profiles")] [SerializeField]
+    private VoiceProfile lenaVoiceProfile;
+
     [SerializeField] private VoiceProfile jamesVoiceProfile;
     [SerializeField] private VoiceProfile saraVoiceProfile;
 
@@ -96,7 +98,7 @@ public class UnitManager : Singleton<UnitManager>
     {
         UnitList.Remove(unitController);
         unitTeamTypeDict[unitController.GetUnitTeamType()].Remove(unitController);
-        
+
         Destroy(unitController.gameObject);
     }
 
@@ -133,14 +135,20 @@ public class UnitManager : Singleton<UnitManager>
 
         return nearestEnemyUnit;
     }
-    
+
     public BossController GetBossController()
-    { 
+    {
         return UnitList.Find(e => e is BossController) as BossController;
     }
 
     public IEnumerable<UnitController> GetAliveEnemies(UnitController me) =>
         GetUnitTeamTypeList(me.GetOppositeTeamType()).Where(e => !e.IsDead());
+
+    public IEnumerable<UnitController> GetAliveEnemieTypes(UnitController me, EnemyType enemyType)
+    {
+        return GetUnitTeamTypeList(me.GetOppositeTeamType()).Where(e =>
+            !e.IsDead() && (e is EnemyController enemyController && enemyController.enemyType == enemyType));
+    }
 
     public IEnumerable<UnitController> GetVisibleEnemies(
         UnitShooter shooter,
@@ -155,6 +163,7 @@ public class UnitManager : Singleton<UnitManager>
             .Where(e =>
             {
                 return shooter.IsVisibleTarget(e);
+
                 /*Vector3 dir = e.transform.position - eyePos;
                 float distSqr = dir.sqrMagnitude;
                 if (distSqr > maxDistance * maxDistance) return false;
@@ -174,6 +183,7 @@ public class UnitManager : Singleton<UnitManager>
     {
         return playerUnit;
     }
+
 
     // 특정 동료에게 VoiceProfile 적용 (TeammateVoiceSetupManager에서 호출)
     public void ApplyTeammateVoiceProfile(string teammateName, VoiceProfile profile)

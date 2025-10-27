@@ -120,6 +120,10 @@ public class TeammateAI : MonoBehaviour
 
                 unitController.GetUnitShooter().SetAimTargetUnit(bossController);
             }
+            else if (Enum.TryParse<EnemyType>(param.engage_enemy, out EnemyType enemyType))
+            {
+                unitController.GetUnitShooter().SetTargetEnemyType(enemyType);
+            }
             else if (string.Equals(param.engage_enemy, "nearestTarget", StringComparison.OrdinalIgnoreCase))
             {
                 UnitController nearestEnemyUnit = unitManager.GetNearestEnemyUnit(unitManager.GetPlayerUnit());

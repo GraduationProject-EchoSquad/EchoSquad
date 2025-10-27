@@ -7,8 +7,9 @@ using static Unity.Collections.Unicode;
 
 public enum EnemyType
 {
-    Zombie, 
-    Monster   
+    None,   
+    Zombie,
+    Boss
 }
 
 public class EnemyController : UnitController
@@ -108,7 +109,7 @@ public class EnemyController : UnitController
             PlayerHealth health = attackTarget.GetComponent<PlayerHealth>();
             if (health != null)
             {
-                int damage = (enemyType == EnemyType.Monster) ? 20 : 10;
+                int damage = (enemyType == EnemyType.Zombie) ? 20 : 10;
                 DamageMessage damageMessage;
 
                 damageMessage.damager = gameObject;
