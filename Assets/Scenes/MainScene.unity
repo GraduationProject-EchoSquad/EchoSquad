@@ -27039,8 +27039,8 @@ MonoBehaviour:
         z: 0
       Rotation:
         value:
-          x: 0.27733296
-          y: 9.720198e-10
+          x: 0.27733293
+          y: 0
           z: 0.07121054
           w: 0.9581312
     m_MetaData:
@@ -45326,8 +45326,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waves:
-  - enemyPrefab: {fileID: 1510129015077551741, guid: 32aafcecb007f1f46a227de5e7b0bd14,
-      type: 3}
+  - enemyPrefab:
+    - {fileID: 1510129015077551741, guid: 32aafcecb007f1f46a227de5e7b0bd14, type: 3}
+    - {fileID: 1510129015077551741, guid: 6297a27982079024bb03d372f83f0c84, type: 3}
     count: 10
     spawnInterval: 5
     isBossWave: 1
@@ -45340,10 +45341,11 @@ MonoBehaviour:
     - {fileID: 1740722884}
     - {fileID: 1667829911}
     - {fileID: 1879873406}
-  - enemyPrefab: {fileID: 1510129015077551741, guid: 32aafcecb007f1f46a227de5e7b0bd14,
-      type: 3}
-    count: 10
-    spawnInterval: 5
+  - enemyPrefab:
+    - {fileID: 1510129015077551741, guid: 32aafcecb007f1f46a227de5e7b0bd14, type: 3}
+    - {fileID: 1510129015077551741, guid: 6297a27982079024bb03d372f83f0c84, type: 3}
+    count: 15
+    spawnInterval: 4
     isBossWave: 1
     bossPrefab: {fileID: 3354316289118794396, guid: 5701b381e6ba73d4b8f53c6432da5b90,
       type: 3}
@@ -50384,7 +50386,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2029073041
 Transform:
   m_ObjectHideFlags: 0

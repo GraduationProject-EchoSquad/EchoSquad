@@ -9,6 +9,7 @@ public enum EnemyType
 {
     None,   
     Zombie,
+    Lion,
     Boss
 }
 

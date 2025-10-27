@@ -106,7 +106,7 @@ public class GameManager : Singleton<GameManager>
         SetGameState(GameState.End);
         
         PubSubManager.Instance.Publish<OnGameEndData>(PubSubEvent.OnGameEnd, data => data.IsWin = isWin);
-        (await UIManager.Instance.GetUI<GameOverUI>(UIManager.EUIData.GameOver)).gameObject.SetActive(true);
+        (await UIManager.Instance.GetUI<GameOverUI>(UIManager.EUIData.GameOver)).ShowGameOverUI(isWin);
     }
 
     public bool IsGameControllable()
