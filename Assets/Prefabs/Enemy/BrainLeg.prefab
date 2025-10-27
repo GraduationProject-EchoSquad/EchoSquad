@@ -233,7 +233,7 @@ MonoBehaviour:
   enemyType: 5
   moneyReward: 50
   scoreReward: 100
-  attackRange: 1.5
+  attackRange: 1
 --- !u!114 &4428940001741895727
 MonoBehaviour:
   m_ObjectHideFlags: 0

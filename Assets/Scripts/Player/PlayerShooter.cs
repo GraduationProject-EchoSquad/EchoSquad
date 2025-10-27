@@ -8,6 +8,10 @@ public class PlayerShooter : UnitShooter
     private PlayerInput playerInput;
     private Camera playerCamera;
     private Vector3 aimPoint;
+
+    [Header("조준 설정")]
+    [SerializeField] private float aimAngle = 0.5f; // 0 = 아래, 0.5 = 수평, 1 = 위
+    [SerializeField] private float aimSpeed = 1f; // 조준 속도
     
     void Awake()
     {
@@ -54,13 +58,22 @@ public class PlayerShooter : UnitShooter
 
     private void Update()
     {
-        // 카메라 높이 기반 발사각 변경 기능 비활성화 - 정면으로 고정
-        // float camY = playerCamera.transform.position.y;
-        // float animAngle = Mathf.InverseLerp(0f, 20f, camY);
+        // Q키: 총구를 위로 (aimAngle 증가)
+        if (Input.GetKey(KeyCode.Q))
+        {
+            aimAngle += aimSpeed * Time.deltaTime;
+            aimAngle = Mathf.Clamp01(aimAngle); // 0~1 사이로 제한
+        }
 
-        // 정면(수평) 발사각으로 고정
-        float animAngle = 0.5f;
-        unitAnimator.SetFloat("Angle", animAngle);
+        // E키: 총구를 아래로 (aimAngle 감소)
+        if (Input.GetKey(KeyCode.E))
+        {
+            aimAngle -= aimSpeed * Time.deltaTime;
+            aimAngle = Mathf.Clamp01(aimAngle); // 0~1 사이로 제한
+        }
+
+        // 조준각을 애니메이터에 적용
+        unitAnimator.SetFloat("Angle", aimAngle);
 
         if (!playerInput.fire && Time.time >= lastFireInputTime + waitingTimeForReleasingAim)
         {

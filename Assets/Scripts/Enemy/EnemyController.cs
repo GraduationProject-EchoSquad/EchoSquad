@@ -35,6 +35,9 @@ public class EnemyController : UnitController
     {
         base.Start();
         agent = GetComponent<NavMeshAgent>();
+
+        // 팀 타입 설정 (Init이 호출되지 않은 경우 대비)
+        unitTeamType = EUnitTeamType.Enemy;
     }
 
     void Update()
@@ -158,13 +161,13 @@ public class EnemyController : UnitController
             int attackType = Random.Range(0, 2);
             if (attackType == 0)
             {
-                animator.SetTrigger("AnkleBiteTrigger");
+                animator.SetBool("AnkleBite", true);
                 currentAttackDamage = 15;
             }
             else
             {
-                animator.SetTrigger("CrochBiteTrigger");
-                currentAttackDamage = 25;
+                animator.SetBool("CrochBite", true);
+                currentAttackDamage = 35;
             }
         }
         else if (enemyType == EnemyType.Boss)
@@ -183,7 +186,8 @@ public class EnemyController : UnitController
         }
         else
         {
-            animator.SetTrigger("Attack");
+            // 트리거 대신 직접 상태 전환 (Run 상태에서도 작동)
+            animator.Play("Attack", 0);
             currentAttackDamage = (enemyType == EnemyType.Zombie) ? 20 : 10;
         }
 
@@ -218,8 +222,17 @@ public class EnemyController : UnitController
     // [애니메이션 이벤트]에서 호출하는 공격 종료 함수
     public void OnAttackAnimationEnd()
     {
-        isAttacking = false; // 👈 공격 종료 (Update 로직 다시 활성화)
+        isAttacking = false; //  공격 종료 (Update 로직 다시 활성화)
         agent.isStopped = false; // 이동 재개 가능하도록
+
+        // HandAlien의 경우 Bool 파라미터 리셋
+        if (enemyType == EnemyType.HandAlien)
+        {
+            animator.SetBool("AnkleBite", false);
+            animator.SetBool("CrochBite", false);
+            animator.SetBool("IdleOne", true);
+        }
+
         Debug.Log($"[{enemyType}] Attack ended - isAttacking: {isAttacking}");
     }
 

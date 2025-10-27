@@ -7,8 +7,8 @@ using UnityEngine;
 public class ShopTrigger : MonoBehaviour
 {
     [Header("상호작용 설정")]
-    [Tooltip("상호작용 키 (E키)")]
-    [SerializeField] private KeyCode interactionKey = KeyCode.E;
+    [Tooltip("상호작용 키 (Z키)")]
+    [SerializeField] private KeyCode interactionKey = KeyCode.Z;
 
     [Header("UI 힌트 설정")]
     [Tooltip("상호작용 힌트 텍스트 (선택적)")]
@@ -59,7 +59,7 @@ public class ShopTrigger : MonoBehaviour
                 interactionHintUI.SetActive(true);
             }
 
-            Debug.Log("[ShopTrigger] 플레이어가 상점 범위에 진입했습니다. E키를 눌러 상점을 여세요.");
+            Debug.Log("[ShopTrigger] 플레이어가 상점 범위에 진입했습니다. Z키를 눌러 상점을 여세요.");
         }
     }
 
