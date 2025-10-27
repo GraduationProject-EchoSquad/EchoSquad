@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: ShopItem_MaxHpIncrease
   m_EditorClassIdentifier: 
   itemId: player_maxhealth
-  itemName: health_restore
+  itemName: MaxHPIncrease
   description: 
   icon: {fileID: 0}
   price: 300
-  itemType: 2
+  itemType: 3
   target: 0
   effectValue: 50
   isRepeatable: 1

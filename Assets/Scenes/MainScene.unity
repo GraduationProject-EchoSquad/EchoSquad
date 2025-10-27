@@ -27039,8 +27039,8 @@ MonoBehaviour:
         z: 0
       Rotation:
         value:
-          x: 0.27733293
-          y: 0
+          x: 0.27733296
+          y: 9.720198e-10
           z: 0.07121054
           w: 0.9581312
     m_MetaData:
@@ -53106,7 +53106,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerUnitPrefab: {fileID: 7578207875882508878, guid: 2cfad616b5d3e5641af915816ac56868,
     type: 3}
-  TeammateUnitPrefab: {fileID: 4800373941245335645, guid: ce9a501e3125c964f929aac0bc0d19be,
+  lenaUnitPrefab: {fileID: 1853500688205152844, guid: 0598bca9478069c4199c76eba329aa43,
+    type: 3}
+  jamesUnitPrefab: {fileID: 5361759590296184318, guid: 5c01f96433725b848973bc9b91a4cb50,
+    type: 3}
+  saraUnitPrefab: {fileID: 283644264564125964, guid: 54ccd660b8a7fcc408fc711b09f25281,
     type: 3}
   lenaVoiceProfile: {fileID: 11400000, guid: 6ae22a5a32839504c82455a79adc929c, type: 2}
   jamesVoiceProfile: {fileID: 11400000, guid: 9ee9f9e9ac396ba44b22fd92b9fc22d4, type: 2}

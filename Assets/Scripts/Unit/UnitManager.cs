@@ -8,11 +8,14 @@ public class UnitManager : Singleton<UnitManager>
 {
     //TODO 리소스 관리 따로 필요?
     [SerializeField] private PlayerController PlayerUnitPrefab;
-    [SerializeField] private TeammateController TeammateUnitPrefab;
 
-    [Header("Teammate Voice Profiles")] [SerializeField]
-    private VoiceProfile lenaVoiceProfile;
+    [Header("Teammate Prefabs")]
+    [SerializeField] private TeammateController lenaUnitPrefab;
+    [SerializeField] private TeammateController jamesUnitPrefab;
+    [SerializeField] private TeammateController saraUnitPrefab;
 
+    [Header("Teammate Voice Profiles")]
+    [SerializeField] private VoiceProfile lenaVoiceProfile;
     [SerializeField] private VoiceProfile jamesVoiceProfile;
     [SerializeField] private VoiceProfile saraVoiceProfile;
 
@@ -23,6 +26,7 @@ public class UnitManager : Singleton<UnitManager>
         { "Sara", "사라" },
     };
 
+    private Dictionary<string, TeammateController> teammatePrefabDict = new Dictionary<string, TeammateController>();
     private Dictionary<string, VoiceProfile> teammateVoiceProfileDict = new Dictionary<string, VoiceProfile>();
 
     //모든 유닛 list
@@ -44,6 +48,11 @@ public class UnitManager : Singleton<UnitManager>
             unitTeamTypeDict.Add(unitTeamType, new List<UnitController>());
         }
 
+        // 동료 프리팹 딕셔너리 초기화
+        teammatePrefabDict.Add("Lena", lenaUnitPrefab);
+        teammatePrefabDict.Add("James", jamesUnitPrefab);
+        teammatePrefabDict.Add("Sara", saraUnitPrefab);
+
         // 목소리 프로필 딕셔너리 초기화
         teammateVoiceProfileDict.Add("Lena", lenaVoiceProfile);
         teammateVoiceProfileDict.Add("James", jamesVoiceProfile);
@@ -55,10 +64,17 @@ public class UnitManager : Singleton<UnitManager>
         //플레이어유닛, 동료유닛
         playerUnit = SpawnUnit(PlayerUnitPrefab, new Vector3(-20, 0, -8), PlayerUnitPrefab.transform.rotation,
             UnitController.EUnitTeamType.Allay);
-        for (int i = 0; i < teammateNameDic.Count; i++)
+
+        // 각 동료 유닛을 해당하는 Variant 프리팹으로 생성
+        int i = 0;
+        foreach (var teammateName in teammateNameDic.Keys)
         {
-            SpawnUnit(TeammateUnitPrefab, new Vector3(-20 + i, 0, -8), TeammateUnitPrefab.transform.rotation,
-                UnitController.EUnitTeamType.Allay);
+            if (teammatePrefabDict.TryGetValue(teammateName, out TeammateController prefab))
+            {
+                SpawnUnit(prefab, new Vector3(-20 + i, 0, -8), prefab.transform.rotation,
+                    UnitController.EUnitTeamType.Allay);
+                i++;
+            }
         }
     }
 
