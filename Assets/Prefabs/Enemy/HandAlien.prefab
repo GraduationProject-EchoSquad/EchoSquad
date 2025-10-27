@@ -2130,7 +2130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 592b5982891e3e84185a2be806a2dd67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyType: 3
+  enemyType: 4
   moneyReward: 75
   scoreReward: 100
   attackRange: 1.5
@@ -6325,6 +6325,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 612661110274600468, guid: 5b5cb83f4f979904d974ab364c214299,
+        type: 3}
+      propertyPath: m_margin.x
+      value: -8.374023
+      objectReference: {fileID: 0}
+    - target: {fileID: 612661110274600468, guid: 5b5cb83f4f979904d974ab364c214299,
+        type: 3}
+      propertyPath: m_margin.z
+      value: -13.460621
+      objectReference: {fileID: 0}
     - target: {fileID: 6460791816805391703, guid: 5b5cb83f4f979904d974ab364c214299,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -6343,17 +6353,17 @@ PrefabInstance:
     - target: {fileID: 8332753611001271627, guid: 5b5cb83f4f979904d974ab364c214299,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 8332753611001271627, guid: 5b5cb83f4f979904d974ab364c214299,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 8332753611001271627, guid: 5b5cb83f4f979904d974ab364c214299,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 8332753611001271627, guid: 5b5cb83f4f979904d974ab364c214299,
         type: 3}

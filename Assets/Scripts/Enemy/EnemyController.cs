@@ -9,6 +9,7 @@ public enum EnemyType
 {
     None,
     Zombie,
+    ZombieKing,
     Boss,
     HandAlien,
     BrainLeg,
@@ -27,6 +28,8 @@ public class EnemyController : UnitController
     private NavMeshAgent agent;
     private float attackCooldown = 1f;
     private float attackTimer = 0f;
+    private bool isAttacking = false;
+    private int currentAttackDamage;
 
     protected override void Start()
     {
@@ -36,7 +39,7 @@ public class EnemyController : UnitController
 
     void Update()
     {
-        if (IsDead())
+        if (IsDead() || isAttacking)
         {
             return;
         }
@@ -44,28 +47,52 @@ public class EnemyController : UnitController
         UpdateAttackTarget();   // 근처 적 확인
                                 // 공격 대상이 있으면 그걸 추적
 
-        moveTarget = attackTarget != null ? attackTarget : FindNearestRune();
+        // 공격 대상이 있는지, 그리고 사거리 내에 있는지 확인
+        float dist = Mathf.Infinity;
+        bool isInAttackRange = false;
 
-        if (moveTarget != null)
-            agent.SetDestination(moveTarget.position);
-
-
-        bool isMoving = agent.velocity.magnitude > 0.1f;
-        animator.SetBool("Run", isMoving);
-
-        // 공격 처리
         if (attackTarget != null)
         {
-            float dist = Vector3.Distance(transform.position, attackTarget.position);
-            if (dist <= attackRange)
+            dist = Vector3.Distance(transform.position, attackTarget.position);
+            isInAttackRange = (dist <= attackRange);
+        }
+
+        // 공격 사거리 내에 있을 경우
+        if (isInAttackRange)
+        {
+            agent.isStopped = true; // 멈춤
+            animator.SetBool("Run", false); // 달리기 애니메이션 정지
+
+            // 부드러운 회전을 위해 LookAt 대신 Slerp 사용
+            Vector3 lookDir = (attackTarget.position - transform.position).normalized;
+            lookDir.y = 0; // Y축은 회전하지 않도록
+            if (lookDir != Vector3.zero)
             {
-                attackTimer += Time.deltaTime;
-                if (attackTimer >= attackCooldown)
-                {
-                    attackTimer = 0f;
-                    Attack();
-                }
+                Quaternion targetRotation = Quaternion.LookRotation(lookDir);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
             }
+
+            // 공격 쿨다운 처리
+            attackTimer += Time.deltaTime;
+            if (attackTimer >= attackCooldown)
+            {
+                attackTimer = 0f;
+                Attack();
+            }
+        }
+        else // 공격 사거리 밖에 있거나 공격 대상이 없는 경우
+        {
+            agent.isStopped = false; // 이동 재개
+
+            // 이동 타겟 설정 (적 또는 룬)
+            moveTarget = attackTarget != null ? attackTarget : FindNearestRune();
+
+            if (moveTarget != null)
+                agent.SetDestination(moveTarget.position);
+
+            // isStopped가 false일 때만 Run 애니메이션 활성화
+            bool isMoving = agent.velocity.magnitude > 0.1f && !agent.isStopped;
+            animator.SetBool("Run", isMoving);
         }
     }
 
@@ -111,39 +138,55 @@ public class EnemyController : UnitController
 
     void Attack()
     {
-        int damage;
+        isAttacking = true;
+        agent.isStopped = true;
 
-        // HandAlien 계열은 다양한 공격 패턴 사용
         if (enemyType == EnemyType.HandAlien)
         {
             int attackType = Random.Range(0, 2);
             if (attackType == 0)
             {
                 animator.SetTrigger("AnkleBiteTrigger");
-                damage = 15; // 발목 물기 - 약한 공격
+                currentAttackDamage = 15;
             }
             else
             {
                 animator.SetTrigger("CrochBiteTrigger");
-                damage = 25; // 사타구니 물기 - 강한 공격!
+                currentAttackDamage = 25;
+            }
+        }
+        else if (enemyType == EnemyType.Boss)
+        {
+            int attackType = Random.Range(0, 2);
+            if (attackType == 0)
+            {
+                animator.SetTrigger("Attack");
+                currentAttackDamage = 15;
+            }
+            else
+            {
+                animator.SetTrigger("Cast Spell");
+                currentAttackDamage = 50;
             }
         }
         else
         {
-            // 일반 적들은 기본 공격
             animator.SetTrigger("Attack");
-            damage = (enemyType == EnemyType.Zombie) ? 20 : 10;
+            currentAttackDamage = (enemyType == EnemyType.Zombie) ? 20 : 10;
         }
+    }
 
-        if (attackTarget != null)
+    // [애니메이션 이벤트]에서 호출하는 데미지 적용 함수
+    public void ApplyDamageToTarget()
+    {
+        if (attackTarget != null) // 타겟이 여전히 유효한지 확인
         {
             PlayerHealth health = attackTarget.GetComponent<PlayerHealth>();
             if (health != null)
             {
                 DamageMessage damageMessage;
-
                 damageMessage.damager = gameObject;
-                damageMessage.amount = damage;
+                damageMessage.amount = currentAttackDamage; // 저장된 데미지 사용
                 damageMessage.hitPoint = attackTarget.transform.position;
                 damageMessage.hitNormal = Vector3.up;
                 health.ApplyDamage(damageMessage);
@@ -157,7 +200,13 @@ public class EnemyController : UnitController
             }*/
         }
     }
-    
+
+    // [애니메이션 이벤트]에서 호출하는 공격 종료 함수
+    public void OnAttackAnimationEnd()
+    {
+        isAttacking = false; // 👈 공격 종료 (Update 로직 다시 활성화)
+    }
+
     public override async UniTaskVoid HandleDeath()
     {
         base.HandleDeath();
