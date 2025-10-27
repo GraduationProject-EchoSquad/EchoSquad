@@ -1,52 +1,51 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using TMPro; // TMP 용
-using EasyTextEffects;
-using Random = UnityEngine.Random; // TextEffect가 이 네임스페이스에 있다고 가정
+using TMPro;             // TMP 용
+using EasyTextEffects;   // TextEffect가 이 네임스페이스에 있다고 가정
+
+[System.Serializable]
+public class EnemySpawnInfo
+{
+    public UnitController enemyPrefab;
+    public int count;
+}
 
 [System.Serializable]
 public class Wave
 {
-    [Header("Normal Wave Settings")] 
-    //private List<WaveData> waveData;
-    public List<UnitController> enemyPrefab;
-    public int count;
+    [Header("Normal Wave Settings")]
+    [Tooltip("이 웨이브에서 스폰할 적 타입들")]
+    public EnemySpawnInfo[] enemyTypes;
     public float spawnInterval;
 
-    [Header("Boss Wave Settings")] 
+    [Header("Boss Wave Settings")]
     public bool isBossWave;
     public UnitController bossPrefab;
 
-    [Header("Common Settings")] 
+    [Header("Common Settings")]
     public Transform[] spawnPoints;
 
-    /*public int GetCount()
+    // 총 적의 수 계산 (내부 사용)
+    public int GetTotalEnemyCount()
     {
-        int sum = 0;
-        foreach (var data in waveData)
+        int total = 0;
+        foreach (var enemyInfo in enemyTypes)
         {
-            sum += data.count;
+            total += enemyInfo.count;
         }
-
-        return sum;
-    }*/
+        return total;
+    }
 }
-
-/*[Serializable]
-struct WaveData
-{
-    public UnitController enemyPrefab;
-    public int count;
-}*/
 
 public class WaveManager : Singleton<WaveManager>
 {
-    [Header("Waves")] public Wave[] waves;
+    [Header("Waves")]
+    public Wave[] waves;
 
-    [Header("Time Between Waves (s)")] public float timeBetweenWaves = 5f;
+    [Header("Time Between Waves (s)")]
+    public float timeBetweenWaves = 5f;
 
     private int currentWaveIndex;
     private int MaxWaveIndex = 1;
@@ -68,6 +67,7 @@ public class WaveManager : Singleton<WaveManager>
 
     private void Start()
     {
+
     }
 
     // GameManager에서 호출하는 웨이브 시작 메서드
@@ -90,7 +90,7 @@ public class WaveManager : Singleton<WaveManager>
             }
 
             currentWaveIndex++;
-
+            
             // --- 휴식 시간 시작 ---
             if (currentWaveIndex < MaxWaveIndex)
             {
@@ -109,17 +109,18 @@ public class WaveManager : Singleton<WaveManager>
 
 
         Wave wave = waves[currentWaveIndex];
-        SetEnemiesRemaining(wave.count);
+        SetEnemiesRemaining(wave.GetTotalEnemyCount());
 
-        PubSubManager.Instance.Publish<OnWaveStartData>(PubSubEvent.OnWaveStart,
-            data => { data.WaveIndex = currentWaveIndex + 1; });
+        PubSubManager.Instance.Publish<OnWaveStartData>(PubSubEvent.OnWaveStart, data =>
+        {
+            data.WaveIndex = currentWaveIndex + 1;
+        });
 
         // 몬스터 스폰을 백그라운드에서 진행
         if (wave.isBossWave)
         {
             SpawnBoss(wave);
         }
-
         SpawnEnemiesAsync(wave).Forget();
 
 
@@ -137,13 +138,40 @@ public class WaveManager : Singleton<WaveManager>
 
     private async UniTask SpawnEnemiesAsync(Wave wave)
     {
-        for (int i = 0; i < wave.count; i++)
+        // 스폰할 적들의 리스트 생성
+        List<UnitController> spawnQueue = new List<UnitController>();
+
+        foreach (var enemyInfo in wave.enemyTypes)
+        {
+            for (int i = 0; i < enemyInfo.count; i++)
+            {
+                spawnQueue.Add(enemyInfo.enemyPrefab);
+            }
+        }
+
+        // 리스트를 섞어서 랜덤한 순서로 스폰
+        ShuffleList(spawnQueue);
+
+        // 모든 적을 스폰
+        for (int i = 0; i < spawnQueue.Count; i++)
         {
             // 웨이브가 이미 종료되었다면 스폰 중지
             if (waveCompletionSource.Task.Status.IsCompleted()) break;
 
-            SpawnEnemy(wave);
+            SpawnEnemy(wave, spawnQueue[i]);
             await UniTask.WaitForSeconds(wave.spawnInterval);
+        }
+    }
+
+    // Fisher-Yates 셔플 알고리즘
+    private void ShuffleList<T>(List<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            T temp = list[i];
+            list[i] = list[j];
+            list[j] = temp;
         }
     }
 
@@ -154,13 +182,10 @@ public class WaveManager : Singleton<WaveManager>
         Debug.Log("end breakTime!");
     }
 
-    private void SpawnEnemy(Wave wave)
+    private void SpawnEnemy(Wave wave, UnitController enemyPrefab)
     {
-        UnitController spawnController = wave.enemyPrefab[Random.Range(0, wave.enemyPrefab.Count)];
-        
         Transform spawnPoint = wave.spawnPoints[Random.Range(0, wave.spawnPoints.Length)];
-        UnitManager.Instance.SpawnUnit(spawnController, spawnPoint.position, spawnPoint.rotation,
-            UnitController.EUnitTeamType.Enemy);
+        UnitManager.Instance.SpawnUnit(enemyPrefab, spawnPoint.position, spawnPoint.rotation, UnitController.EUnitTeamType.Enemy);
 
         PubSubManager.Instance.Publish(PubSubEvent.OnEnemySpawn);
     }
@@ -173,11 +198,9 @@ public class WaveManager : Singleton<WaveManager>
             waveCompletionSource.TrySetResult(true); // 오류가 있지만 웨이브를 강제로 종료하여 멈춤 방지
             return;
         }
-
         // 보스는 보통 정해진 위치에 소환되므로, 첫 번째 스폰 포인트를 사용하거나 별도의 보스 스폰 포인트를 지정할 수 있습니다.
         Transform spawnPoint = wave.spawnPoints[0];
-        UnitManager.Instance.SpawnUnit(wave.bossPrefab, spawnPoint.position, spawnPoint.rotation,
-            UnitController.EUnitTeamType.Enemy);
+        UnitManager.Instance.SpawnUnit(wave.bossPrefab, spawnPoint.position, spawnPoint.rotation, UnitController.EUnitTeamType.Enemy);
     }
 
     // 몬스터가 죽을 때마다 호출
@@ -196,8 +219,10 @@ public class WaveManager : Singleton<WaveManager>
     private void SetEnemiesRemaining(int count)
     {
         enemiesRemaining = Mathf.Max(0, count);
-        PubSubManager.Instance.Publish<OnRemainEnemyCountChangeData>(PubSubEvent.OnRemainEnemyCountChange,
-            data => { data.remainEnemyCount = enemiesRemaining; });
+        PubSubManager.Instance.Publish<OnRemainEnemyCountChangeData>(PubSubEvent.OnRemainEnemyCountChange, data =>
+        {
+            data.remainEnemyCount = enemiesRemaining;
+        });
     }
 
     // 웨이브 진행 중 플레이어가 죽었을 때 호출
