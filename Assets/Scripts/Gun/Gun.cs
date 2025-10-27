@@ -177,8 +177,8 @@ public class Gun : MonoBehaviour
             // 레이가 어떤 물체와 충돌한 경우
 
             // 충돌한 상대방으로부터 IDamageable 오브젝트를 가져오기 시도
-            var target =
-                hit.collider.GetComponent<IDamageable>();
+            // GetComponentInParent 사용으로 Collider가 자식에 있어도 감지
+            var target = hit.collider.GetComponentInParent<IDamageable>();
 
             // 상대방으로 부터 IDamageable 오브젝트를 가져오는데 성공했다면
             if (target != null)
@@ -192,9 +192,13 @@ public class Gun : MonoBehaviour
 
                 // 상대방의 OnDamage 함수를 실행시켜서 상대방에게 데미지 주기
                 target.ApplyDamage(damageMessage);
+
+                Debug.Log($"[Gun] {gunHolder.name} → {hit.collider.name}에 {damage} 데미지 적용!");
             }
             else
             {
+                // IDamageable이 없으면 벽이나 지형에 맞은 것
+                Debug.LogWarning($"[Gun] {gunHolder.name} 레이캐스트 히트했으나 IDamageable 없음: {hit.collider.name}");
                 EffectManager.Instance.PlayHitEffect(hit.point, hit.normal, hit.transform);
             }
 

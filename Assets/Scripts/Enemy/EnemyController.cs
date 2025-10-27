@@ -36,7 +36,7 @@ public class EnemyController : UnitController
         base.Start();
         agent = GetComponent<NavMeshAgent>();
 
-        // 팀 타입 설정 (Init이 호출되지 않은 경우 대비)
+        // 팀 타입 설정
         unitTeamType = EUnitTeamType.Enemy;
     }
 
@@ -121,7 +121,7 @@ public class EnemyController : UnitController
         foreach (UnitController unit in units)
         {
             float dist = Vector3.Distance(transform.position, unit.transform.position);
-            if (dist <= 3f && dist < minDist)  // 공격 범위보다 넉넉하게 탐색 범위 설정
+            if (dist <= 5f && dist < minDist)  // 5f 탐색 범위
             {
                 minDist = dist;
                 nearest = unit.transform;
@@ -159,15 +159,20 @@ public class EnemyController : UnitController
         if (enemyType == EnemyType.HandAlien)
         {
             int attackType = Random.Range(0, 2);
+            Debug.Log($"[{enemyType}] Random.Range(0, 2) 결과: {attackType}");
+
             if (attackType == 0)
             {
-                animator.SetBool("AnkleBite", true);
+                // Bool 대신 직접 애니메이션 재생 (확실한 방법)
+                animator.Play("AnkleBite", 0, 0f);
                 currentAttackDamage = 15;
+                Debug.Log($"[{enemyType}] AnkleBite 애니메이션 강제 재생! (데미지: {currentAttackDamage})");
             }
             else
             {
-                animator.SetBool("CrochBite", true);
+                animator.Play("CrochBite", 0, 0f);
                 currentAttackDamage = 35;
+                Debug.Log($"[{enemyType}] CrochBite 애니메이션 강제 재생! (데미지: {currentAttackDamage})");
             }
         }
         else if (enemyType == EnemyType.Boss)
@@ -199,16 +204,32 @@ public class EnemyController : UnitController
     {
         if (attackTarget != null) // 타겟이 여전히 유효한지 확인
         {
-            PlayerHealth health = attackTarget.GetComponent<PlayerHealth>();
+            // 거리 체크 추가: 공격 범위 내에 있을 때만 데미지 적용
+            float dist = Vector3.Distance(transform.position, attackTarget.position);
+            if (dist > attackRange * 1.5f) // 공격 범위의 1.5배까지 허용 (약간의 여유)
+            {
+                Debug.LogWarning($"[{enemyType}] 타겟이 공격 범위를 벗어남! 거리: {dist:F2}, 범위: {attackRange}");
+                return;
+            }
+
+            LivingEntity health = attackTarget.GetComponent<LivingEntity>();
+
             if (health != null)
             {
                 DamageMessage damageMessage;
                 damageMessage.damager = gameObject;
-                damageMessage.amount = currentAttackDamage; // 저장된 데미지 사용
+                damageMessage.amount = currentAttackDamage;
                 damageMessage.hitPoint = attackTarget.transform.position;
                 damageMessage.hitNormal = Vector3.up;
+
                 health.ApplyDamage(damageMessage);
+                Debug.Log($"[{enemyType}] {currentAttackDamage} 데미지 적용! 대상: {attackTarget.name}, 거리: {dist:F2}");
             }
+            else
+            {
+                Debug.LogError($"[{enemyType}] {attackTarget.name}에서 LivingEntity 컴포넌트를 찾지 못했습니다!");
+            }
+
 
             // 룬 체력 스크립트 작성 후 주석 해제
             /*var rune = target.GetComponent<RuneHP>();
@@ -222,24 +243,40 @@ public class EnemyController : UnitController
     // [애니메이션 이벤트]에서 호출하는 공격 종료 함수
     public void OnAttackAnimationEnd()
     {
+        Debug.Log($"[{enemyType}] OnAttackAnimationEnd 호출됨! isAttacking: {isAttacking} → false");
+
         isAttacking = false; //  공격 종료 (Update 로직 다시 활성화)
         agent.isStopped = false; // 이동 재개 가능하도록
 
-        // HandAlien의 경우 Bool 파라미터 리셋
+        // HandAlien의 경우 IdleOne으로 강제 전환
         if (enemyType == EnemyType.HandAlien)
         {
-            animator.SetBool("AnkleBite", false);
-            animator.SetBool("CrochBite", false);
-            animator.SetBool("IdleOne", true);
+            animator.Play("IdleOne", 0);
+            Debug.Log($"[{enemyType}] IdleOne 애니메이션으로 강제 전환");
         }
-
-        Debug.Log($"[{enemyType}] Attack ended - isAttacking: {isAttacking}");
     }
 
     public override async UniTaskVoid HandleDeath()
     {
         base.HandleDeath();
+
+        // 공격 중이었다면 즉시 해제 (죽는 모션으로 바로 전환하기 위해)
+        isAttacking = false;
         agent.enabled = false;
+
+        // HandAlien의 경우 모든 Bool 파라미터 리셋
+        if (enemyType == EnemyType.HandAlien)
+        {
+            animator.SetBool("AnkleBite", false);
+            animator.SetBool("CrochBite", false);
+            animator.SetBool("IdleOne", false);
+            animator.SetBool("Run", false);
+        }
+        else
+        {
+            animator.SetBool("Run", false);
+        }
+
         animator.SetTrigger("Die");
 
         // 몬스터 정보와 함께 죽음 이벤트 발행
