@@ -20,11 +20,13 @@ public class UnitShooter : MonoBehaviour
 
     public UnitController unit { get; private set; }
     private UnitController aimTargetUnit;
+    private EnemyType targetEnemyType = EnemyType.None;
 
-    [Header("Visibility Setting")]
-    [SerializeField] float viewDistance = 10f;      // 최대 탐지 거리
-    [SerializeField] float viewAngle = 120f;      // 시야각(°)
-    [SerializeField] float eyeHeight;  //  Raycast 시작 높이
+    [Header("Visibility Setting")] [SerializeField]
+    float viewDistance = 10f; // 최대 탐지 거리
+
+    [SerializeField] float viewAngle = 120f; // 시야각(°)
+    [SerializeField] float eyeHeight; //  Raycast 시작 높이
 
     protected bool hasEnoughDistance =>
         !Physics.Linecast(transform.position + Vector3.up * gun.fireTransform.position.y, gun.fireTransform.position,
@@ -36,7 +38,6 @@ public class UnitShooter : MonoBehaviour
         unit = GetComponent<UnitController>();
 
         InitializeEyeHeight();
-
     }
 
     protected virtual void InitializeEyeHeight()
@@ -102,7 +103,7 @@ public class UnitShooter : MonoBehaviour
     public bool IsVisibleTarget(UnitController targetController)
     {
         Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
-        
+
         Vector3 dir = targetController.transform.position - eyePos;
         float distSqr = dir.sqrMagnitude;
         if (distSqr > viewDistance * viewDistance) return false;
@@ -138,10 +139,26 @@ public class UnitShooter : MonoBehaviour
         }
 
         //aimTargetUnit = UnitManager.Instance.GetNearestEnemyUnit(unit, 10f);
-        SetAimTargetUnit(UnitManager.Instance
-        .GetVisibleEnemies(this, viewDistance, viewAngle, eyeHeight, excludeTarget)
-        .OrderBy(e => (e.transform.position - transform.position).sqrMagnitude)
-        .FirstOrDefault());
+
+        if (targetEnemyType == EnemyType.None)
+        {
+            SetAimTargetUnit(UnitManager.Instance
+                .GetVisibleEnemies(this, viewDistance, viewAngle, eyeHeight, excludeTarget)
+                .OrderBy(e => (e.transform.position - transform.position).sqrMagnitude)
+                .FirstOrDefault());
+            return;
+        }
+
+        UnitController enemyController = UnitManager.Instance
+            .GetAliveEnemieTypes(unit, targetEnemyType)
+            .OrderBy(e => (e.transform.position - transform.position).sqrMagnitude)
+            .FirstOrDefault();
+        if (enemyController == null)
+        {
+            targetEnemyType = EnemyType.None;
+        }
+
+        SetAimTargetUnit(enemyController);
     }
 
     // 애니메이터의 IK 갱신
@@ -168,9 +185,20 @@ public class UnitShooter : MonoBehaviour
     {
         return aimTargetUnit;
     }
-    
+
     public void SetAimTargetUnit(UnitController targetController)
     {
         aimTargetUnit = targetController;
+    }
+
+    public void SetTargetEnemyType(EnemyType newEnemyType)
+    {
+        if (targetEnemyType == newEnemyType)
+        {
+            return;
+        }
+
+        targetEnemyType = newEnemyType;
+        SetAimTargetUnit(null);
     }
 }

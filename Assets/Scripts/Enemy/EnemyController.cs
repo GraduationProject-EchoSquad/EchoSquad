@@ -7,8 +7,13 @@ using static Unity.Collections.Unicode;
 
 public enum EnemyType
 {
-    Zombie, 
-    Monster   
+    None,
+    Zombie,
+    Boss,
+    HandAlien,
+    BrainLeg,
+    WhiteLeg,
+    BlackLeg
 }
 
 public class EnemyController : UnitController
@@ -35,7 +40,7 @@ public class EnemyController : UnitController
         {
             return;
         }
-        
+
         UpdateAttackTarget();   // 근처 적 확인
                                 // 공격 대상이 있으면 그걸 추적
 
@@ -43,6 +48,10 @@ public class EnemyController : UnitController
 
         if (moveTarget != null)
             agent.SetDestination(moveTarget.position);
+
+
+        bool isMoving = agent.velocity.magnitude > 0.1f;
+        animator.SetBool("Run", isMoving);
 
         // 공격 처리
         if (attackTarget != null)
@@ -102,14 +111,42 @@ public class EnemyController : UnitController
 
     void Attack()
     {
-        animator.SetTrigger("Attack");
+        int damage;
+
+        // HandAlien 계열은 다양한 공격 패턴 사용
+        if (enemyType == EnemyType.HandAlien)
+        {
+            int attackType = Random.Range(0, 2);
+            if (attackType == 0)
+            {
+                animator.SetTrigger("AnkleBiteTrigger");
+                damage = 15; // 발목 물기 - 약한 공격
+            }
+            else
+            {
+                animator.SetTrigger("CrochBiteTrigger");
+                damage = 25; // 사타구니 물기 - 강한 공격!
+            }
+        }
+        else
+        {
+            // 일반 적들은 기본 공격
+            animator.SetTrigger("Attack");
+            damage = (enemyType == EnemyType.Zombie) ? 20 : 10;
+        }
+
         if (attackTarget != null)
         {
-            PlayerHP health = attackTarget.GetComponent<PlayerHP>();
+            PlayerHealth health = attackTarget.GetComponent<PlayerHealth>();
             if (health != null)
             {
-                int damage = (enemyType == EnemyType.Monster) ? 20 : 10;
-                health.TakeDamage(damage);
+                DamageMessage damageMessage;
+
+                damageMessage.damager = gameObject;
+                damageMessage.amount = damage;
+                damageMessage.hitPoint = attackTarget.transform.position;
+                damageMessage.hitNormal = Vector3.up;
+                health.ApplyDamage(damageMessage);
             }
 
             // 룬 체력 스크립트 작성 후 주석 해제

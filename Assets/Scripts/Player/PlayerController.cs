@@ -42,7 +42,8 @@ public class PlayerController : UnitController
         }
         else
         {
-            GameManager.Instance.EndGame(false);
+            PubSubManager.Instance.Publish<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, data => {});
+            //GameManager.Instance.EndGame(false);
         }
 
         Cursor.visible = true;

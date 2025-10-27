@@ -100,12 +100,13 @@ public class GameManager : Singleton<GameManager>
     }
 
     // 게임 오버 처리
-    public void EndGame(bool isWin)
+    public async UniTaskVoid EndGame(bool isWin)
     {
         // 게임 오버 상태를 참으로 변경
         SetGameState(GameState.End);
         
         PubSubManager.Instance.Publish<OnGameEndData>(PubSubEvent.OnGameEnd, data => data.IsWin = isWin);
+        (await UIManager.Instance.GetUI<GameOverUI>(UIManager.EUIData.GameOver)).ShowGameOverUI(isWin);
     }
 
     public bool IsGameControllable()

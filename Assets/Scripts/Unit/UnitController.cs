@@ -18,9 +18,10 @@ public class UnitController : MonoBehaviour
         None,
         Idle,
         Scout, // 정찰
-        Move, // 정찰
+        Combat,
+        Supprot,
+        Move, // 이동
         Die,
-        Combat
     }
 
     /*public enum EUnitType

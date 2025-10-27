@@ -1,23 +1,42 @@
 using System.Collections;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using TMPro;             // TMP 용
 using EasyTextEffects;   // TextEffect가 이 네임스페이스에 있다고 가정
 
 [System.Serializable]
+public class EnemySpawnInfo
+{
+    public UnitController enemyPrefab;
+    public int count;
+}
+
+[System.Serializable]
 public class Wave
 {
     [Header("Normal Wave Settings")]
-    public UnitController enemyPrefab;
-    public int count;
+    [Tooltip("이 웨이브에서 스폰할 적 타입들")]
+    public EnemySpawnInfo[] enemyTypes;
     public float spawnInterval;
- 
+
     [Header("Boss Wave Settings")]
     public bool isBossWave;
     public UnitController bossPrefab;
- 
+
     [Header("Common Settings")]
     public Transform[] spawnPoints;
+
+    // 총 적의 수 계산 (내부 사용)
+    public int GetTotalEnemyCount()
+    {
+        int total = 0;
+        foreach (var enemyInfo in enemyTypes)
+        {
+            total += enemyInfo.count;
+        }
+        return total;
+    }
 }
 
 public class WaveManager : Singleton<WaveManager>
@@ -43,6 +62,7 @@ public class WaveManager : Singleton<WaveManager>
 
         // 몬스터 사망 이벤트 구독
         PubSubManager.Instance.Subscribe<OnEnemyDeathData>(PubSubEvent.OnEnemyDeath, OnEnemyDeath);
+        PubSubManager.Instance.Subscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
     }
 
     private void Start()
@@ -86,11 +106,11 @@ public class WaveManager : Singleton<WaveManager>
     private async UniTask RunWave()
     {
         waveCompletionSource = new UniTaskCompletionSource<bool>();
-        PubSubManager.Instance.Subscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
+
 
         Wave wave = waves[currentWaveIndex];
-        SetEnemiesRemaining(wave.count);
-        
+        SetEnemiesRemaining(wave.GetTotalEnemyCount());
+
         PubSubManager.Instance.Publish<OnWaveStartData>(PubSubEvent.OnWaveStart, data =>
         {
             data.WaveIndex = currentWaveIndex + 1;
@@ -102,24 +122,56 @@ public class WaveManager : Singleton<WaveManager>
             SpawnBoss(wave);
         }
         SpawnEnemiesAsync(wave).Forget();
-        
+
 
         // 웨이브 종료 조건 (모든 몬스터 사망 또는 플레이어 사망)을 기다림
-        await waveCompletionSource.Task;
+        bool isSuccess = await waveCompletionSource.Task;
+
+        if (isSuccess == false)
+        {
+            GameManager.Instance.EndGame(false);
+        }
 
         // 다음 웨이브를 위해 이벤트 구독 해제
-        PubSubManager.Instance.Unsubscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
+        //PubSubManager.Instance.Unsubscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
     }
 
     private async UniTask SpawnEnemiesAsync(Wave wave)
     {
-        for (int i = 0; i < wave.count; i++)
+        // 스폰할 적들의 리스트 생성
+        List<UnitController> spawnQueue = new List<UnitController>();
+
+        foreach (var enemyInfo in wave.enemyTypes)
+        {
+            for (int i = 0; i < enemyInfo.count; i++)
+            {
+                spawnQueue.Add(enemyInfo.enemyPrefab);
+            }
+        }
+
+        // 리스트를 섞어서 랜덤한 순서로 스폰
+        ShuffleList(spawnQueue);
+
+        // 모든 적을 스폰
+        for (int i = 0; i < spawnQueue.Count; i++)
         {
             // 웨이브가 이미 종료되었다면 스폰 중지
             if (waveCompletionSource.Task.Status.IsCompleted()) break;
-            
-            SpawnEnemy(wave);
+
+            SpawnEnemy(wave, spawnQueue[i]);
             await UniTask.WaitForSeconds(wave.spawnInterval);
+        }
+    }
+
+    // Fisher-Yates 셔플 알고리즘
+    private void ShuffleList<T>(List<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            T temp = list[i];
+            list[i] = list[j];
+            list[j] = temp;
         }
     }
 
@@ -130,11 +182,11 @@ public class WaveManager : Singleton<WaveManager>
         Debug.Log("end breakTime!");
     }
 
-    private void SpawnEnemy(Wave wave)
+    private void SpawnEnemy(Wave wave, UnitController enemyPrefab)
     {
         Transform spawnPoint = wave.spawnPoints[Random.Range(0, wave.spawnPoints.Length)];
-        UnitManager.Instance.SpawnUnit(wave.enemyPrefab, spawnPoint.position, spawnPoint.rotation, UnitController.EUnitTeamType.Enemy);
-        
+        UnitManager.Instance.SpawnUnit(enemyPrefab, spawnPoint.position, spawnPoint.rotation, UnitController.EUnitTeamType.Enemy);
+
         PubSubManager.Instance.Publish(PubSubEvent.OnEnemySpawn);
     }
 
