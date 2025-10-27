@@ -45326,9 +45326,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waves:
-  - enemyPrefab: {fileID: 1510129015077551741, guid: 32aafcecb007f1f46a227de5e7b0bd14,
-      type: 3}
-    count: 10
+  - enemyTypes:
+    - enemyPrefab: {fileID: 4745153996441181462, guid: 9f4ee05bc2ac99643afa0b674559f3c5,
+        type: 3}
+      count: 3
+    - enemyPrefab: {fileID: 5185953644134458575, guid: 4448ab21d3414ea49997a005238ad8a9,
+        type: 3}
+      count: 3
+    - enemyPrefab: {fileID: 8126421197936284830, guid: 6b8dde80a6b9ad7499fb218bb9370228,
+        type: 3}
+      count: 3
+    - enemyPrefab: {fileID: 1510129015077551741, guid: 32aafcecb007f1f46a227de5e7b0bd14,
+        type: 3}
+      count: 3
+    - enemyPrefab: {fileID: 3711400394012360897, guid: 863c5c3d6ee701745a8c957724057315,
+        type: 3}
+      count: 5
     spawnInterval: 5
     isBossWave: 1
     bossPrefab: {fileID: 3354316289118794396, guid: 5701b381e6ba73d4b8f53c6432da5b90,
@@ -45340,9 +45353,7 @@ MonoBehaviour:
     - {fileID: 1740722884}
     - {fileID: 1667829911}
     - {fileID: 1879873406}
-  - enemyPrefab: {fileID: 1510129015077551741, guid: 32aafcecb007f1f46a227de5e7b0bd14,
-      type: 3}
-    count: 10
+  - enemyTypes: []
     spawnInterval: 5
     isBossWave: 1
     bossPrefab: {fileID: 3354316289118794396, guid: 5701b381e6ba73d4b8f53c6432da5b90,
