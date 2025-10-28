@@ -26,6 +26,7 @@ public class UnitShooter : MonoBehaviour
     float viewDistance = 10f; // 최대 탐지 거리
 
     [SerializeField] float viewAngle = 120f; // 시야각(°)
+    [SerializeField] private float autoTargetRange; // 자동 타겟팅 범위 (시야 무관)
     [SerializeField] float eyeHeight; //  Raycast 시작 높이
 
     protected bool hasEnoughDistance =>
@@ -37,6 +38,7 @@ public class UnitShooter : MonoBehaviour
         unitAnimator = GetComponent<Animator>();
         unit = GetComponent<UnitController>();
 
+        autoTargetRange = 10f;
         InitializeEyeHeight();
     }
 
@@ -137,16 +139,26 @@ public class UnitShooter : MonoBehaviour
                 return;
             }
         }
+        
+        SetAimTargetUnit(GetNewTargetUnit());
+    }
 
+    UnitController GetNewTargetUnit()
+    {
         //aimTargetUnit = UnitManager.Instance.GetNearestEnemyUnit(unit, 10f);
-
+        // 3. 자동 타겟팅 범위 내 적 타겟 (시야 무관)
+        UnitController autoTarget = UnitManager.Instance.GetNearestEnemyUnit(unit, autoTargetRange);
+        if (autoTarget != null)
+        {
+            return autoTarget; // 자동 타겟을 찾았으면 바로 타겟 설정
+        }
+        
         if (targetEnemyType == EnemyType.None)
         {
-            SetAimTargetUnit(UnitManager.Instance
+            return UnitManager.Instance
                 .GetVisibleEnemies(this, viewDistance, viewAngle, eyeHeight, excludeTarget)
                 .OrderBy(e => (e.transform.position - transform.position).sqrMagnitude)
-                .FirstOrDefault());
-            return;
+                .FirstOrDefault();
         }
 
         UnitController enemyController = UnitManager.Instance
@@ -158,7 +170,7 @@ public class UnitShooter : MonoBehaviour
             targetEnemyType = EnemyType.None;
         }
 
-        SetAimTargetUnit(enemyController);
+        return enemyController;
     }
 
     // 애니메이터의 IK 갱신
