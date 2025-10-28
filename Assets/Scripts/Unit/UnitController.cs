@@ -81,4 +81,9 @@ public class UnitController : MonoBehaviour
     {
         return unitState == EUnitState.Die;
     }
+
+    public void ApplyDamage(DamageMessage damageMessage)
+    {
+        LivingEntity.ApplyDamage(damageMessage);
+    }
 }

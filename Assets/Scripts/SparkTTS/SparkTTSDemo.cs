@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using SparkTTS;
 using SparkTTS.Models;
 using TMPro;
@@ -65,7 +66,7 @@ public class SpartTTSDemo : MonoBehaviour
         // Assign button handlers
         if (generateButton != null)
         {
-            generateButton.onClick.AddListener(GenerateSpeech);
+            generateButton.onClick.AddListener(() => GenerateSpeech().Forget());
         }
         
         if (createMaleButton != null)
@@ -118,13 +119,17 @@ public class SpartTTSDemo : MonoBehaviour
     /// <summary>
     /// Creates a style-based voice with the specified gender and current dropdown settings.
     /// </summary>
-    private async void CreateStyleVoice(string gender)
+    private async UniTaskVoid CreateStyleVoice(string gender)
     {
+        
         if (_isGenerating)
         {
             Debug.Log("Already generating or creating a voice. Please wait.");
             return;
         }
+        
+        var stopwatch = new System.Diagnostics.Stopwatch();
+        stopwatch.Start();
         
         _isGenerating = true;
         SetButtonsInteractable(false);
@@ -157,12 +162,15 @@ public class SpartTTSDemo : MonoBehaviour
         
         _isGenerating = false;
         SetButtonsInteractable(true);
+
+        stopwatch.Stop();
+        Debug.Log($"[Performance] CreateStyleVoice execution time: {stopwatch.ElapsedMilliseconds} ms");
     }
     
     /// <summary>
     /// Generates speech using the current character voice.
     /// </summary>
-    private async void GenerateSpeech()
+    private async UniTaskVoid GenerateSpeech()
     {
         if (_isGenerating)
         {
@@ -176,15 +184,21 @@ public class SpartTTSDemo : MonoBehaviour
             return;
         }
         
+        var stopwatch = new System.Diagnostics.Stopwatch();
+        stopwatch.Start();
+        
         _isGenerating = true;
         SetButtonsInteractable(false);
         
         await GenerateSpeechAsync();
         _isGenerating = false;
         SetButtonsInteractable(true);
+        
+        stopwatch.Stop();
+        Debug.Log($"[Performance] GenerateSpeech execution time: {stopwatch.ElapsedMilliseconds} ms");
     }
     
-    private async Task GenerateSpeechAsync()
+    private async UniTask GenerateSpeechAsync()
     {
         string text = textInput != null ? textInput.text : defaultText;
         
