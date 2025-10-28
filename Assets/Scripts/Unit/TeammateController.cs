@@ -3,6 +3,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.AI;
 using Cysharp.Threading.Tasks;
+using UnityEngine.Audio;
 
 public class TeammateController : UnitController
 {
@@ -434,5 +435,27 @@ public class TeammateController : UnitController
         voiceSpeaker.SetVoiceProfile(newProfile);
 
         Debug.Log($"[TeammateController] {teammateAI.teammateName}의 VoiceProfile 업데이트: Gender={newProfile.gender}, Pitch={newProfile.pitch}, Speed={newProfile.speed}");
+    }
+
+    public override async UniTaskVoid HandleDeath()
+    {
+        // 1. 부모 클래스의 HandleDeath 실행 (IsDead()가 true가 됨)
+        base.HandleDeath();
+
+        // 2. 이동 및 AI 정지
+        if (navMeshAgent.isOnNavMesh)
+        {
+            navMeshAgent.isStopped = true;
+            navMeshAgent.enabled = false;
+        }
+
+        // 3. 애니메이션 재생
+        animator.SetTrigger("Die");
+
+        // Todo: 사망 사운드 재생
+        //if (audioSource != null && deathClip != null)
+        //{
+        //    audioSource.PlayOneShot(deathClip);
+        //}
     }
 }
