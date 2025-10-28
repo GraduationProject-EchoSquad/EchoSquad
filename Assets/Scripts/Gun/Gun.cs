@@ -178,9 +178,12 @@ public class Gun : MonoBehaviour
 
             // 충돌한 상대방으로부터 IDamageable 오브젝트를 가져오기 시도
             // GetComponentInParent 사용으로 Collider가 자식에 있어도 감지
-            var target = hit.collider.GetComponentInParent<IDamageable>();
+            var target = hit.collider.GetComponentInParent<EnemyController>();
+            
+            
 
             // 상대방으로 부터 IDamageable 오브젝트를 가져오는데 성공했다면
+            //TODO 임시로 EnemyController 유무로 처리
             if (target != null)
             {
                 DamageMessage damageMessage;
