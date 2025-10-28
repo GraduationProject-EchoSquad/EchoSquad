@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class GameOverUI : UIBase
 {
-    [SerializeField] private Text resultText;
+    //[SerializeField] private Text resultText;
     [SerializeField] private Button TitleButton;
-    [SerializeField] private Image TitleImage;
+    //[SerializeField] private Image TitleImage;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -15,7 +15,7 @@ public class GameOverUI : UIBase
         TitleButton.onClick.AddListener(() => OnClickTitle());
     }
     
-    public void ShowGameOverUI(bool isWin)
+    /*public void ShowGameOverUI(bool isWin)
     {
         gameObject.SetActive(true);
  
@@ -29,7 +29,7 @@ public class GameOverUI : UIBase
             TitleImage.color = new Color32(253, 30, 30, 160);
             resultText.text = "GAME OVER";
         }
-    }
+    }*/
 
     private async UniTaskVoid OnClickTitle()
     {
