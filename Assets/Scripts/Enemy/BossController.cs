@@ -37,18 +37,9 @@ public class BossController : EnemyController
             }
         }
 
-        // Boss Run은 Trigger이므로 상태 변화가 있을 때만 트리거
+        // Boss Run 처리
         bool shouldRun = !isAttacking && !agent.isStopped && agent.velocity.sqrMagnitude > 0.01f;
-
-        if (shouldRun && !isRunning)
-        {
-            animator.SetTrigger("Run");
-            isRunning = true;
-        }
-        else if (!shouldRun && isRunning)
-        {
-            isRunning = false;
-        }
+        animator.SetBool("Run", shouldRun);
     }
 
     protected override void ExecuteAttack()
