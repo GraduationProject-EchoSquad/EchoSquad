@@ -34,6 +34,13 @@ public class PlayerShooter : UnitShooter
 
     private void FixedUpdate()
     {
+        // (UI가 열려있으면)
+        // 사격, 재장전 등 모든 입력을 무시합니다.
+        if (Cursor.lockState != CursorLockMode.Locked)
+        {
+            return;
+        }
+
         if (playerInput.fire)
         {
             //Debug.Log("[FixedUpdate] playerInput.fire == true, Shoot() 호출 시도");
@@ -58,6 +65,13 @@ public class PlayerShooter : UnitShooter
 
     private void Update()
     {
+        // (UI가 열려있으면) 
+        // 조준각 변경 등 입력을 무시합니다.
+        if (Cursor.lockState != CursorLockMode.Locked)
+        {
+            return;
+        }
+
         // Q키: 총구를 위로 (aimAngle 증가)
         if (Input.GetKey(KeyCode.Q))
         {
