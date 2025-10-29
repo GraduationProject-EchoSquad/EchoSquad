@@ -139,10 +139,10 @@ Echo Squad implements a real-time voice command system where players interact wi
 
 | Stage | Component | Description |
 |-------|-----------|-------------|
-| **1. Voice Capture** | STT (Whisper) | Player speaks into microphone. OpenAI Whisper model transcribes speech into text in real-time, enabling natural language commands. |
-| **2. Intent Recognition** | LLM (Qwen3 + LoRA) | The transcribed text is processed by Qwen3 LLM merged with a custom LoRA Adapter fine-tuned on in-game command patterns. The model interprets player intent and generates structured JSON containing both the desired AI action and a contextual dialogue response. |
-| **3. Action Execution** | FSM Controller | A Finite State Machine parses the JSON output and translates it into concrete in-game behaviors (movement, combat, support, etc.), while simultaneously triggering the AI's vocal response. |
-| **4. Voice Generation** | TTS (Spark-TTS) | The AI's dialogue text is converted to speech using Spark-TTS. To minimize latency, common phrases and vocabulary are pre-generated and cached at runtime, allowing instant voice playback during critical gameplay moments. |
+| **1. Voice Capture** | STT (Whisper) | Player speaks into microphone<br>↓<br>Whisper transcribes speech to text in real-time<br>↓<br>Natural language command extracted |
+| **2. Intent Recognition** | LLM (Qwen3 + LoRA) | Text processed by Qwen3 LLM with custom LoRA Adapter<br>↓<br>Model interprets player intent from command patterns<br>↓<br>Outputs structured JSON (AI action + dialogue response) |
+| **3. Action Execution** | FSM Controller | FSM parses JSON output<br>↓<br>Translates into in-game behaviors (move/attack/support)<br>↓<br>Triggers AI action and vocal response simultaneously |
+| **4. Voice Generation** | TTS (Spark-TTS) | AI dialogue text sent to Spark-TTS<br>↓<br>Common phrases pre-cached for instant playback<br>↓<br>Generated voice played through speakers |
 
 ### Key Technical Features
 - **Local Processing**: All AI inference runs on the player's machine—no cloud dependency
