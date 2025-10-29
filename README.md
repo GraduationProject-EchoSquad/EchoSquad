@@ -104,7 +104,7 @@ Once all prerequisites are installed and all models are downloaded and placed in
 | Action | Key/Input              | Description |
 |--------|------------------------|-------------|
 | **Movement** | `W` `A` `S` `D`        | Move forward, left, backward, right |
-| **Voice Command** | ` (BackQuote)          | activate microphone |
+| **Voice Command** | `` ` `` (Backtick)     | Activate microphone |
 | **Aiming** | `Mouse`                | Change player direction |
 | **Aim Up/Down** | `Q` / `E`              | Aim gun upward / downward |
 | **Jump** | `Spacebar`             | Jump |
@@ -128,7 +128,10 @@ Click on the image below to watch the game trailer.
 
 
 ## 💡System Overview
-![img.png](img.png)
+
+<div align="center">
+  <img src="./images/system-diagram.png" alt="System Architecture Diagram" width="900">
+</div>
 
 Echo Squad's core system is designed for real-time interaction between the player and AI companions. The entire process operates within Unity, utilizing separate modules for Speech-to-Text (STT), Language Model interpretation (LLM), and Text-to-Speech (TTS).
 
