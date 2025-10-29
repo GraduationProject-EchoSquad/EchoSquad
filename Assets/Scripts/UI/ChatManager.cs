@@ -9,8 +9,11 @@ public class ChatManager : Singleton<ChatManager>
 
     public void AddMessage(string sender, string message)
     {
-        GameObject TextClone = Instantiate(TextChat, chatPanel);
+        Debug.Log($"[ChatManager] AddMessage called: {sender}: {message}");
 
+        GameObject TextClone = Instantiate(TextChat, chatPanel);
         TextClone.GetComponent<TextMeshProUGUI>().text = $"<b>{sender}</b>: {message}";
+
+        Debug.Log($"[ChatManager] Message added to UI");
     }
 }

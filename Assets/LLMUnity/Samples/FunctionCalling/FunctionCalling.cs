@@ -100,6 +100,12 @@ namespace LLMUnitySamples
                 { "lena", "Lena" },
                 { "Elena", "Lena" },
 
+                // 장소 이름 오인식
+                { "amo", "Ammo" },
+                { "ammo", "Ammo" },
+                { "toilet", "Toilet" },
+                { "kitchen", "Kitchen" },
+
                 // 기타 자주 틀리는 단어
                 { "a tack", "attack" },
                 { "fallow", "follow" },
@@ -525,12 +531,16 @@ namespace LLMUnitySamples
             playerText.interactable = false;
             llmCharacter.grammarString = "";
 
-            // STT 오류 및 동의어 전처리
+            // 원본 메시지 저장 (Whisper 원문 - 채팅 표시용)
+            string originalMessage = message;
+
+            // STT 오류 및 동의어 전처리 (LLM 전송용)
             message = PreprocessCommand(message);
+            Debug.Log($"[ORIGINAL] {originalMessage}");
             Debug.Log($"[PREPROCESSED] {message}");
 
-            // 플레이어가 입력한 명령어를 채팅에 추가
-            ChatManager.Instance.AddMessage("Player", message);
+            // 플레이어가 입력한 명령어를 채팅에 추가 (Whisper 원문 사용!)
+            ChatManager.Instance.AddMessage("Player", originalMessage);
 
             List<TeammateAI> aiList = UnitManager.Instance.teammateUnitDict.Values
                 .Select(tc => tc.GetComponent<TeammateAI>())
@@ -539,6 +549,9 @@ namespace LLMUnitySamples
 
             MapManager mapManager = MapManager.Instance;
             string districtsName = mapManager.GetDistrictsName();
+
+            // Clear chat history to prevent context accumulation across commands
+            llmCharacter.ClearChat();
 
             float t0 = Time.realtimeSinceStartup;
 
@@ -570,6 +583,14 @@ namespace LLMUnitySamples
         /// <param name="aiList">현재 활성화된 모든 팀원 AI 유닛 목록입니다.</param>
         public void DoCommand(ParsedCommand cmd, List<TeammateAI> aiList)
         {
+            // Null-safety check for command_units (Error actions may have null units)
+            if (cmd == null || cmd.command_units == null)
+            {
+                Debug.LogWarning($"[DoCommand] Invalid command or null command_units. Action: {cmd?.action}");
+                playerText.interactable = true;
+                return;
+            }
+
             string unitsText = string.Join(", ", cmd.command_units);
             string functionName = $"{cmd.action}{cmd.Parameters}";
             Debug.Log($"[Parsed] target = {unitsText},\n action = {cmd.action},\n params = {cmd.Parameters}");

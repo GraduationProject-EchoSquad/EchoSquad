@@ -69,7 +69,58 @@ namespace Whisper.Samples
         private void OnSegmentFinished(WhisperResult segment)
         {
             print($"Segment finished: {segment.Result}");
-            functionCalling?.SendCommandFromText(segment.Result);
+
+            // 빈 메시지나 침묵(점만 있는 경우) 필터링
+            if (IsValidCommand(segment.Result))
+            {
+                functionCalling?.SendCommandFromText(segment.Result);
+            }
+            else
+            {
+                print($"Ignored silence/invalid input: '{segment.Result}'");
+            }
+        }
+
+        /// <summary>
+        /// 유효한 명령인지 확인 (침묵이나 쓰레기 텍스트 필터링)
+        /// </summary>
+        private bool IsValidCommand(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            // 점과 공백만 있는 경우 무시
+            string cleaned = text.Replace(".", "").Replace(" ", "").Replace(",", "");
+            if (string.IsNullOrEmpty(cleaned))
+                return false;
+
+            // Whisper 환청(hallucination) 필터링 - 자주 나오는 오인식 문구들
+            string lower = text.ToLower().Trim();
+            string[] hallucinations = {
+                "thank you",
+                "thanks",
+                "thanks for watching",
+                "thank you for watching",
+                "bye",
+                "goodbye",
+                "see you",
+                "you",
+                "uh",
+                "um",
+                "hmm",
+                "ah"
+            };
+
+            foreach (string hallucination in hallucinations)
+            {
+                if (lower == hallucination)
+                {
+                    print($"[Whisper] Detected hallucination: '{text}'");
+                    return false;
+                }
+            }
+
+            return true;
         }
         
         private void OnFinished(string finalResult)
