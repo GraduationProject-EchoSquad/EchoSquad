@@ -45329,7 +45329,7 @@ MonoBehaviour:
   - enemyTypes: []
     spawnInterval: 5
     isBossWave: 1
-    bossPrefab: {fileID: 5588847185356648363, guid: 76e60639135d81c4292b46b342bd14a1,
+    bossPrefab: {fileID: 6210077996157375181, guid: 76e60639135d81c4292b46b342bd14a1,
       type: 3}
     spawnPoints:
     - {fileID: 960073198}
