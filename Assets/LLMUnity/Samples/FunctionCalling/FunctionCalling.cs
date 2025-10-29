@@ -113,12 +113,18 @@ namespace LLMUnitySamples
                 { "lina", "Lena" },
                 { "lena", "Lena" },
                 { "Elena", "Lena" },
+                { "Rena", "Lena" },
+                { "Sarah", "Sara" },
 
                 // 장소 이름 오인식
                 { "amo", "Ammo" },
                 { "ammo", "Ammo" },
                 { "toilet", "Toilet" },
                 { "kitchen", "Kitchen" },
+                { "a", "A" },
+                { "b", "B" },
+                { "c", "C" },
+                { "be", "B" },
 
                 // 기타 자주 틀리는 단어
                 { "a tack", "attack" },
