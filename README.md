@@ -2,7 +2,7 @@
 [프로젝트를 gif 파일, 사진을 기반으로 소개합니다.]
 
 
-## Table of Contents
+## 📌Table of Contents
 - [Highlights](#highlights)
 - [Installation](#installation)
 - [How to Play](#how-to-play)
@@ -13,13 +13,13 @@
 - [Team](#team)
 
 
-## Highlights
+## ⭐Highlights
 Echo Squad is a TPS (Third-Person Shooter) defense game being developed as a graduation project for Konkuk University.
 Players can communicate with AI companions in real-time using voice commands to execute strategic gameplay. 
 The goal is to implement AI-driven companion interaction as the core mechanic.
 
 
-## Installation
+## ⚙️Installation
 This guide will walk you through setting up the Echo Squad project on your local machine.
 
 ### Prerequisites
@@ -90,21 +90,28 @@ You must manually download and place the following models into the project.
 ### 3. Running the Project
 
 Once all prerequisites are installed and all models are downloaded and placed in their correct folders, press the **Play** button (▶) in the Unity Editor to run the game.
-## How to Play
-[게임의 기본적인 조작법과 플레이 방법을 설명합니다.]
+## 🎮How to Play
+- Movement:Use W / A / S / D to move (Up, Left, Down, Right).
+- Camera Control:Press Q to move the camera upward, and E to move it down from the player’s perspective.
+- Jump: Press Spacebar to jump.
+- Shop: Approach the center rune and press Z to open the shop. In the shop, you can purchase fire rate upgrades, ammo, and health.
+- Coins: Defeating enemies grants you coins, which can be used to buy items in the shop.
+- Waves: The game consists of 5 waves (Waves 1–5).
+- Mission Complete: Successfully surviving all five waves will trigger Mission Complete.
+- Mission Failed: If both the player and the AI companion die, the mission will fail.
 
 
-## Trailer
+## 🎞️Trailer
 Click on the image below to watch the game trailer.
 
 [![Echo Squad Trailer](https://img.youtube.com/vi/WveVS0yvggg/hqdefault.jpg)](https://www.youtube.com/watch?v=WveVS0yvggg)
 
 
-## System Overview
+## 💡System Overview
 [프로젝트의 기술적인 구조와 작동 원리에 대해 설명합니다.]
 
 
-## Reference
+## 📃Reference
 This project was developed using several key open-source libraries. We extend our gratitude to the original authors for their contributions to the community.
 
 * **LLM (Llama):** [LLMUnity](https://github.com/undreamai/LLMUnity)
@@ -117,11 +124,11 @@ This project was developed using several key open-source libraries. We extend ou
     * An efficient, allocation-free async/await integration for Unity, used to manage various asynchronous operations.
 
 
-## License
+## 💻License
 [프로젝트의 라이선스 정보를 안내합니다.]
 
 
-## Team
+## 👥Team
 
 | Name | Role | GitHub |
 |------|------|:---|
