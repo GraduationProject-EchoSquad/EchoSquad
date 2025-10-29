@@ -34,25 +34,22 @@ public class PlayerShooter : UnitShooter
 
     private void FixedUpdate()
     {
-        // (UI가 열려있으면)
-        // 사격, 재장전 등 모든 입력을 무시합니다.
-        if (Cursor.lockState != CursorLockMode.Locked)
+        // Shop UI(None)에서만 입력 차단, Locked/Confined는 허용
+        if (Cursor.lockState == CursorLockMode.None)
         {
             return;
         }
 
         if (playerInput.fire)
         {
-            //Debug.Log("[FixedUpdate] playerInput.fire == true, Shoot() 호출 시도");
             lastFireInputTime = Time.time;
             Shoot();
         }
         else if (playerInput.reload)
         {
-            //Debug.Log("[FixedUpdate] playerInput.reload == true, Reload() 호출");
             Reload();
         }
-        
+
         if (playerInput.subFire)
         {
             gun.DrawPreviewLine();
@@ -65,9 +62,8 @@ public class PlayerShooter : UnitShooter
 
     private void Update()
     {
-        // (UI가 열려있으면) 
-        // 조준각 변경 등 입력을 무시합니다.
-        if (Cursor.lockState != CursorLockMode.Locked)
+        // Shop UI(None)에서만 입력 차단, Locked/Confined는 허용
+        if (Cursor.lockState == CursorLockMode.None)
         {
             return;
         }
@@ -97,23 +93,10 @@ public class PlayerShooter : UnitShooter
 
     public override void Shoot()
     {
-        //Debug.Log($"[Shoot] 단발 모드 진입 → hasEnoughDistance={hasEnoughDistance}");
-
-        // linedUp 체크 제거하고, 사거리(장애물)만 확인
-        if (hasEnoughDistance)
+        bool fired = gun.Fire(aimPoint);
+        if (fired)
         {
-            //Debug.Log("[Shoot] hasEnoughDistance == true → gun.Fire 호출");
-            bool fired = gun.Fire(aimPoint);
-            //Debug.Log($"[Shoot] gun.Fire 리턴값 = {fired}");
-            if (fired)
-            {
-                //Debug.Log("[Shoot] 발사 성공 → 애니메이터 트리거");
-                unitAnimator.SetTrigger("Shoot");
-            }
-        }
-        else
-        {
-            //Debug.Log("[Shoot] 사정거리/장애물 조건 불만족");
+            unitAnimator.SetTrigger("Shoot");
         }
     }
 

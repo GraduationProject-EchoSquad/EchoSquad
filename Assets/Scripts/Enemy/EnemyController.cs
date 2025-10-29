@@ -128,12 +128,10 @@ public class EnemyController : UnitController
 
         foreach (UnitController unit in units)
         {
-            if (unit.IsDead())
-            {
-                continue;
-            }
+            if (unit.IsDead()) continue;
+
             float dist = Vector3.Distance(transform.position, unit.transform.position);
-            if (dist <= 5f && dist < minDist)  // 5f 탐색 범위
+            if (dist <= 5f && dist < minDist)
             {
                 minDist = dist;
                 nearest = unit.transform;
