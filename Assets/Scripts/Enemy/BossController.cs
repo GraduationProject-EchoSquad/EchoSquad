@@ -7,5 +7,69 @@ using static Unity.Collections.Unicode;
 
 public class BossController : EnemyController
 {
-  
+    [Header("Boss Attack Settings")]
+    [SerializeField] private int normalAttackDamage = 15;
+    [SerializeField] private int spellAttackDamage = 50;
+    [SerializeField] private float attackAnimationDuration = 1.5f;
+    [SerializeField] private float spellAnimationDuration = 2.5f;
+
+    private float attackEndTimer = 0f;
+    private bool isWaitingForAnimationEnd = false;
+    private bool isRunning = false;
+
+    protected override void Start()
+    {
+        base.Start();
+        enemyType = EnemyType.Boss;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (isWaitingForAnimationEnd)
+        {
+            attackEndTimer -= Time.deltaTime;
+            if (attackEndTimer <= 0f)
+            {
+                OnAttackAnimationEnd();
+                isWaitingForAnimationEnd = false;
+            }
+        }
+
+        // Boss Run은 Trigger이므로 상태 변화가 있을 때만 트리거
+        bool shouldRun = !isAttacking && !agent.isStopped && agent.velocity.sqrMagnitude > 0.01f;
+
+        if (shouldRun && !isRunning)
+        {
+            animator.SetTrigger("Run");
+            isRunning = true;
+        }
+        else if (!shouldRun && isRunning)
+        {
+            isRunning = false;
+        }
+    }
+
+    protected override void ExecuteAttack()
+    {
+        int attackType = Random.Range(0, 2);
+
+        if (attackType == 0)
+        {
+            animator.SetTrigger("Attack");
+            SetCurrentAttackDamage(normalAttackDamage);
+            attackEndTimer = attackAnimationDuration;
+            Debug.Log($"[Boss] Normal Attack - Damage: {normalAttackDamage}");
+        }
+        else
+        {
+            animator.SetTrigger("Cast Spell");
+            SetCurrentAttackDamage(spellAttackDamage);
+            attackEndTimer = spellAnimationDuration;
+            Debug.Log($"[Boss] Cast Spell - Damage: {spellAttackDamage}");
+        }
+
+        isWaitingForAnimationEnd = true;
+    }
 }

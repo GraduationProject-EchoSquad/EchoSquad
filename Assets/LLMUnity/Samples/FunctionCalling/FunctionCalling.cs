@@ -208,10 +208,14 @@ namespace LLMUnitySamples
                    "  - 'Sara go Kitchen' → destination: 'Kitchen'\n\n" +
 
                    "**CRITICAL: 'me' PATTERN HANDLING**\n" +
-                   "- 'move me James' → command_units: ['James'], follow_target: 'Player'\n" +
-                   "- 'help me James' → command_units: ['James'], support_target: 'Player'\n" +
-                   "- 'heal me Sara' → command_units: ['Sara'], support_target: 'Player'\n" +
-                   "- RULE: The unit AFTER 'me' or 'from' executes the command\n\n" +
+                   "- When command contains 'me/myself/I', it means Player is the TARGET, not the executor\n" +
+                   "- The UNIT NAME in the command is ALWAYS the executor\n" +
+                   "- Examples (all mean the same - unit executes, Player is target):\n" +
+                   "  - 'Lena follow me' → command_units: ['Lena'], follow_target: 'Player'\n" +
+                   "  - 'follow me Lena' → command_units: ['Lena'], follow_target: 'Player'\n" +
+                   "  - 'James help me' → command_units: ['James'], support_target: 'Player'\n" +
+                   "  - 'help me James' → command_units: ['James'], support_target: 'Player'\n" +
+                   "- RULE: Find the unit name, make it executor. 'me' = Player = target.\n\n" +
 
                    "**ERROR CONDITIONS**\n" +
                    "- Unknown units (John, Bob, etc.)\n" +

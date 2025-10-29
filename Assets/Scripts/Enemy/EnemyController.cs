@@ -25,11 +25,12 @@ public class EnemyController : UnitController
     public float attackRange = 1f;
     private Transform moveTarget;
     private Transform attackTarget;
-    private NavMeshAgent agent;
+    private Transform lastMoveTarget;
+    protected NavMeshAgent agent;
     private float attackCooldown = 1f;
     private float attackTimer = 0f;
-    private bool isAttacking = false;
-    private int currentAttackDamage;
+    protected bool isAttacking = false;
+    protected int currentAttackDamage;
 
     protected override void Start()
     {
@@ -40,7 +41,7 @@ public class EnemyController : UnitController
         unitTeamType = EUnitTeamType.Enemy;
     }
 
-    void Update()
+    protected virtual void Update()
     {
         if (IsDead())
         {
@@ -94,18 +95,26 @@ public class EnemyController : UnitController
         else // 공격 사거리 밖에 있거나 공격 대상이 없는 경우
         {
             agent.isStopped = false; // 이동 재개
-            animator.SetBool("Run", false); // 일단 false로 초기화
 
             // 이동 타겟 설정 (적 또는 룬)
             moveTarget = attackTarget != null ? attackTarget : FindNearestRune();
 
             if (moveTarget != null)
             {
-                agent.SetDestination(moveTarget.position);
+                // 목표가 변경되었을 때만 SetDestination 호출 (성능 개선 + 부드러운 이동)
+                if (lastMoveTarget != moveTarget || Vector3.Distance(agent.destination, moveTarget.position) > 1f)
+                {
+                    agent.SetDestination(moveTarget.position);
+                    lastMoveTarget = moveTarget;
+                }
 
-                // NavMeshAgent가 실제로 움직이고 있는지 확인
-                bool isMoving = agent.velocity.sqrMagnitude > 0.01f;
+                // NavMeshAgent가 실제로 움직이고 있는지 확인 (속도 기반)
+                bool isMoving = agent.velocity.sqrMagnitude > 0.1f;
                 animator.SetBool("Run", isMoving);
+            }
+            else
+            {
+                animator.SetBool("Run", false);
             }
         }
     }
@@ -156,6 +165,13 @@ public class EnemyController : UnitController
         agent.isStopped = true;
         animator.SetBool("Run", false); // 확실하게 Run 애니메이션 종료
 
+        ExecuteAttack(); // 각 적 타입별 공격 실행
+
+        Debug.Log($"[{enemyType}] Attack started - isAttacking: {isAttacking}");
+    }
+
+    protected virtual void ExecuteAttack()
+    {
         if (enemyType == EnemyType.HandAlien)
         {
             int attackType = Random.Range(0, 2);
@@ -175,28 +191,17 @@ public class EnemyController : UnitController
                 Debug.Log($"[{enemyType}] CrochBite 애니메이션 강제 재생! (데미지: {currentAttackDamage})");
             }
         }
-        else if (enemyType == EnemyType.Boss)
-        {
-            int attackType = Random.Range(0, 2);
-            if (attackType == 0)
-            {
-                animator.SetTrigger("Attack");
-                currentAttackDamage = 15;
-            }
-            else
-            {
-                animator.SetTrigger("Cast Spell");
-                currentAttackDamage = 50;
-            }
-        }
         else
         {
-            // 트리거 대신 직접 상태 전환 (Run 상태에서도 작동)
+            // 기본 공격 (Zombie 등)
             animator.Play("Attack", 0);
             currentAttackDamage = (enemyType == EnemyType.Zombie) ? 20 : 10;
         }
+    }
 
-        Debug.Log($"[{enemyType}] Attack started - isAttacking: {isAttacking}");
+    protected void SetCurrentAttackDamage(int damage)
+    {
+        currentAttackDamage = damage;
     }
 
     // [애니메이션 이벤트]에서 호출하는 데미지 적용 함수
@@ -241,7 +246,7 @@ public class EnemyController : UnitController
     }
 
     // [애니메이션 이벤트]에서 호출하는 공격 종료 함수
-    public void OnAttackAnimationEnd()
+    public virtual void OnAttackAnimationEnd()
     {
         Debug.Log($"[{enemyType}] OnAttackAnimationEnd 호출됨! isAttacking: {isAttacking} → false");
 
