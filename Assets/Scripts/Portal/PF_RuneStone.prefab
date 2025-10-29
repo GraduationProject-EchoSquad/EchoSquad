@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2544803827715280791}
   - component: {fileID: 2635359606580278893}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: AuS_Implode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,7 +183,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2222405903344853069}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Effects
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -219,7 +219,7 @@ GameObject:
   - component: {fileID: 2222071426415379003}
   - component: {fileID: 2018806930082178875}
   - component: {fileID: 2018691049937264301}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Part_Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4939,7 +4939,7 @@ GameObject:
   - component: {fileID: 2222513813602484711}
   - component: {fileID: 2019605234995295865}
   - component: {fileID: 2017830088454126517}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Part_Core
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9711,7 +9711,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2222063765798599673}
   - component: {fileID: 2254034273413411659}
-  m_Layer: 0
+  - component: {fileID: 9168646648914208525}
+  m_Layer: 2
   m_Name: Light_Portal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9798,6 +9799,29 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!114 &9168646648914208525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2216516872509782719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1 &2216517029510664659
 GameObject:
   m_ObjectHideFlags: 0
@@ -9807,7 +9831,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2222091676556586979}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Runes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9842,7 +9866,7 @@ GameObject:
   - component: {fileID: 2222046918030467955}
   - component: {fileID: 2051692448992372261}
   - component: {fileID: 2018395054840058713}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Part_Sparks_Sub
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14546,7 +14570,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2218573251409858717}
   - component: {fileID: 2031822302953512271}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RuneCircle2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14632,7 +14656,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2218173942392786567}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Effects_Runestone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14665,7 +14689,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2222484924293355659}
   - component: {fileID: 2032673721540392387}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RuneCircle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14753,9 +14777,9 @@ GameObject:
   - component: {fileID: 961382260589078851}
   - component: {fileID: 8204769519439207838}
   - component: {fileID: 5742030740744332156}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: PF_RuneStone
-  m_TagString: Untagged
+  m_TagString: Rune
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -14976,7 +15000,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4615931697919449225}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Audio
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15010,7 +15034,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6075849157881363410}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Rocks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15046,7 +15070,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5370460244800125345}
   - component: {fileID: 4407447669273796839}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: AuS_Crackling
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15220,7 +15244,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4903384287625779636}
   - component: {fileID: 6927399461652307705}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: AuS_ForceField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15393,7 +15417,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2447412400201508177}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15427,7 +15451,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4338345115091099409}
   - component: {fileID: 7077151746091656646}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15543,6 +15567,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7c900668484faa647b64d62a3fcb1b51,
         type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7c900668484faa647b64d62a3fcb1b51,
+        type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
       objectReference: {fileID: 0}
@@ -15630,6 +15659,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Rock_1_3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1fd018b8c4251c34f95cf3f67d1552d1,
+        type: 3}
+      propertyPath: m_Layer
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1fd018b8c4251c34f95cf3f67d1552d1,
         type: 3}
@@ -15748,6 +15782,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b6778bae0e8d8a94185dce6496d846fd,
         type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b6778bae0e8d8a94185dce6496d846fd,
+        type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
@@ -15863,6 +15902,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1fd018b8c4251c34f95cf3f67d1552d1,
         type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1fd018b8c4251c34f95cf3f67d1552d1,
+        type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
@@ -15975,6 +16019,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Rock_0_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b6778bae0e8d8a94185dce6496d846fd,
+        type: 3}
+      propertyPath: m_Layer
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b6778bae0e8d8a94185dce6496d846fd,
         type: 3}

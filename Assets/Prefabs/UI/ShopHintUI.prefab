@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2527620632820771354}
   - component: {fileID: 2467622559706306763}
   - component: {fileID: 7164072253348161932}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: KeyIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84,7 +84,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3136121113391524186}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: ShopHintUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,7 +99,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2729236659533527566}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 2253369115623168488}
   - component: {fileID: 8445646057831068464}
   - component: {fileID: 314831103107762434}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: HintText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -256,7 +256,7 @@ GameObject:
   - component: {fileID: 8812889932715661131}
   - component: {fileID: 3863117567855936887}
   - component: {fileID: 4801051898231917587}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -369,7 +369,7 @@ GameObject:
   - component: {fileID: 1161765877862222189}
   - component: {fileID: 1721081115044257502}
   - component: {fileID: 2338463797199318957}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
