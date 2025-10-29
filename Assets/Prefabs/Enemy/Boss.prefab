@@ -14279,8 +14279,8 @@ GameObject:
   - component: {fileID: 5240616893635991741}
   - component: {fileID: 8575010899055558442}
   - component: {fileID: 947967523614153412}
-  - component: {fileID: 5588847185356648363}
   - component: {fileID: 518107552579827387}
+  - component: {fileID: 6210077996157375181}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -14388,22 +14388,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &5588847185356648363
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8102969495323673366}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 592b5982891e3e84185a2be806a2dd67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyType: 3
-  moneyReward: 50
-  scoreReward: 100
-  attackRange: 2
 --- !u!136 &518107552579827387
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -14427,6 +14411,22 @@ CapsuleCollider:
   m_Height: 2.0426426
   m_Direction: 1
   m_Center: {x: 0, y: 1.1584924, z: 0}
+--- !u!114 &6210077996157375181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8102969495323673366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bddc654191427c4ca3d98a4df029ac0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyType: 3
+  moneyReward: 50
+  scoreReward: 100
+  attackRange: 2
 --- !u!1 &8112937548522028747
 GameObject:
   m_ObjectHideFlags: 0

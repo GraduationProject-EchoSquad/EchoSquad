@@ -82,6 +82,18 @@ namespace LLMUnitySamples
             string AINames = string.Join(" | ", uniqueNames);
             return AINames;
         }
+        
+        string GetEnemyNames()
+        {
+            var validEnemies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (EnemyType enemyType in Enum.GetValues(typeof(EnemyType)))
+            {
+                validEnemies.Add(enemyType.ToString());
+            }
+
+            string enemyNames = string.Join(" | ", validEnemies);
+            return enemyNames;
+        }
         private string PreprocessCommand(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -94,6 +106,8 @@ namespace LLMUnitySamples
                 { "pose", "Boss" },
                 { "post", "Boss" },
                 { "boss", "Boss" },
+                { "both", "Boss" },
+                { "force", "Boss" },
 
                 // 동료 이름 오인식
                 { "lina", "Lena" },
@@ -148,6 +162,7 @@ namespace LLMUnitySamples
         {
             string actions = FormatEnumOptions<AIActionEnum>();
             string unitNames = GetAINames(AIList);
+            string enemyNames = GetEnemyNames();
 
             return "### Core Rules\n" +
                    "You are a military command parser. Parse natural language into structured commands.\n\n" +
@@ -175,7 +190,7 @@ namespace LLMUnitySamples
                    "- 'me/myself/I' → 'Player'\n" +
                    $"- 'all/everyone/everybody' → [{string.Join(",", AIList.Select(ai => $"\"{ai.teammateName}\""))}]\n" +
                    $"- Locations: {districtsName}, Left, Right, Forward, Back\n" +
-                   "- Enemies: Zombie, Boss\n\n" +
+                   $"- Enemies: {enemyNames}\n\n" +
 
                    "**PARAMETERS RULE (CRITICAL!)**\n" +
                    $"- If target is a PERSON ({unitNames}, Player) → use `follow_target` or `support_target`\n" +
@@ -457,7 +472,14 @@ namespace LLMUnitySamples
                 .ToList();
 
             var validUnits = new HashSet<string>(aiList.Select(ai => ai.teammateName), StringComparer.OrdinalIgnoreCase);
-            var validEnemies = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Zombie", "Boss" };
+
+            // Dynamically populate the validEnemies set from the EnemyType enum
+            var validEnemies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (EnemyType enemyType in Enum.GetValues(typeof(EnemyType)))
+            {
+                validEnemies.Add(enemyType.ToString());
+            }
+
             var validLocations = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Left", "Right", "Forward", "Back", "Center" };
 
             MapManager mapManager = MapManager.Instance;
