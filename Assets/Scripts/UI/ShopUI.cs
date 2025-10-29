@@ -127,6 +127,17 @@ public class ShopUI : UIBase
 
         // 버튼 상태 업데이트
         UpdateAllButtonStates();
+
+        // Shop 열릴 때 커서 표시
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    private void OnDisable()
+    {
+        // Shop 닫힐 때 커서 잠금 (FPS 게임)
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void OnDestroy()
