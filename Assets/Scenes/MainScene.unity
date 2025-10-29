@@ -53356,7 +53356,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7624911027257481554}
   m_Layer: 0
-  m_Name: Kitchen
+  m_Name: C
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53372,7 +53372,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4698687494661653499}
   m_Layer: 0
-  m_Name: Toilet
+  m_Name: B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53437,7 +53437,7 @@ GameObject:
   m_Component:
   - component: {fileID: 368786441323217155}
   m_Layer: 0
-  m_Name: Ammo
+  m_Name: A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
