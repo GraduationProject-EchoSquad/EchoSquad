@@ -153,6 +153,12 @@ public class TeammateAI : MonoBehaviour
                     return;
                 }
 
+                if (playerUnit.IsDead() == false)
+                {
+                    Debug.LogWarning("playerUnit is alive!");
+                    return;
+                }
+
                 unitController.SetFollowHealUnit(playerUnit);
             }
         }

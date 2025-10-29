@@ -31,7 +31,7 @@ public class PlayerController : UnitController
         playerMovement.enabled = false;
         playerShooter.enabled = false;
 
-        if (lifeRemains > 0)
+        /*if (lifeRemains > 0)
         {
             SetLifeRemains(lifeRemains - 1);
 
@@ -44,7 +44,7 @@ public class PlayerController : UnitController
         {
             PubSubManager.Instance.Publish<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, data => {});
             //GameManager.Instance.EndGame(false);
-        }
+        }*/
 
         Cursor.visible = true;
     }
@@ -82,10 +82,7 @@ public class PlayerController : UnitController
     }
 
 #if UNITY_EDITOR
-    public void ForceDead()
-    {
-        LivingEntity.Die();
-    }
+
 
     public void ForceDeadImmediately()
     {

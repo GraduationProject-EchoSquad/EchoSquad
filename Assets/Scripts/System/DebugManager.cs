@@ -25,13 +25,22 @@ public class DebugManager : Singleton<DebugManager>
         }
     }
 
-    public void KillPlayerImmediately()
+    /*public void KillPlayerImmediately()
     {
         PlayerController player = UnitManager.Instance.GetPlayerUnit();
         if (player != null && !player.IsDead())
         {
             Debug.Log("[Debug] Forcing player death Immediately.");
             player.ForceDeadImmediately();
+        }
+    }*/
+    
+    public void KillAllAllay()
+    {
+        foreach (var allayUnit in UnitManager.Instance.GetUnitTeamTypeList(UnitController.EUnitTeamType.Allay))
+        {
+            Debug.Log("[Debug] Forcing allay death Immediately.");
+            allayUnit.ForceDead();
         }
     }
 

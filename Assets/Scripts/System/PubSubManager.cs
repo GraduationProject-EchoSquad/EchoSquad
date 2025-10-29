@@ -16,6 +16,7 @@ public enum PubSubEvent
     OnMoneyChanged,         // 돈 변경
     OnItemPurchased,        // 아이템 구매 성공
     OnPurchaseFailed,       // 구매 실패
+    OnUnitDeath,
 
     OnGameEnd
 }
@@ -82,6 +83,11 @@ public class OnItemPurchasedData : PubSubDataBase
 public class OnPurchaseFailedData : PubSubDataBase
 {
     public string Reason;
+}
+
+public class OnUnitDeathData : PubSubDataBase
+{
+    public UnitController DeathController;
 }
 
 public class PubSubManager

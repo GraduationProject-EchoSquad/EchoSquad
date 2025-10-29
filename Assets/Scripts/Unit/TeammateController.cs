@@ -356,8 +356,17 @@ public class TeammateController : UnitController
 
     void DoHeal(UnitController targetUnit)
     {
-        var health = targetUnit.GetComponent<LivingEntity>();
-        health.RestoreHealth(100);
+        if (targetUnit.IsDead() == false)
+        {
+            return;
+        }
+
+        if (targetUnit is PlayerController playerController)
+        {
+            playerController.Respawn();
+        }
+        /*var health = targetUnit.GetComponent<LivingEntity>();
+        health.RestoreHealth(100);*/
     }
 
     public TeammateAI GetTeammateAI()
