@@ -133,34 +133,22 @@ Click on the image below to watch the game trailer.
   <img src="./images/system-diagram.png" alt="System Architecture Diagram" width="900">
 </div>
 
-Echo Squad's core system enables real-time interaction between players and AI companions through an integrated pipeline of STT, LLM, and TTS modules running entirely within Unity.
+Echo Squad implements a real-time voice command system where players interact with AI companions through natural speech. The entire pipeline—from voice input to AI response—runs locally within Unity, ensuring low latency and seamless gameplay.
 
----
+### Data Flow Pipeline
 
-### Step 1: Speech-to-Text (STT)
-- **Input:** Player's voice via microphone
-- **Process:** OpenAI Whisper transcribes audio into text in real-time
-- **Output:** Text command
+| Stage | Component | Description |
+|-------|-----------|-------------|
+| **1. Voice Capture** | STT (Whisper) | Player speaks into microphone. OpenAI Whisper model transcribes speech into text in real-time, enabling natural language commands. |
+| **2. Intent Recognition** | LLM (Qwen3 + LoRA) | The transcribed text is processed by Qwen3 LLM merged with a custom LoRA Adapter fine-tuned on in-game command patterns. The model interprets player intent and generates structured JSON containing both the desired AI action and a contextual dialogue response. |
+| **3. Action Execution** | FSM Controller | A Finite State Machine parses the JSON output and translates it into concrete in-game behaviors (movement, combat, support, etc.), while simultaneously triggering the AI's vocal response. |
+| **4. Voice Generation** | TTS (Spark-TTS) | The AI's dialogue text is converted to speech using Spark-TTS. To minimize latency, common phrases and vocabulary are pre-generated and cached at runtime, allowing instant voice playback during critical gameplay moments. |
 
-### Step 2: Language Model Interpretation (LLM)
-- **Input:** Transcribed text command
-- **Process:** Qwen3 LLM with fine-tuned LoRA Adapter interprets player intent
-- **Output:** JSON response data (AI actions + dialogue)
-
-### Step 3: Action Execution (FSM)
-- **Input:** JSON response data
-- **Process:** Finite State Machine (FSM) parses commands and determines AI behavior
-- **Output:** Executed actions (move, attack, defend, etc.)
-
-### Step 4: Voice Pre-caching
-- **Purpose:** Optimize TTS performance
-- **Process:** Spark-TTS pre-generates core vocabulary and voice resources for each AI
-- **Storage:** Cache Data for fast retrieval during gameplay
-
-### Step 5: Text-to-Speech (TTS)
-- **Input:** AI dialogue text from Action system
-- **Process:** Spark-TTS generates companion voice using cached resources
-- **Output:** Audio playback through speakers
+### Key Technical Features
+- **Local Processing**: All AI inference runs on the player's machine—no cloud dependency
+- **LoRA Fine-tuning**: Custom adapter trained on tactical commands for accurate intent recognition
+- **Voice Caching**: Pre-computed audio reduces TTS latency from seconds to milliseconds
+- **Modular Architecture**: Each component (STT/LLM/TTS) operates independently for maintainability
 
 
 ## 📃Reference
