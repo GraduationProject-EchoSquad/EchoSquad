@@ -1,5 +1,9 @@
 # EchoSquad
-[프로젝트를 gif 파일, 사진을 기반으로 소개합니다.]
+
+<div align="center">
+  <img src="./images/gameplay-screenshot.png" alt="EchoSquad Gameplay" width="800">
+  <p><i>Command your AI squad with voice controls in intense combat situations</i></p>
+</div>
 
 
 ## Table of Contents
