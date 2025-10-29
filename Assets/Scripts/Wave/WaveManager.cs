@@ -123,13 +123,13 @@ public class WaveManager : Singleton<WaveManager>
             data.WaveIndex = currentWaveIndex + 1;
         });
 
-        // 몬스터 스폰을 백그라운드에서 진행
+        // 일반 몬스터 스폰 후 보스 스폰
+        await SpawnEnemiesAsync(wave);
+
         if (wave.isBossWave)
         {
             SpawnBoss(wave);
         }
-        SpawnEnemiesAsync(wave).Forget();
-
 
         // 웨이브 종료 조건 (모든 몬스터 사망 또는 플레이어 사망)을 기다림
         bool isSuccess = await waveCompletionSource.Task;
