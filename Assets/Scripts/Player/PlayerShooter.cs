@@ -93,23 +93,10 @@ public class PlayerShooter : UnitShooter
 
     public override void Shoot()
     {
-        //Debug.Log($"[Shoot] 단발 모드 진입 → hasEnoughDistance={hasEnoughDistance}");
-
-        // linedUp 체크 제거하고, 사거리(장애물)만 확인
-        if (hasEnoughDistance)
+        bool fired = gun.Fire(aimPoint);
+        if (fired)
         {
-            //Debug.Log("[Shoot] hasEnoughDistance == true → gun.Fire 호출");
-            bool fired = gun.Fire(aimPoint);
-            //Debug.Log($"[Shoot] gun.Fire 리턴값 = {fired}");
-            if (fired)
-            {
-                //Debug.Log("[Shoot] 발사 성공 → 애니메이터 트리거");
-                unitAnimator.SetTrigger("Shoot");
-            }
-        }
-        else
-        {
-            //Debug.Log("[Shoot] 사정거리/장애물 조건 불만족");
+            unitAnimator.SetTrigger("Shoot");
         }
     }
 

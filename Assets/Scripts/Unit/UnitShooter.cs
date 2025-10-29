@@ -82,17 +82,11 @@ public class UnitShooter : MonoBehaviour
 
     public virtual void Shoot()
     {
-        //Debug.Log($"[Shoot] 단발 모드 진입 → hasEnoughDistance={hasEnoughDistance}");
-
-        // linedUp 체크 제거하고, 사거리(장애물)만 확인
-        if (aimTargetUnit != null && hasEnoughDistance && IsVisibleTarget(aimTargetUnit))
+        if (aimTargetUnit != null && IsVisibleTarget(aimTargetUnit))
         {
-            //Debug.Log("[Shoot] hasEnoughDistance == true → gun.Fire 호출");
             bool fired = gun.Fire(aimTargetUnit.transform.position);
-            //Debug.Log($"[Shoot] gun.Fire 리턴값 = {fired}");
             if (fired)
             {
-                //Debug.Log("[Shoot] 발사 성공 → 애니메이터 트리거");
                 unitAnimator.SetTrigger("Shoot");
                 if (gun.magAmmo <= 0)
                 {
