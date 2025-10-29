@@ -91,14 +91,15 @@ You must manually download and place the following models into the project.
 
 Once all prerequisites are installed and all models are downloaded and placed in their correct folders, press the **Play** button (▶) in the Unity Editor to run the game.
 ## 🎮How to Play
-- Movement:Use W / A / S / D to move (Up, Left, Down, Right).
-- Camera Control:Press Q to move the camera upward, and E to move it down from the player’s perspective.
-- Jump: Press Spacebar to jump.
-- Shop: Approach the center rune and press Z to open the shop. In the shop, you can purchase fire rate upgrades, ammo, and health.
-- Coins: Defeating enemies grants you coins, which can be used to buy items in the shop.
-- Waves: The game consists of 5 waves (Waves 1–5).
-- Mission Complete: Successfully surviving all five waves will trigger Mission Complete.
-- Mission Failed: If both the player and the AI companion die, the mission will fail.
+- **Movement** : Use W / A / S / D to move (Up, Left, Down, Right).
+- **Aiming** : Move your mouse to change the player’s direction. Press Q to aim the gun up, and E to aim it down.
+- **Jump** : Press Spacebar to jump.
+- **Camera Zoom** : Scroll the mouse wheel up to zoom in, and scroll down to zoom out.
+- **Shop** : Approach the center rune and press Z to open the shop. In the shop, you can purchase fire rate upgrades, ammo, and health.
+- **Coins** : Defeating enemies grants you coins, which can be used to buy items in the shop.
+- **Waves** : The game consists of 5 waves (Waves 1–5).
+- **Mission Complete** : Successfully surviving all five waves will trigger Mission Complete.
+- **Mission Failed** : If both the player and the AI companion die, the mission will fail.
 
 
 ## 🎞️Trailer
