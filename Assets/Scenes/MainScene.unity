@@ -27039,8 +27039,8 @@ MonoBehaviour:
         z: 0
       Rotation:
         value:
-          x: 0.27733293
-          y: 0
+          x: 0.27733296
+          y: 9.720198e-10
           z: 0.07121054
           w: 0.9581312
     m_MetaData:
@@ -53356,7 +53356,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7624911027257481554}
   m_Layer: 0
-  m_Name: kitchen
+  m_Name: Kitchen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
