@@ -35,6 +35,12 @@ public class Wave
         {
             total += enemyInfo.count;
         }
+
+        if (isBossWave)
+        {
+            total += 1;
+        }
+        
         return total;
     }
 }
