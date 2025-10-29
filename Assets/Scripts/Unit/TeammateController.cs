@@ -78,7 +78,8 @@ public class TeammateController : UnitController
 
             if (unitState == EUnitState.Scout)
             {
-                SetCamera(false);
+                //CameraManager.Instance.SetCinemachineTarget(null);
+                //SetCamera(false);
                 if (unitShooter.GetAimTargetUnit() != null) // 타겟 발견시 순찰 중단
                 {
                     if (navMeshAgent.hasPath)
@@ -98,7 +99,8 @@ public class TeammateController : UnitController
 
             else if (unitState == EUnitState.Idle)
             {
-                SetCamera(false);
+                //CameraManager.Instance.SetCinemachineTarget(null);
+                //SetCamera(false);
                 patrolTimer -= Time.deltaTime;
 
 
@@ -145,6 +147,20 @@ public class TeammateController : UnitController
         //LLM 이동 명령 수행하는 상태
         else if (unitState == EUnitState.Move)
         {
+            var target = unitShooter.GetAimTargetUnit();
+            if (target != null && target.IsDead() == false)
+            {
+                // 타겟이 시야에 있는지 확인
+                if (unitShooter.IsVisibleTarget(target))
+                {
+                    transform.LookAt(target.transform.position);
+                }
+                else
+                {
+                    unitShooter.SetAimTargetUnit(null);
+                }
+            }
+            
             if (followTarget != null)
             {
                 FollowTarget();
@@ -153,6 +169,7 @@ public class TeammateController : UnitController
             {
                 homePosition = transform.position;
                 ChangeUnitState(EUnitState.Idle);
+                CameraManager.Instance.SetCinemachineTarget(null);
             }
         } //전투 상태
         else if (unitState == EUnitState.Combat)
@@ -249,7 +266,8 @@ public class TeammateController : UnitController
             followTarget = null;
             navMeshAgent.SetDestination(hit.position); // 보정된 위치로 이동
             ChangeUnitState(EUnitState.Move);
-            SetCamera(true);
+            CameraManager.Instance.SetCinemachineTarget(this.gameObject);
+            //SetCamera(true);
         }
     }
 
@@ -261,7 +279,8 @@ public class TeammateController : UnitController
             followTarget = null;
             navMeshAgent.SetDestination(hit.position); // 보정된 위치로 이동
             ChangeUnitState(EUnitState.Move);
-            SetCamera(true);
+            CameraManager.Instance.SetCinemachineTarget(this.gameObject);
+            //SetCamera(true);
         }
     }
 
@@ -286,21 +305,24 @@ public class TeammateController : UnitController
         }
 
         ChangeUnitState(EUnitState.Move);
-        SetCamera(true);
+        CameraManager.Instance.SetCinemachineTarget(this.gameObject);
+        //SetCamera(true);
     }
 
     public void SetFollowUnit(UnitController followUnitController)
     {
         followTarget = followUnitController;
         ChangeUnitState(EUnitState.Move);
-        SetCamera(true);
+        CameraManager.Instance.SetCinemachineTarget(this.gameObject);
+        //SetCamera(true);
     }
     
     public void SetFollowHealUnit(UnitController followUnitController)
     {
         followTarget = followUnitController;
         ChangeUnitState(EUnitState.Supprot);
-        SetCamera(true);
+        CameraManager.Instance.SetCinemachineTarget(this.gameObject);
+        //SetCamera(true);
     }
 
     private void FollowTarget()
@@ -320,7 +342,8 @@ public class TeammateController : UnitController
             // agent가 실제로 멈췄는지 (목표 도착 + 속도 거의 없음)
             if (IsNavArrivedTargetPosition())
             {
-                SetCamera(false);
+                CameraManager.Instance.SetCinemachineTarget(null);
+                //SetCamera(false);
                 stopTimer += Time.deltaTime;
 
                 if (stopTimer >= waitBeforeRelease)
