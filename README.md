@@ -1,8 +1,13 @@
 # EchoSquad
 
 <div align="center">
-  <img src="./images/gameplay-demo.gif" alt="EchoSquad Gameplay" width="800">
-  <p><i>Command your AI squad with voice controls in intense combat situations</i></p>
+  <img src="./images/gameplay-demo_boss.gif" alt="Boss Battle" width="800">
+  <p><i>Boss monster appears - Face the ultimate challenge</i></p>
+
+  <br>
+
+  <img src="./images/gameplay-demo_move.gif" alt="Voice Command Movement" width="800">
+  <p><i>Command your AI companion to move using voice controls</i></p>
 </div>
 
 
