@@ -1,7 +1,7 @@
 # EchoSquad
 
 <div align="center">
-  <img src="./images/gameplay-screenshot.png" alt="EchoSquad Gameplay" width="800">
+  <img src="./images/gameplay-demo.gif" alt="EchoSquad Gameplay" width="800">
   <p><i>Command your AI squad with voice controls in intense combat situations</i></p>
 </div>
 
