@@ -104,13 +104,13 @@ Once all prerequisites are installed and all models are downloaded and placed in
 | Action | Key/Input              | Description |
 |--------|------------------------|-------------|
 | **Movement** | `W` `A` `S` `D`        | Move forward, left, backward, right |
-| **Voice Command** | `` ` `` (Backtick)     | Activate microphone |
 | **Camera Rotation** | `Mouse Movement`       | Rotate camera view |
-| **Aiming** | `Right Mouse Button`   | Display red aiming line |
-| **Shoot** | `Left Mouse Button`    | Fire weapon |
-| **Aim Up/Down** | `Q` / `E`              | Aim gun upward / downward |
-| **Jump** | `Spacebar`             | Jump |
 | **Camera Zoom** | `Mouse Wheel`          | Scroll up to zoom in, down to zoom out |
+| **Jump** | `Spacebar`             | Jump |
+| **Shoot** | `Left Mouse Button`    | Fire weapon |
+| **Aiming** | `Right Mouse Button`   | Display red aiming line |
+| **Aim Up/Down** | `Q` / `E`              | Aim gun upward / downward |
+| **Voice Command** | `` ` `` (Backtick)     | Activate microphone |
 | **Shop** | `Z` (near center rune) | Open shop to purchase upgrades |
 
 ### Gameplay
