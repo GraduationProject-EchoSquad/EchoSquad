@@ -78,6 +78,11 @@ public class UnitController : MonoBehaviour
     {
         unitState = newUnitState;
     }
+    
+    public EUnitState GetUnitState()
+    {
+        return unitState;
+    }
 
     public bool IsDead()
     {
