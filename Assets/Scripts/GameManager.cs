@@ -27,7 +27,7 @@ public class GameManager : Singleton<GameManager>
 
         SetGameState(GameState.Start);
 
-        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         isTest = false;
     }
@@ -60,6 +60,10 @@ public class GameManager : Singleton<GameManager>
         // 2. Wave 단계: WaveManager에게 웨이브 진행 위임
         SetGameState(GameState.Wave);
         Debug.Log("[GameManager] Wave 단계 시작 - WaveManager에 위임");
+
+        // 전투 시작 시 커서 잠금
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
 
         bool isWin = await WaveManager.Instance.StartWaves();
 

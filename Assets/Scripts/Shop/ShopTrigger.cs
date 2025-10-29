@@ -90,41 +90,25 @@ public class ShopTrigger : MonoBehaviour
             Debug.Log("[ShopTrigger] 플레이어가 상점 범위를 벗어났습니다.");
         }
     }
-    // 상점 UI 열기
     private async void OpenShop()
     {
         if (UIManager.Instance != null)
         {
-            // 마우스 커서 보이게 하고 잠금 해제
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-
             await UIManager.Instance.Show<ShopUI>(UIManager.EUIData.Shop);
-            Debug.Log("[ShopTrigger] 상점 UI를 열었습니다. 마우스 커서 활성화됨.");
-
-            // 게임 일시정지 (선택적)
-            // Time.timeScale = 0f;
+            Debug.Log("[ShopTrigger] 상점 UI를 열었습니다.");
         }
         else
         {
             Debug.LogError("[ShopTrigger] UIManager를 찾을 수 없습니다!");
         }
     }
-    // 상점 UI 닫기
+
     private async UniTaskVoid CloseShop()
     {
         if (UIManager.Instance != null)
         {
             await UIManager.Instance.Hide<ShopUI>(UIManager.EUIData.Shop);
-
-            // 마우스 커서 다시 숨기고 잠금 (FPS 게임이므로)
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-
-            Debug.Log("[ShopTrigger] 상점 UI를 닫았습니다. 마우스 커서 비활성화됨.");
-
-            // 게임 재개 (선택적)
-            // Time.timeScale = 1f;
+            Debug.Log("[ShopTrigger] 상점 UI를 닫았습니다.");
         }
     }
 
