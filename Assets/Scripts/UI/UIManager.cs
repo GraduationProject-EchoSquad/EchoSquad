@@ -19,7 +19,8 @@ public class UIManager : Singleton<UIManager>
         Title,
         HUD,
         TeamVoiceSetUp,
-        GameOver,
+        EndingClear,
+        EndingFail,
         Shop,
 
         //Popup
@@ -42,8 +43,10 @@ public class UIManager : Singleton<UIManager>
         { EUIData.Title, "Prefabs/UI/TitleUI.prefab" },
         { EUIData.HUD, "Prefabs/UI/HUD.prefab" },
         { EUIData.TeamVoiceSetUp, "Prefabs/UI/AllyStatChoiceUI.prefab" },
-        { EUIData.GameOver, "Prefabs/UI/GameoverUI.prefab" }, // GameOverUI 프리팹 경로 추가
+        { EUIData.EndingClear, "Prefabs/UI/EndingUI_Clear.prefab" }, 
+        { EUIData.EndingFail, "Prefabs/UI/EndingUI_Failed.prefab" }, 
         { EUIData.Shop, "Prefabs/UI/ShopUI.prefab" }, // ShopUI 프리팹 경로 추가
+        
 
         { EUIData.Countdown, "Prefabs/UI/CountdownText.prefab" }, // GameOverUI 프리팹 경로 추가
     };

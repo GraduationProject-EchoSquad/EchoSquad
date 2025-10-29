@@ -52,6 +52,8 @@ public class UnitController : MonoBehaviour
     public virtual async UniTaskVoid HandleDeath()
     {
         ChangeUnitState(EUnitState.Die);
+        PubSubManager.Instance.Publish<OnUnitDeathData>(PubSubEvent.OnUnitDeath,
+            data => { data.DeathController = this; });
     }
 
     public EUnitTeamType GetUnitTeamType()
@@ -81,4 +83,16 @@ public class UnitController : MonoBehaviour
     {
         return unitState == EUnitState.Die;
     }
+
+    public void ApplyDamage(DamageMessage damageMessage)
+    {
+        LivingEntity.ApplyDamage(damageMessage);
+    }
+#if UNITY_EDITOR
+
+    public void ForceDead()
+    {
+        LivingEntity.Die();
+    }
+#endif
 }

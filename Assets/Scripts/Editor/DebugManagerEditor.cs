@@ -29,9 +29,14 @@ public class DebugManagerEditor : Editor
             debugManager.KillPlayer();
         }
         
-        if (GUILayout.Button("Kill Player Immediately"))
+        /*if (GUILayout.Button("Kill Player Immediately"))
         {
             debugManager.KillPlayerImmediately();
+        }*/
+        
+        if (GUILayout.Button("Kill Allay Immediately"))
+        {
+            debugManager.KillAllAllay();
         }
 
         // "다음 웨이브로" 버튼

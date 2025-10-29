@@ -125,7 +125,7 @@ public class UnitManager : Singleton<UnitManager>
     }
 
     //limitDistance까지만 탐색
-    public UnitController GetNearestEnemyUnit(UnitController unitController, float limitDistance = float.MaxValue)
+    public UnitController GetNearestEnemyUnit(UnitController unitController, float limitDistance = float.MaxValue, EnemyType enemyType = EnemyType.None)
     {
         List<UnitController> enemyList = GetUnitTeamTypeList(unitController.GetOppositeTeamType())
             .Where(e => e.IsDead() == false).ToList();
@@ -135,11 +135,16 @@ public class UnitManager : Singleton<UnitManager>
 
         foreach (var enemy in enemyList)
         {
-            float sqrDistance = (enemy.transform.position - myPosition).sqrMagnitude;
-            if (sqrDistance < minSqrDistance)
+            //none이거나, 특정 타입에 맞으면
+            if (enemyType == EnemyType.None ||
+                enemy is EnemyController enemyController && enemyController.enemyType == enemyType)
             {
-                minSqrDistance = sqrDistance;
-                nearestEnemyUnit = enemy;
+                float sqrDistance = (enemy.transform.position - myPosition).sqrMagnitude;
+                if (sqrDistance < minSqrDistance)
+                {
+                    minSqrDistance = sqrDistance;
+                    nearestEnemyUnit = enemy;
+                }
             }
         }
 

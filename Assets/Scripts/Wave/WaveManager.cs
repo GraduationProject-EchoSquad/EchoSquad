@@ -62,7 +62,8 @@ public class WaveManager : Singleton<WaveManager>
 
         // 몬스터 사망 이벤트 구독
         PubSubManager.Instance.Subscribe<OnEnemyDeathData>(PubSubEvent.OnEnemyDeath, OnEnemyDeath);
-        PubSubManager.Instance.Subscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
+        //PubSubManager.Instance.Subscribe<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, HandlePlayerDeathDuringWave);
+        PubSubManager.Instance.Subscribe<OnUnitDeathData>(PubSubEvent.OnUnitDeath, HandlePlayerDeathDuringWave);
     }
 
     private void Start()
@@ -226,11 +227,22 @@ public class WaveManager : Singleton<WaveManager>
     }
 
     // 웨이브 진행 중 플레이어가 죽었을 때 호출
-    private void HandlePlayerDeathDuringWave(OnPlayerDeathData data)
+    private void HandlePlayerDeathDuringWave(OnUnitDeathData data)
     {
-        // 웨이브가 아직 진행 중이라면 웨이브 종료 처리
-        if (!waveCompletionSource.Task.Status.IsCompleted())
-            waveCompletionSource.TrySetResult(false); // 웨이브 실패로 종료
+        if (data.DeathController.GetUnitTeamType() == UnitController.EUnitTeamType.Allay)
+        {
+            foreach (var allayUnit in  UnitManager.Instance.GetUnitTeamTypeList(UnitController.EUnitTeamType.Allay))
+            {
+                if (allayUnit.IsDead() == false)
+                {
+                    return;
+                }
+            }
+            
+            // 웨이브가 아직 진행 중이라면 웨이브 종료 처리
+            if (!waveCompletionSource.Task.Status.IsCompleted())
+                waveCompletionSource.TrySetResult(false); // 웨이브 실패로 종료
+        }
     }
 
     // 디버그용: 현재 웨이브를 강제로 종료시킵니다.
