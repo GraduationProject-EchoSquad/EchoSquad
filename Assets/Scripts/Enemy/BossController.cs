@@ -38,8 +38,11 @@ public class BossController : EnemyController
         }
 
         // Boss Run 처리
-        bool shouldRun = !isAttacking && !agent.isStopped && agent.velocity.sqrMagnitude > 0.01f;
-        animator.SetBool("Run", shouldRun);
+        if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
+        {
+            bool shouldRun = !isAttacking && !agent.isStopped && agent.velocity.sqrMagnitude > 0.01f;
+            animator.SetBool("Run", shouldRun);
+        }
     }
 
     protected override void ExecuteAttack()
