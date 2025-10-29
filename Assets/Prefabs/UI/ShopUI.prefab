@@ -1703,6 +1703,11 @@ PrefabInstance:
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
+    - target: {fileID: 114125720558640550, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
+        type: 3}
+      propertyPath: clickSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 7c9538617afc45845afcc57c61884c66, type: 3}
     - target: {fileID: 114169537636052006, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: buttonTitle
@@ -1928,7 +1933,7 @@ PrefabInstance:
     - target: {fileID: 224356461645277832, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -267.225
+      value: -221.225
       objectReference: {fileID: 0}
     - target: {fileID: 224512338624831612, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
@@ -1958,7 +1963,7 @@ PrefabInstance:
     - target: {fileID: 224512338624831612, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -318.96
+      value: -272.96
       objectReference: {fileID: 0}
     - target: {fileID: 1513308398274441377, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
@@ -2291,6 +2296,11 @@ PrefabInstance:
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
+    - target: {fileID: 114125720558640550, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
+        type: 3}
+      propertyPath: clickSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 7c9538617afc45845afcc57c61884c66, type: 3}
     - target: {fileID: 114169537636052006, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: buttonTitle
@@ -2709,6 +2719,11 @@ PrefabInstance:
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
+    - target: {fileID: 114125720558640550, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
+        type: 3}
+      propertyPath: clickSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 7c9538617afc45845afcc57c61884c66, type: 3}
     - target: {fileID: 114169537636052006, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: buttonTitle
@@ -3127,6 +3142,11 @@ PrefabInstance:
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
+    - target: {fileID: 114125720558640550, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
+        type: 3}
+      propertyPath: clickSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 7c9538617afc45845afcc57c61884c66, type: 3}
     - target: {fileID: 114169537636052006, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: buttonTitle
@@ -3352,7 +3372,7 @@ PrefabInstance:
     - target: {fileID: 224356461645277832, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -267.225
+      value: -221.225
       objectReference: {fileID: 0}
     - target: {fileID: 224512338624831612, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
@@ -3382,7 +3402,7 @@ PrefabInstance:
     - target: {fileID: 224512338624831612, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -318.96
+      value: -272.96
       objectReference: {fileID: 0}
     - target: {fileID: 1513308398274441377, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
@@ -3965,6 +3985,11 @@ PrefabInstance:
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
+    - target: {fileID: 114125720558640550, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
+        type: 3}
+      propertyPath: clickSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 7c9538617afc45845afcc57c61884c66, type: 3}
     - target: {fileID: 114169537636052006, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: buttonTitle
@@ -4490,6 +4515,11 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 22
       objectReference: {fileID: 0}
+    - target: {fileID: 3151650362910516542, guid: 833da02dd63380644995e8ccd3b9917c,
+        type: 3}
+      propertyPath: clickSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 7c9538617afc45845afcc57c61884c66, type: 3}
     - target: {fileID: 3205734830039849741, guid: 833da02dd63380644995e8ccd3b9917c,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -4848,6 +4878,11 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 22
       objectReference: {fileID: 0}
+    - target: {fileID: 3151650362910516542, guid: 833da02dd63380644995e8ccd3b9917c,
+        type: 3}
+      propertyPath: clickSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 7c9538617afc45845afcc57c61884c66, type: 3}
     - target: {fileID: 3205734830039849741, guid: 833da02dd63380644995e8ccd3b9917c,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -5109,6 +5144,11 @@ PrefabInstance:
       propertyPath: 'm_ActiveFontFeatures.Array.data[0]'
       value: 1801810542
       objectReference: {fileID: 0}
+    - target: {fileID: 114125720558640550, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
+        type: 3}
+      propertyPath: clickSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 7c9538617afc45845afcc57c61884c66, type: 3}
     - target: {fileID: 114169537636052006, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: buttonTitle
@@ -5334,7 +5374,7 @@ PrefabInstance:
     - target: {fileID: 224356461645277832, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -267.225
+      value: -221.225
       objectReference: {fileID: 0}
     - target: {fileID: 224512338624831612, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
@@ -5364,7 +5404,7 @@ PrefabInstance:
     - target: {fileID: 224512338624831612, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -318.96
+      value: -272.96
       objectReference: {fileID: 0}
     - target: {fileID: 1513308398274441377, guid: cf19e05a3962ce64fb3e8f61455ee6a6,
         type: 3}
