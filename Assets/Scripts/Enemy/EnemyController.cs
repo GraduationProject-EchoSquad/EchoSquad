@@ -43,7 +43,7 @@ public class EnemyController : UnitController
 
     protected virtual void Update()
     {
-        if (IsDead())
+        if (IsDead() || agent == null || !agent.isActiveAndEnabled || !agent.isOnNavMesh)
         {
             return;
         }
@@ -51,7 +51,6 @@ public class EnemyController : UnitController
         // 공격 중에는 이동 로직 실행 안 함
         if (isAttacking)
         {
-            // 공격 중에는 확실하게 멈춤
             agent.isStopped = true;
             animator.SetBool("Run", false);
             return;
@@ -162,10 +161,15 @@ public class EnemyController : UnitController
     void Attack()
     {
         isAttacking = true;
-        agent.isStopped = true;
-        animator.SetBool("Run", false); // 확실하게 Run 애니메이션 종료
 
-        ExecuteAttack(); // 각 적 타입별 공격 실행
+        if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+        }
+
+        animator.SetBool("Run", false);
+
+        ExecuteAttack();
 
         Debug.Log($"[{enemyType}] Attack started - isAttacking: {isAttacking}");
     }
@@ -250,10 +254,13 @@ public class EnemyController : UnitController
     {
         Debug.Log($"[{enemyType}] OnAttackAnimationEnd 호출됨! isAttacking: {isAttacking} → false");
 
-        isAttacking = false; //  공격 종료 (Update 로직 다시 활성화)
-        agent.isStopped = false; // 이동 재개 가능하도록
+        isAttacking = false;
 
-        // HandAlien의 경우 IdleOne으로 강제 전환
+        if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = false;
+        }
+
         if (enemyType == EnemyType.HandAlien)
         {
             animator.Play("IdleOne", 0);
