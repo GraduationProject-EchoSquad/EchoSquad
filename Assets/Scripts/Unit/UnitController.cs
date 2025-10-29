@@ -74,8 +74,12 @@ public class UnitController : MonoBehaviour
         }
     }
 
-    protected void ChangeUnitState(EUnitState newUnitState)
+    protected void ChangeUnitState(EUnitState newUnitState, bool isForce = false)
     {
+        if (isForce == false && unitState == EUnitState.Die)
+        {
+            return;
+        }
         unitState = newUnitState;
     }
     

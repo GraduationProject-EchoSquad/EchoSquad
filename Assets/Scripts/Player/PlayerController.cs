@@ -58,7 +58,7 @@ public class PlayerController : UnitController
 
     public void Respawn()
     {
-        ChangeUnitState(EUnitState.Idle);
+        ChangeUnitState(EUnitState.Idle, true);
 
         gameObject.SetActive(false);
         gameObject.SetActive(true);
