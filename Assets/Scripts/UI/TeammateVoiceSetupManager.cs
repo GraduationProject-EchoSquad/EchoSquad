@@ -311,7 +311,11 @@ public class TeammateVoiceItem
         // 슬라이더 값 변경 시 텍스트 업데이트
         if (livelinessSlider != null)
         {
-            livelinessSlider.onValueChanged.AddListener(UpdateLivelinessText);
+            livelinessSlider.onValueChanged.AddListener((value) =>
+            {
+                UpdateLivelinessText(value);
+                PreventInvalidCombination();
+            });
             livelinessSlider.minValue = 0;
             livelinessSlider.maxValue = 4;
             livelinessSlider.wholeNumbers = true;
@@ -321,7 +325,11 @@ public class TeammateVoiceItem
 
         if (moodSlider != null)
         {
-            moodSlider.onValueChanged.AddListener(UpdateMoodText);
+            moodSlider.onValueChanged.AddListener((value) =>
+            {
+                UpdateMoodText(value);
+                PreventInvalidCombination();
+            });
             moodSlider.minValue = 0;
             moodSlider.maxValue = 4;
             moodSlider.wholeNumbers = true;
@@ -336,7 +344,22 @@ public class TeammateVoiceItem
         }
     }
 
-    // 미리듣기 버튼 클릭 시 "안녕하세요" TTS 재생
+    /// <summary>
+    /// Female + VeryHigh(4) + VeryHigh(4) 조합 방지
+    /// </summary>
+    private void PreventInvalidCombination()
+    {
+        if (gender == VoiceGender.Female &&
+            livelinessSlider != null && livelinessSlider.value == 4 &&
+            moodSlider != null && moodSlider.value == 4)
+        {
+            // VeryHigh + VeryHigh 조합 시 Liveliness를 3(High)로 자동 조정
+            livelinessSlider.value = 3;
+            Debug.LogWarning($"[TeammateVoiceItem] Female + VeryHigh/VeryHigh combination is not supported. Liveliness adjusted to High.");
+        }
+    }
+
+    // 미리듣기 버튼 클릭 시 미리 생성된 "Hello" 음성 재생
     private void OnPreviewButtonClicked()
     {
         VoiceProperty pitch = ConvertSliderToVoiceProperty(GetMoodValue());
@@ -345,8 +368,52 @@ public class TeammateVoiceItem
         Debug.Log(
             $"[TeammateVoiceItem] Preview voice for {teammateName}: Gender={gender}, Pitch={pitch}, Speed={speed}");
 
-        // SparkTTS로 "안녕하세요" 음성 생성 및 재생
-        SparkTTSManager.Instance.CreateStyleVoice("Hello", gender, pitch, speed);
+        // Resources 폴더에서 미리 생성된 음성 로드 및 재생
+        PlayPreviewVoiceFromResources(gender, pitch, speed);
+    }
+
+    /// <summary>
+    /// Resources/PreviewVoices 폴더에서 미리 생성된 음성을 로드하여 재생
+    /// </summary>
+    private void PlayPreviewVoiceFromResources(VoiceGender gender, VoiceProperty pitch, VoiceProperty speed)
+    {
+        // 파일명 생성 (PreviewVoicePreGeneratorEditor와 동일한 형식)
+        string genderStr = gender.ToApiString();
+        string pitchStr = pitch.ToApiString();
+        string speedStr = speed.ToApiString();
+        string textSafe = "hello"; // "Hello".ToLower()
+
+        string resourcePath = $"PreviewVoices/{genderStr}_{pitchStr}_{speedStr}_{textSafe}";
+
+        // Resources 폴더에서 로드
+        AudioClip clip = Resources.Load<AudioClip>(resourcePath);
+
+        if (clip != null)
+        {
+            Debug.Log($"[TeammateVoiceItem] ✓ Loaded preview voice from Resources: {resourcePath}");
+
+            // AudioSource를 통해 재생
+            if (SparkTTSManager.Instance != null && SparkTTSManager.Instance.audioSource != null)
+            {
+                AudioSource audioSource = SparkTTSManager.Instance.audioSource;
+                audioSource.Stop();
+                audioSource.clip = clip;
+                audioSource.Play();
+            }
+            else
+            {
+                Debug.LogWarning("[TeammateVoiceItem] SparkTTSManager or AudioSource is null!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[TeammateVoiceItem] ✗ Preview voice not found in Resources: {resourcePath}");
+            Debug.LogWarning($"[TeammateVoiceItem] Please generate preview voices using Tools > Voice > Preview Voice Pre-Generator");
+
+            // Fallback: 실시간 생성 (미리 생성된 음성이 없을 경우)
+            Debug.Log($"[TeammateVoiceItem] Fallback to real-time TTS generation...");
+            SparkTTSManager.Instance.CreateStyleVoice("Hello", gender, pitch, speed);
+        }
     }
 
     // 슬라이더 값을 VoiceProperty로 변환

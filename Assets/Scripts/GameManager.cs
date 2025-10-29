@@ -42,11 +42,10 @@ public class GameManager : Singleton<GameManager>
     private async UniTaskVoid GameFlowController()
     {
         // 1. Preparation 단계: 동료 음성 설정
-        //SetGameState(GameState.Preparation);
-        //Debug.Log("[GameManager] Preparation 단계 시작");
+        SetGameState(GameState.Preparation);
+        Debug.Log("[GameManager] Preparation 단계 시작");
 
-        //TODO 임시 주석처리
-        //await TeammateVoiceSetupManager.Instance.ShowAndWaitForCompletion();
+        await TeammateVoiceSetupManager.Instance.ShowAndWaitForCompletion();
 
         // HUD Panel 숨김
         HUDUI hudUI = await UIManager.Instance.GetUI<HUDUI>(UIManager.EUIData.HUD);
@@ -56,7 +55,7 @@ public class GameManager : Singleton<GameManager>
         UnitManager.Instance.InitSpawnUnit();
 
         // VoiceProfile 적용 (유닛 생성 후)
-        //TeammateVoiceSetupManager.Instance.ApplyVoiceProfilesToTeammates();
+        TeammateVoiceSetupManager.Instance.ApplyVoiceProfilesToTeammates();
 
         // 2. Wave 단계: WaveManager에게 웨이브 진행 위임
         SetGameState(GameState.Wave);
