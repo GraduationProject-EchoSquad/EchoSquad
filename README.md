@@ -1,5 +1,14 @@
 # EchoSquad
-[프로젝트를 gif 파일, 사진을 기반으로 소개합니다.]
+
+<div align="center">
+  <img src="./images/gameplay-demo_boss.gif" alt="Boss Battle" width="800">
+  <p><i>Boss monster appears - Face the ultimate challenge</i></p>
+
+  <br>
+
+  <img src="./images/gameplay-demo_move.gif" alt="Voice Command Movement" width="800">
+  <p><i>Command your AI companion to move using voice controls</i></p>
+</div>
 
 
 ## 📌Table of Contents
@@ -91,16 +100,25 @@ You must manually download and place the following models into the project.
 
 Once all prerequisites are installed and all models are downloaded and placed in their correct folders, press the **Play** button (▶) in the Unity Editor to run the game.
 ## 🎮How to Play
-- **Movement** : Use W / A / S / D to move (Up, Left, Down, Right).
-- **Voice Command** : Press and hold the **[ ` ]**(BackQuote) key to activate your microphone and give voice commands to your AI companion. Release the key to stop listening.
-- **Aiming** : Move your mouse to change the player’s direction. Press Q to aim the gun up, and E to aim it down.
-- **Jump** : Press Spacebar to jump.
-- **Camera Zoom** : Scroll the mouse wheel up to zoom in, and scroll down to zoom out.
-- **Shop** : Approach the center rune and press Z to open the shop. In the shop, you can purchase fire rate upgrades, ammo, and health.
-- **Coins** : Defeating enemies grants you coins, which can be used to buy items in the shop.
-- **Waves** : The game consists of 5 waves (Waves 1–5).
-- **Mission Complete** : Successfully surviving all five waves will trigger Mission Complete.
-- **Mission Failed** : If both the player and the AI companion die, the mission will fail.
+### 🕹️ Controls
+| Action | Key/Input              | Description |
+|--------|------------------------|-------------|
+| **Movement** | `W` `A` `S` `D`        | Move forward, left, backward, right |
+| **Voice Command** | ` (BackQuote)          | activate microphone |
+| **Aiming** | `Mouse`                | Change player direction |
+| **Aim Up/Down** | `Q` / `E`              | Aim gun upward / downward |
+| **Jump** | `Spacebar`             | Jump |
+| **Camera Zoom** | `Mouse Wheel`          | Scroll up to zoom in, down to zoom out |
+| **Shop** | `Z` (near center rune) | Open shop to purchase upgrades |
+
+### Gameplay
+- **Coins**: Defeating enemies grants coins to buy items in the shop
+- **Shop Items**: Fire rate upgrades, ammo refills, health restoration, and max HP increase
+- **Waves**: Survive 5 progressively challenging waves (Wave 1–5)
+
+### Mission Objectives
+- **Mission Complete**: Successfully survive all five waves
+- **Mission Failed**: Both player and AI companion die
 
 
 ## 🎞️Trailer
