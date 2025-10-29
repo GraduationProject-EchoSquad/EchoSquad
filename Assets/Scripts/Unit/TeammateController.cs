@@ -31,6 +31,10 @@ public class TeammateController : UnitController
     private Vector3 homePosition; // 시작 위치 저장
     float patrolTimer;
 
+    [Header("Combat Retreat Settings")]
+    [SerializeField] float minSafeDistance = 3f; // 최소 안전거리
+    [SerializeField] float retreatDistance = 5f; // 후퇴 목표 거리
+
     protected override void Start()
     {
         base.Start();
@@ -182,17 +186,24 @@ public class TeammateController : UnitController
                 return;
             }
 
-            // 타겟이 시야에 있는지 확인
-            if (unitShooter.IsVisibleTarget(target))
+            // 후퇴가 필요한지 체크
+            bool isRetreating = HandleCombatRetreat();
+
+            // 후퇴 중이 아닐 때만 기존 전투 로직 실행
+            if (!isRetreating)
             {
-                // 시야에 있으면 이동을 멈추고 타겟을 바라봄
-                navMeshAgent.ResetPath();
-                transform.LookAt(target.transform.position);
-            }
-            else
-            {
-                // 시야에 없으면 타겟의 위치로 이동 (추적)
-                navMeshAgent.SetDestination(target.transform.position);
+                // 타겟이 시야에 있는지 확인
+                if (unitShooter.IsVisibleTarget(target))
+                {
+                    // 시야에 있으면 이동을 멈추고 타겟을 바라봄
+                    navMeshAgent.ResetPath();
+                    transform.LookAt(target.transform.position);
+                }
+                else
+                {
+                    // 시야에 없으면 타겟의 위치로 이동 (추적)
+                    navMeshAgent.SetDestination(target.transform.position);
+                }
             }
         }
         else if (unitState == EUnitState.Supprot)
@@ -248,6 +259,46 @@ public class TeammateController : UnitController
         Vector2 moveInput = new Vector2(localVel.x, localVel.z).normalized;
         animator.SetFloat("Horizontal Move", moveInput.x * speed, 0.05f, Time.deltaTime);
         animator.SetFloat("Vertical Move", moveInput.y * speed, 0.05f, Time.deltaTime);
+    }
+
+    bool HandleCombatRetreat()
+    {
+        // 주변의 모든 적들을 체크
+        var enemies = UnitManager.Instance.GetUnitTeamTypeList(GetOppositeTeamType());
+
+        UnitController nearestEnemy = null;
+        float nearestDistance = Mathf.Infinity;
+
+        foreach (var enemy in enemies)
+        {
+            if (enemy.IsDead()) continue;
+
+            float dist = Vector3.Distance(transform.position, enemy.transform.position);
+            if (dist < nearestDistance)
+            {
+                nearestDistance = dist;
+                nearestEnemy = enemy;
+            }
+        }
+
+        // 가장 가까운 적이 최소 안전거리보다 가까우면 후퇴
+        if (nearestEnemy != null && nearestDistance < minSafeDistance)
+        {
+            // 적의 반대방향으로 후퇴
+            Vector3 directionAwayFromEnemy = (transform.position - nearestEnemy.transform.position).normalized;
+            Vector3 retreatPosition = transform.position + directionAwayFromEnemy * retreatDistance;
+
+            // NavMesh 위의 유효한 위치로 보정
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(retreatPosition, out hit, retreatDistance, NavMesh.AllAreas))
+            {
+                navMeshAgent.SetDestination(hit.position);
+            }
+
+            return true; // 후퇴 중
+        }
+
+        return false; // 후퇴 불필요
     }
 
     bool IsGrounded()
