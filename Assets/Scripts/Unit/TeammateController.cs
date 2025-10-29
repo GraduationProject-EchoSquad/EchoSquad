@@ -34,6 +34,7 @@ public class TeammateController : UnitController
     [Header("Combat Retreat Settings")]
     [SerializeField] float minSafeDistance = 3f; // 최소 안전거리
     [SerializeField] float retreatDistance = 5f; // 후퇴 목표 거리
+    private bool isCurrentlyRetreating = false; // 현재 후퇴 중인지 플래그
 
     protected override void Start()
     {
@@ -70,6 +71,18 @@ public class TeammateController : UnitController
         }
 
         HandleMovement();
+
+        // 모든 상태에서 적이 너무 가까우면 후퇴 (시야와 무관)
+        if (unitState == EUnitState.Combat || unitState == EUnitState.Idle || unitState == EUnitState.Scout)
+        {
+            isCurrentlyRetreating = HandleCombatRetreat();
+            if (isCurrentlyRetreating && unitState != EUnitState.Combat)
+            {
+                // Idle/Scout에서 후퇴 시작하면 Combat 상태로 전환
+                ChangeUnitState(EUnitState.Combat);
+                return;
+            }
+        }
 
         if (unitState == EUnitState.Scout || unitState == EUnitState.Idle)
         {
@@ -186,11 +199,8 @@ public class TeammateController : UnitController
                 return;
             }
 
-            // 후퇴가 필요한지 체크
-            bool isRetreating = HandleCombatRetreat();
-
-            // 후퇴 중이 아닐 때만 기존 전투 로직 실행
-            if (!isRetreating)
+            // 후퇴 중이 아닐 때만 전투 로직 실행
+            if (!isCurrentlyRetreating)
             {
                 // 타겟이 시야에 있는지 확인
                 if (unitShooter.IsVisibleTarget(target))
@@ -199,11 +209,7 @@ public class TeammateController : UnitController
                     navMeshAgent.ResetPath();
                     transform.LookAt(target.transform.position);
                 }
-                else
-                {
-                    // 시야에 없으면 타겟의 위치로 이동 (추적)
-                    navMeshAgent.SetDestination(target.transform.position);
-                }
+                // 시야에 없으면 그냥 제자리에서 대기 (추적하지 않음)
             }
         }
         else if (unitState == EUnitState.Supprot)
@@ -265,6 +271,7 @@ public class TeammateController : UnitController
     {
         // 주변의 모든 적들을 체크
         var enemies = UnitManager.Instance.GetUnitTeamTypeList(GetOppositeTeamType());
+        Debug.Log($"[{teammateAI.teammateName}] 적 수: {enemies.Count}");
 
         UnitController nearestEnemy = null;
         float nearestDistance = Mathf.Infinity;
@@ -281,9 +288,16 @@ public class TeammateController : UnitController
             }
         }
 
+        if (nearestEnemy != null)
+        {
+            Debug.Log($"[{teammateAI.teammateName}] 가장 가까운 적 거리: {nearestDistance:F2}m (안전거리: {minSafeDistance}m)");
+        }
+
         // 가장 가까운 적이 최소 안전거리보다 가까우면 후퇴
         if (nearestEnemy != null && nearestDistance < minSafeDistance)
         {
+            Debug.Log($"[{teammateAI.teammateName}] 후퇴 시작!");
+
             // 적의 반대방향으로 후퇴
             Vector3 directionAwayFromEnemy = (transform.position - nearestEnemy.transform.position).normalized;
             Vector3 retreatPosition = transform.position + directionAwayFromEnemy * retreatDistance;
@@ -293,6 +307,11 @@ public class TeammateController : UnitController
             if (NavMesh.SamplePosition(retreatPosition, out hit, retreatDistance, NavMesh.AllAreas))
             {
                 navMeshAgent.SetDestination(hit.position);
+                Debug.Log($"[{teammateAI.teammateName}] 후퇴 목적지 설정 완료");
+            }
+            else
+            {
+                Debug.LogWarning($"[{teammateAI.teammateName}] NavMesh 위치 찾기 실패!");
             }
 
             return true; // 후퇴 중
