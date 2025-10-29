@@ -105,7 +105,9 @@ Once all prerequisites are installed and all models are downloaded and placed in
 |--------|------------------------|-------------|
 | **Movement** | `W` `A` `S` `D`        | Move forward, left, backward, right |
 | **Voice Command** | `` ` `` (Backtick)     | Activate microphone |
-| **Aiming** | `Mouse`                | Change player direction |
+| **Camera Rotation** | `Mouse Movement`       | Rotate camera view |
+| **Aiming** | `Right Mouse Button`   | Display red aiming line |
+| **Shoot** | `Left Mouse Button`    | Fire weapon |
 | **Aim Up/Down** | `Q` / `E`              | Aim gun upward / downward |
 | **Jump** | `Spacebar`             | Jump |
 | **Camera Zoom** | `Mouse Wheel`          | Scroll up to zoom in, down to zoom out |
