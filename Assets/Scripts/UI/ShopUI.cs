@@ -135,9 +135,9 @@ public class ShopUI : UIBase
 
     private void OnDisable()
     {
-        // Shop 닫힐 때 커서 잠금 (FPS 게임)
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        // Shop 닫힐 때 커서 복원 (Confined로 복원)
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
     }
 
     private void OnDestroy()

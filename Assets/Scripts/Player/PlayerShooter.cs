@@ -34,25 +34,22 @@ public class PlayerShooter : UnitShooter
 
     private void FixedUpdate()
     {
-        // (UI가 열려있으면)
-        // 사격, 재장전 등 모든 입력을 무시합니다.
-        if (Cursor.lockState != CursorLockMode.Locked)
+        // Shop UI(None)에서만 입력 차단, Locked/Confined는 허용
+        if (Cursor.lockState == CursorLockMode.None)
         {
             return;
         }
 
         if (playerInput.fire)
         {
-            //Debug.Log("[FixedUpdate] playerInput.fire == true, Shoot() 호출 시도");
             lastFireInputTime = Time.time;
             Shoot();
         }
         else if (playerInput.reload)
         {
-            //Debug.Log("[FixedUpdate] playerInput.reload == true, Reload() 호출");
             Reload();
         }
-        
+
         if (playerInput.subFire)
         {
             gun.DrawPreviewLine();
@@ -65,9 +62,8 @@ public class PlayerShooter : UnitShooter
 
     private void Update()
     {
-        // (UI가 열려있으면) 
-        // 조준각 변경 등 입력을 무시합니다.
-        if (Cursor.lockState != CursorLockMode.Locked)
+        // Shop UI(None)에서만 입력 차단, Locked/Confined는 허용
+        if (Cursor.lockState == CursorLockMode.None)
         {
             return;
         }
