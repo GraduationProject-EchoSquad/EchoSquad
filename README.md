@@ -137,9 +137,8 @@ Click on the image below to watch the game trailer.
 
 <div align="center">
   <img src="./images/system-diagram.png" alt="System Architecture Diagram" width="900">
+  <p><i>Full voice command pipeline running locally within Unity</i></p>
 </div>
-
-Echo Squad implements a real-time voice command system where players interact with AI companions through natural speech. The entire pipeline—from voice input to AI response—runs locally within Unity, ensuring low latency and seamless gameplay.
 
 ### Data Flow Pipeline
 
