@@ -23,9 +23,15 @@
 
 
 ## ⭐Highlights
-Echo Squad is a TPS (Third-Person Shooter) defense game being developed as a graduation project for Konkuk University.
-Players can communicate with AI companions in real-time using voice commands to execute strategic gameplay. 
-The goal is to implement AI-driven companion interaction as the core mechanic.
+
+**Echo Squad** is a TPS defense game where voice becomes your tactical weapon.
+
+- **Voice-Controlled AI Companions**: Command your squad in real-time using natural speech
+- **Local AI Processing**: STT, LLM, and TTS run entirely on your machine—no internet required
+- **Strategic Defense Gameplay**: Survive 5 waves of enemies with intelligent AI teammates
+- **Custom LoRA Training**: Fine-tuned language model specialized for tactical commands
+
+> 📚 **Academic Project**: Developed as a graduation project for Konkuk University, focusing on AI-driven companion interaction as the core gameplay mechanic.
 
 
 ## ⚙️Installation
@@ -40,70 +46,56 @@ This guide will walk you through setting up the Echo Squad project source code o
 
 Before you begin, ensure you have the following tools and software installed on your system.
 
-* **Unity:** Version **`6000.0.42f1`** (or newer) via Unity Hub.
-* **Git:** Standard Git client (Git LFS is recommended).
-* **NVIDIA GPU Dependencies (Required for TTS):**
-    * **CUDA Toolkit:** Version 12.9 (or compatible).
-    * **cuDNN:** Version 9.12.0 (or compatible).
-    * *Note: TTS will run on CPU without these, but it will be very slow.*
+| Requirement | Version | Purpose | Notes |
+|-------------|---------|---------|-------|
+| **Unity** | `6000.0.42f1` or newer | Game engine | Install via Unity Hub |
+| **Git** | Latest | Version control | Git LFS recommended for large files |
+| **CUDA Toolkit** | 12.9 or compatible | GPU acceleration for TTS | ⚠️ Optional but **highly recommended** |
+| **cuDNN** | 9.12.0 or compatible | Deep learning library | ⚠️ Optional but **highly recommended** |
+
+> **⚡ Performance Note**: Without CUDA/cuDNN, TTS will run on CPU and be significantly slower (several seconds per voice line).
 
 ---
 
 #### 1. Project & Core Dependencies Setup
 
-1.  **Clone the Repository**
-    Open your terminal and run the following command:
-    ```bash
-    git clone [https://github.com/GraduationProject-EchoSquad/EchoSquad.git](https://github.com/GraduationProject-EchoSquad/EchoSquad.git)
-    ```
+**Step 1: Clone the Repository**
+```bash
+git clone https://github.com/GraduationProject-EchoSquad/EchoSquad.git
+```
 
-2.  **Download ONNX Runtime (for TTS)**
-    * Download **`onnxruntime-win-x64-gpu-1.23.1.zip`**.
-    * Unzip the file.
-    * Copy all files from inside the `lib` folder into the project's `Assets/Plugins/` folder.
+**Step 2: Download ONNX Runtime (TTS Dependency)**
+1. Download `onnxruntime-win-x64-gpu-1.23.1.zip`
+2. Extract and copy all files from the `lib` folder
+3. Paste into `Assets/Plugins/` folder in your project
 
-3.  **Open the Project in Unity**
-    * Open **Unity Hub** and add the cloned project folder.
-    * When the project first opens, it will automatically download the **`LLM - StreamingAssets`**. Wait for this to complete.
-    * **Troubleshooting:** If you encounter LLM errors, try deleting the `llamacpp` folder from the project, restart the Unity Editor, and wait for the download to complete again.
+**Step 3: Open Project in Unity**
+1. Open **Unity Hub** → Add cloned project folder
+2. Wait for automatic **LLM StreamingAssets** download
+3. ⚠️ **Troubleshooting**: If LLM errors occur:
+   - Delete `llamacpp` folder from project
+   - Restart Unity Editor
+   - Wait for re-download to complete
 
 ---
 
 #### 2. Manual Model Setup
 
-You must manually download and place the following models into the project.
+> **Required Downloads**: The following models and assets must be manually downloaded and configured.
 
-**A. TTS (Spark-TTS) Models**
-
-1.  Download the `SparkTTS` folder from this [Google Drive link](httpsManage cookies).
-2.  Copy the entire `SparkTTS` folder directly into `Assets/StreamingAssets/`.
-3.  (For more info, see the original [Spark-TTS-Unity repo](https://github.com/arghyasur1991/Spark-TTS-Unity?tab=readme-ov-file)).
-
-**B. LLM (Qwen3) Models**
-
-1.  **Base Model:** Inside the Unity Editor, find the "LLM Object" and use its interface to download and **"Load model"** for **`Qwen3-1.7b`**.
-2.  **LoRA Adapter:**
-    * Download `qwen3-1.7b-lora-adapter.gguf` from this [Google Drive link](https://drive.google.com/file/d/1dUdH4YhvF7zO9W-cXgWaVIiGbg1saS_Z/view?usp=sharing).
-    * In the "LLM Object", link this file using the **"Load LoRA"** option.
-
-**C. STT (Whisper) Model**
-
-1.  Go to the [whisper.cpp Hugging Face repository](https://huggingface.co/ggerganov/whisper.cpp/tree/main).
-2.  Download the **`ggml-large-v3-turbo-q8_0.bin`** file.
-3.  Place this `.bin` file inside the `Assets/StreamingAssets/` folder.
-4.  Link this model file within the relevant component in the Unity Editor.
-
-**D. UI Files**
-
-1.  Purchase and download the **"Shift - Complete Sci-fi UI"** asset from the Unity Asset Store:
-    * [https://assetstore.unity.com/packages/2d/gui/shift-complete-sci-fi-ui-157943](https://assetstore.unity.com/packages/2d/gui/shift-complete-sci-fi-ui-157943)
-2.  Import the downloaded asset package directly into the `Assets/ImportedAsset` folder within your project.
+| Component | File/Model | Download Source | Installation Path | Notes |
+|-----------|------------|-----------------|-------------------|-------|
+| **TTS (Spark-TTS)** | `SparkTTS` folder | [Google Drive](httpsManage cookies) | `Assets/StreamingAssets/` | See [Spark-TTS-Unity repo](https://github.com/arghyasur1991/Spark-TTS-Unity) for details |
+| **LLM (Qwen3)** | `Qwen3-1.7b` base model | Unity Editor (LLM Object) | Auto-downloaded | Use "Load model" option in LLM Object |
+| **LLM (LoRA)** | `qwen3-1.7b-lora-adapter.gguf` | [Google Drive](https://drive.google.com/file/d/1dUdH4YhvF7zO9W-cXgWaVIiGbg1saS_Z/view?usp=sharing) | Link via Unity Editor | Use "Load LoRA" option in LLM Object |
+| **STT (Whisper)** | `ggml-large-v3-turbo-q8_0.bin` | [Hugging Face](https://huggingface.co/ggerganov/whisper.cpp/tree/main) | `Assets/StreamingAssets/` | Link in relevant Unity component |
+| **UI Assets** | Shift - Complete Sci-fi UI | [Unity Asset Store](https://assetstore.unity.com/packages/2d/gui/shift-complete-sci-fi-ui-157943) | `Assets/ImportedAsset/` | Purchase required |
 
 ---
 
 #### 3. Running the Project
 
-Once all prerequisites are installed and all models are downloaded and placed in their correct folders, press the **Play** button (▶) in the Unity Editor to run the game.
+> **✅ Ready to Play**: Once all prerequisites, models, and assets are properly configured, press the **Play** button (▶) in the Unity Editor to launch the game.
 ## 🎮How to Play
 ### 🕹️ Controls
 | Action | Key/Input              | Description |
