@@ -23,9 +23,15 @@
 
 
 ## ⭐Highlights
-Echo Squad is a TPS (Third-Person Shooter) defense game being developed as a graduation project for Konkuk University.
-Players can communicate with AI companions in real-time using voice commands to execute strategic gameplay. 
-The goal is to implement AI-driven companion interaction as the core mechanic.
+
+**Echo Squad** is a TPS defense game where voice becomes your tactical weapon.
+
+- **Voice-Controlled AI Companions**: Command your squad in real-time using natural speech
+- **Local AI Processing**: STT, LLM, and TTS run entirely on your machine—no internet required
+- **Strategic Defense Gameplay**: Survive 5 waves of enemies with intelligent AI teammates
+- **Custom LoRA Training**: Fine-tuned language model specialized for tactical commands
+
+> 📚 **Academic Project**: Developed as a graduation project for Konkuk University, focusing on AI-driven companion interaction as the core gameplay mechanic.
 
 
 ## ⚙️Installation
