@@ -136,7 +136,7 @@ Fight through 5 waves, collect coins from defeated enemies, and upgrade your squ
 ## 🎞️Trailer
 Click on the image below to watch the game trailer.
 
-[![Echo Squad Trailer](https://img.youtube.com/vi/WveVS0yvggg/hqdefault.jpg)](https://www.youtube.com/watch?v=WveVS0yvggg)
+[![EchoSquad Trailer 1](https://img.youtube.com/vi/mgJtWeqkY_k/hqdefault.jpg)](https://youtu.be/mgJtWeqkY_k)
 
 
 ## 💡System Overview
