@@ -110,12 +110,6 @@ git clone https://github.com/GraduationProject-EchoSquad/EchoSquad.git
 | **Voice Command** | `` ` `` (Backtick)     | Activate microphone |
 | **Shop** | `Z` (near center rune) | Open shop to purchase upgrades |
 
-### Game Loop
-
-**Defend → Earn → Upgrade → Survive**
-
-Fight through 5 waves, collect coins from defeated enemies, and upgrade your squad at the center rune between waves.
-
 ### Shop Upgrades
 
 | Item | Applies To |
