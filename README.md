@@ -110,14 +110,27 @@ git clone https://github.com/GraduationProject-EchoSquad/EchoSquad.git
 | **Voice Command** | `` ` `` (Backtick)     | Activate microphone |
 | **Shop** | `Z` (near center rune) | Open shop to purchase upgrades |
 
-### Gameplay
-- **Coins**: Defeating enemies grants coins to buy items in the shop
-- **Shop Items**: Fire rate upgrades, ammo refills, health restoration, and max HP increase
-- **Waves**: Survive 5 progressively challenging waves (Wave 1–5)
+### Game Loop
 
-### Mission Objectives
-- **Mission Complete**: Successfully survive all five waves
-- **Mission Failed**: Both player and AI companion die
+**Defend → Earn → Upgrade → Survive**
+
+Fight through 5 waves, collect coins from defeated enemies, and upgrade your squad at the center rune between waves.
+
+### Shop Upgrades
+
+| Item | Applies To |
+|------|------------|
+| Fire rate increase | Player + AI |
+| Ammo refill | Player + AI |
+| Health restoration | Player + AI |
+| Max HP increase | Player + AI |
+
+### Victory & Defeat
+
+| Condition | Result |
+|-----------|--------|
+| **Mission Complete** | Survive all 5 waves with at least one unit alive |
+| **Mission Failed** | Both player and AI companion are eliminated |
 
 
 ## 🎞️Trailer
