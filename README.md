@@ -128,9 +128,16 @@ git clone https://github.com/GraduationProject-EchoSquad/EchoSquad.git
 
 
 ## 🎞️Trailer
-Click on the image below to watch the game trailer.
 
-[![EchoSquad Trailer 1](https://img.youtube.com/vi/mgJtWeqkY_k/hqdefault.jpg)](https://youtu.be/mgJtWeqkY_k)
+<div align="center">
+
+**See Echo Squad in Action**
+
+[![EchoSquad Trailer](https://img.youtube.com/vi/mgJtWeqkY_k/hqdefault.jpg)](https://youtu.be/mgJtWeqkY_k)
+
+*Command your AI squad with your voice and survive the waves*
+
+</div>
 
 
 ## 💡System Overview
