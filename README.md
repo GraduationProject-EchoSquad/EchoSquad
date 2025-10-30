@@ -29,9 +29,14 @@ The goal is to implement AI-driven companion interaction as the core mechanic.
 
 
 ## ⚙️Installation
-This guide will walk you through setting up the Echo Squad project on your local machine.
 
-### Prerequisites
+### For Players (Game Release)
+> 🚧 **Coming Soon**: A standalone executable version of Echo Squad for end-users is currently in development. Stay tuned for future releases!
+
+### For Developers (Unity Project Setup)
+This guide will walk you through setting up the Echo Squad project source code on your local machine.
+
+#### Prerequisites
 
 Before you begin, ensure you have the following tools and software installed on your system.
 
@@ -44,7 +49,7 @@ Before you begin, ensure you have the following tools and software installed on 
 
 ---
 
-### 1. Project & Core Dependencies Setup
+#### 1. Project & Core Dependencies Setup
 
 1.  **Clone the Repository**
     Open your terminal and run the following command:
@@ -64,7 +69,7 @@ Before you begin, ensure you have the following tools and software installed on 
 
 ---
 
-### 2. Manual Model Setup
+#### 2. Manual Model Setup
 
 You must manually download and place the following models into the project.
 
@@ -96,7 +101,7 @@ You must manually download and place the following models into the project.
 
 ---
 
-### 3. Running the Project
+#### 3. Running the Project
 
 Once all prerequisites are installed and all models are downloaded and placed in their correct folders, press the **Play** button (▶) in the Unity Editor to run the game.
 ## 🎮How to Play
