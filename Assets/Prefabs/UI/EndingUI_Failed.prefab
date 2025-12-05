@@ -503,6 +503,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TitleButton: {fileID: 540610034753032685}
+  WaveText: {fileID: 2572573084563622388}
+  PlayTimeText: {fileID: 5775700894355034390}
+  ScoreText: {fileID: 4978747963974307733}
 --- !u!1 &365662851763468571
 GameObject:
   m_ObjectHideFlags: 0

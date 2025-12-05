@@ -53,8 +53,8 @@ public class WaveManager : Singleton<WaveManager>
     [Header("Time Between Waves (s)")]
     public float timeBetweenWaves = 5f;
 
-    private int currentWaveIndex;
-    private int MaxWaveIndex = 1;
+    public int currentWaveIndex { get; private set; }
+    private int MaxWaveIndex = 2;
     public int enemiesRemaining;
 
     private UniTaskCompletionSource<bool> waveCompletionSource;
@@ -80,6 +80,8 @@ public class WaveManager : Singleton<WaveManager>
     // GameManager에서 호출하는 웨이브 시작 메서드
     public async UniTask<bool> StartWaves()
     {
+        currentWaveIndex = 1;
+        
         while (currentWaveIndex < MaxWaveIndex)
         {
             // --- 웨이브 시작 ---
@@ -115,12 +117,12 @@ public class WaveManager : Singleton<WaveManager>
         waveCompletionSource = new UniTaskCompletionSource<bool>();
 
 
-        Wave wave = waves[currentWaveIndex];
+        Wave wave = waves[currentWaveIndex - 1];
         SetEnemiesRemaining(wave.GetTotalEnemyCount());
 
         PubSubManager.Instance.Publish<OnWaveStartData>(PubSubEvent.OnWaveStart, data =>
         {
-            data.WaveIndex = currentWaveIndex + 1;
+            data.WaveIndex = currentWaveIndex;
         });
 
         // 일반 몬스터 스폰 후 보스 스폰

@@ -1,20 +1,30 @@
+using System;
 using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameOverUI : UIBase
 {
-    //[SerializeField] private Text resultText;
     [SerializeField] private Button TitleButton;
-    //[SerializeField] private Image TitleImage;
+    [SerializeField] private TextMeshProUGUI WaveText;
+    [SerializeField] private TextMeshProUGUI PlayTimeText;
+    [SerializeField] private TextMeshProUGUI ScoreText;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         TitleButton.onClick.AddListener(() => OnClickTitle());
     }
-    
+
+    private void OnEnable()
+    {
+        WaveText.text = WaveManager.Instance.currentWaveIndex.ToString();
+        PlayTimeText.text = PlayTimeManager.Instance.GetPlayTimeDisplay();
+        ScoreText.text = GameManager.Instance.score.ToString();
+    }
+
     /*public void ShowGameOverUI(bool isWin)
     {
         gameObject.SetActive(true);

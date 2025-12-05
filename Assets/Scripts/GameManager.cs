@@ -15,7 +15,7 @@ public class GameManager : Singleton<GameManager>
         End,
     }
 
-    private int score; // 현재 게임 점수
+    public int score { get; private set; } // 현재 게임 점수
 
     public GameState CurrentGameState { get; private set; } // 현재 게임 상태
 
@@ -65,7 +65,9 @@ public class GameManager : Singleton<GameManager>
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
 
+        PlayTimeManager.Instance.StartTimer();
         bool isWin = await WaveManager.Instance.StartWaves();
+        PlayTimeManager.Instance.StopTimer();
 
         // 3. 모든 웨이브 완료 또는 게임 오버
         if (CurrentGameState != GameState.End)
