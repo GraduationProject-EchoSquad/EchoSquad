@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class SettingController : UIBase
@@ -8,24 +9,25 @@ public class SettingController : UIBase
     public Slider effect_Slider;        // ����Ʈ ����
     public Button closeButton;    // X ��ư
 
-    [Header("Prefs Keys")]
-    [SerializeField] private string keyA = "Setting.Master_Slider";
-    [SerializeField] private string keyB = "Setting.Effect_Slider";
-
     [Header("Defaults")]
     [Range(0f, 1f)] public float defaultA = 1.0f;
     [Range(0f, 1f)] public float defaultB = 1.0f;
 
-    bool _loaded = false;
+    private UnityAction<float> _masterSliderAction;
+    private UnityAction<float> _effectSliderAction;
 
-    void Awake()
+    void Start()
     {
         // X ��ư: �г� �ݱ�
         if (closeButton) closeButton.onClick.AddListener(ClosePanel);
 
-        // �����̴� ������ ���� (�� �ٲ� ������ ����)
-        if (master_Slider) master_Slider.onValueChanged.AddListener(OnSliderAChanged);
-        if (effect_Slider) effect_Slider.onValueChanged.AddListener(OnSliderBChanged);
+
+        _masterSliderAction = (value) => OnSliderChanged(EAudioMixerType.Master, value);
+        _effectSliderAction = (value) => OnSliderChanged(EAudioMixerType.SFX, value);
+
+        // 3. 변수에 저장된 액션을 리스너로 등록합니다.
+        if (master_Slider) master_Slider.onValueChanged.AddListener(_masterSliderAction);
+        if (effect_Slider) effect_Slider.onValueChanged.AddListener(_effectSliderAction);
     }
 
     void OnEnable()
@@ -36,38 +38,26 @@ public class SettingController : UIBase
 
     void OnDestroy()
     {
-        if (master_Slider) master_Slider.onValueChanged.RemoveListener(OnSliderAChanged);
-        if (effect_Slider) effect_Slider.onValueChanged.RemoveListener(OnSliderBChanged);
+        // 4. 등록할 때 사용했던 '바로 그 변수'를 사용하여 리스너를 정확히 제거합니다.
+        if (master_Slider) master_Slider.onValueChanged.RemoveListener(_masterSliderAction);
+        if (effect_Slider) effect_Slider.onValueChanged.RemoveListener(_effectSliderAction);
+        
+        // 버튼 리스너도 제거합니다.
         if (closeButton) closeButton.onClick.RemoveListener(ClosePanel);
     }
 
     void LoadAndApply()
     {
-        _loaded = false; // �ʱ�ȭ �߿��� ���� Ʈ���� ����
 
-        float a = PlayerPrefs.HasKey(keyA) ? PlayerPrefs.GetFloat(keyA) : defaultA;
-        float b = PlayerPrefs.HasKey(keyB) ? PlayerPrefs.GetFloat(keyB) : defaultB;
+        if (master_Slider) master_Slider.value = AudioManager.Instance.GetAudioVolume(EAudioMixerType.Master);
+        if (effect_Slider) effect_Slider.value = AudioManager.Instance.GetAudioVolume(EAudioMixerType.SFX);
 
-        if (master_Slider) master_Slider.value = a;
-        if (effect_Slider) effect_Slider.value = b;
-
-        _loaded = true;
     }
 
-    void OnSliderAChanged(float v)
+    void OnSliderChanged(EAudioMixerType audioMixerType, float v)
     {
-        if (!_loaded) return; // �ʱ� �ε� �� �̺�Ʈ ����
-        PlayerPrefs.SetFloat(keyA, v);
-        PlayerPrefs.Save();
+        AudioManager.Instance.SetAudioVolume(audioMixerType, v);
         // TODO: ���� ���� ����(��: AudioMixer, ��� �Ŵ��� ��)�� v �ݿ�
-    }
-
-    void OnSliderBChanged(float v)
-    {
-        if (!_loaded) return;
-        PlayerPrefs.SetFloat(keyB, v);
-        PlayerPrefs.Save();
-        // TODO: ���� ���� ������ v �ݿ�
     }
 
     void ClosePanel()

@@ -196,12 +196,12 @@ public class Gun : MonoBehaviour
                 // 상대방의 OnDamage 함수를 실행시켜서 상대방에게 데미지 주기
                 target.ApplyDamage(damageMessage);
 
-                Debug.Log($"[Gun] {gunHolder.name} → {hit.collider.name}에 {damage} 데미지 적용!");
+                //Debug.Log($"[Gun] {gunHolder.name} → {hit.collider.name}에 {damage} 데미지 적용!");
             }
             else
             {
                 // IDamageable이 없으면 벽이나 지형에 맞은 것
-                Debug.LogWarning($"[Gun] {gunHolder.name} 레이캐스트 히트했으나 IDamageable 없음: {hit.collider.name}");
+                //Debug.LogWarning($"[Gun] {gunHolder.name} 레이캐스트 히트했으나 IDamageable 없음: {hit.collider.name}");
                 EffectManager.Instance.PlayHitEffect(hit.point, hit.normal, hit.transform);
             }
 

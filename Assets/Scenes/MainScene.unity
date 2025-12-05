@@ -49619,11 +49619,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2635359606580278893, guid: 7573003ec7d73c147b9ed14640735a39,
+        type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 467749559883511622, guid: b986a8b5187e22a4cb03bcab54e30587,
+        type: 2}
+    - target: {fileID: 4407447669273796839, guid: 7573003ec7d73c147b9ed14640735a39,
+        type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 467749559883511622, guid: b986a8b5187e22a4cb03bcab54e30587,
+        type: 2}
     - target: {fileID: 5064046406931840045, guid: 7573003ec7d73c147b9ed14640735a39,
         type: 3}
       propertyPath: m_Name
       value: PF_RuneStone
       objectReference: {fileID: 0}
+    - target: {fileID: 6927399461652307705, guid: 7573003ec7d73c147b9ed14640735a39,
+        type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 467749559883511622, guid: b986a8b5187e22a4cb03bcab54e30587,
+        type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

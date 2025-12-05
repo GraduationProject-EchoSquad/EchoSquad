@@ -115,10 +115,11 @@ public class UIManager : Singleton<UIManager>
     }
 
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         // Shift UI를 위한 전역 "UI Audio" AudioSource 생성
-        CreateUIAudioIfNeeded();
+        //CreateUIAudioIfNeeded();
         
         // 게임 시작 시 필요한 UI 미리 로드
         PreloadGameUI().Forget();
@@ -132,25 +133,7 @@ public class UIManager : Singleton<UIManager>
     }
 
     // Shift UI의 UIElementSound가 사용할 전역 "UI Audio" AudioSource 생성
-    private void CreateUIAudioIfNeeded()
-    {
-        // 이미 씬에 존재하는지 확인
-        GameObject existingUIAudio = GameObject.Find("UI Audio");
-
-        if (existingUIAudio == null)
-        {
-            GameObject uiAudio = new GameObject("UI Audio");
-            AudioSource audioSource = uiAudio.AddComponent<AudioSource>();
-            audioSource.playOnAwake = false;
-            audioSource.spatialBlend = 0f; // 2D 사운드
-            audioSource.volume = 1f;
-
-            // 씬 전환 시에도 유지 (선택사항)
-            // DontDestroyOnLoad(uiAudio);
-
-            Debug.Log("[UIManager] Created global UI Audio AudioSource");
-        }
-    }
+   
 
     // 메인 Canvas 반환 (다른 Manager가 UI를 생성할 때 사용)
     public Canvas GetMainCanvas()
