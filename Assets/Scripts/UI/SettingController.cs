@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingController : MonoBehaviour
+public class SettingController : UIBase
 {
     [Header("UI")]
-    public Slider master_Slider;        // ¸¶½ºÅÍ À½·®
-    public Slider effect_Slider;        // ÀÌÆåÆ® À½·®
-    public Button closeButton;    // X ¹öÆ°
+    public Slider master_Slider;        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public Slider effect_Slider;        // ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+    public Button closeButton;    // X ï¿½ï¿½Æ°
 
     [Header("Prefs Keys")]
     [SerializeField] private string keyA = "Setting.Master_Slider";
@@ -20,17 +20,17 @@ public class SettingController : MonoBehaviour
 
     void Awake()
     {
-        // X ¹öÆ°: ÆÐ³Î ´Ý±â
+        // X ï¿½ï¿½Æ°: ï¿½Ð³ï¿½ ï¿½Ý±ï¿½
         if (closeButton) closeButton.onClick.AddListener(ClosePanel);
 
-        // ½½¶óÀÌ´õ ¸®½º³Ê ¿¬°á (°ª ¹Ù²Ü ¶§¸¶´Ù ÀúÀå)
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ ï¿½Ù²ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         if (master_Slider) master_Slider.onValueChanged.AddListener(OnSliderAChanged);
         if (effect_Slider) effect_Slider.onValueChanged.AddListener(OnSliderBChanged);
     }
 
     void OnEnable()
     {
-        // ÆÐ³ÎÀÌ ¿­¸± ¶§¸¶´Ù ÃÖ½Å ÀúÀå°ª ·Îµå ÈÄ UI ¹Ý¿µ
+        // ï¿½Ð³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö½ï¿½ ï¿½ï¿½ï¿½å°ª ï¿½Îµï¿½ ï¿½ï¿½ UI ï¿½Ý¿ï¿½
         LoadAndApply();
     }
 
@@ -43,7 +43,7 @@ public class SettingController : MonoBehaviour
 
     void LoadAndApply()
     {
-        _loaded = false; // ÃÊ±âÈ­ Áß¿¡´Â ÀúÀå Æ®¸®°Å ¹æÁö
+        _loaded = false; // ï¿½Ê±ï¿½È­ ï¿½ß¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
         float a = PlayerPrefs.HasKey(keyA) ? PlayerPrefs.GetFloat(keyA) : defaultA;
         float b = PlayerPrefs.HasKey(keyB) ? PlayerPrefs.GetFloat(keyB) : defaultB;
@@ -56,10 +56,10 @@ public class SettingController : MonoBehaviour
 
     void OnSliderAChanged(float v)
     {
-        if (!_loaded) return; // ÃÊ±â ·Îµù Áß ÀÌº¥Æ® ¹«½Ã
+        if (!_loaded) return; // ï¿½Ê±ï¿½ ï¿½Îµï¿½ ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         PlayerPrefs.SetFloat(keyA, v);
         PlayerPrefs.Save();
-        // TODO: ½ÇÁ¦ Àû¿ë ·ÎÁ÷(¿¹: AudioMixer, ¹à±â ¸Å´ÏÀú µî)¿¡ v ¹Ý¿µ
+        // TODO: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½: AudioMixer, ï¿½ï¿½ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ ï¿½ï¿½)ï¿½ï¿½ v ï¿½Ý¿ï¿½
     }
 
     void OnSliderBChanged(float v)
@@ -67,22 +67,22 @@ public class SettingController : MonoBehaviour
         if (!_loaded) return;
         PlayerPrefs.SetFloat(keyB, v);
         PlayerPrefs.Save();
-        // TODO: ½ÇÁ¦ Àû¿ë ·ÎÁ÷¿¡ v ¹Ý¿µ
+        // TODO: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ v ï¿½Ý¿ï¿½
     }
 
     void ClosePanel()
     {
-        gameObject.SetActive(false); // X ¹öÆ°À¸·Î ÆÐ³Î ´Ý±â
+        gameObject.SetActive(false); // X ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ï¿½ ï¿½Ð³ï¿½ ï¿½Ý±ï¿½
     }
 
-    // ±âº»°ªÀ¸·Î µÇµ¹¸®±â
+    // ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Çµï¿½ï¿½ï¿½ï¿½ï¿½
     public void ResetToDefaults()
     {
         if (master_Slider) master_Slider.value = defaultA;
         if (effect_Slider) effect_Slider.value = defaultB;
     }
 
-    // ¿ÜºÎ¿¡¼­ ÇöÀç °ª ÀÐ±â
+    // ï¿½ÜºÎ¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ð±ï¿½
     public float GetValueA() => master_Slider ? master_Slider.value : defaultA;
     public float GetValueB() => effect_Slider ? effect_Slider.value : defaultB;
 }

@@ -1,8 +1,17 @@
 # EchoSquad
-[프로젝트를 gif 파일, 사진을 기반으로 소개합니다.]
+
+<div align="center">
+  <img src="./images/gameplay-demo_boss.gif" alt="Boss Battle" width="800">
+  <p><i>Boss monster appears - Face the ultimate challenge</i></p>
+
+  <br>
+
+  <img src="./images/gameplay-demo_move.gif" alt="Voice Command Movement" width="800">
+  <p><i>Command your AI companion to move using voice controls</i></p>
+</div>
 
 
-## Table of Contents
+## 📌Table of Contents
 - [Highlights](#highlights)
 - [Installation](#installation)
 - [How to Play](#how-to-play)
@@ -13,98 +22,148 @@
 - [Team](#team)
 
 
-## Highlights
-Echo Squad is a TPS (Third-Person Shooter) defense game being developed as a graduation project for Konkuk University.
-Players can communicate with AI companions in real-time using voice commands to execute strategic gameplay. 
-The goal is to implement AI-driven companion interaction as the core mechanic.
+## ⭐Highlights
+
+**Echo Squad** is a TPS defense game where voice becomes your tactical weapon.
+
+- **Voice-Controlled AI Companions**: Command your squad in real-time using natural speech
+- **Local AI Processing**: STT, LLM, and TTS run entirely on your machine—no internet required
+- **Strategic Defense Gameplay**: Survive 5 waves of enemies with intelligent AI teammates
+- **Custom LoRA Training**: Fine-tuned language model specialized for tactical commands
+
+> 📚 **Academic Project**: Developed as a graduation project for Konkuk University, focusing on AI-driven companion interaction as the core gameplay mechanic.
 
 
-## Installation
-This guide will walk you through setting up the Echo Squad project on your local machine.
+## ⚙️Installation
 
-### Prerequisites
+### For Players (Game Release)
+> 🚧 **Coming Soon**: A standalone executable version of Echo Squad for end-users is currently in development. Stay tuned for future releases!
+
+### For Developers (Unity Project Setup)
+This guide will walk you through setting up the Echo Squad project source code on your local machine.
+
+#### Prerequisites
 
 Before you begin, ensure you have the following tools and software installed on your system.
 
-* **Unity:** Version **`6000.0.42f1`** (or newer) via Unity Hub.
-* **Git:** Standard Git client (Git LFS is recommended).
-* **NVIDIA GPU Dependencies (Required for TTS):**
-    * **CUDA Toolkit:** Version 12.9 (or compatible).
-    * **cuDNN:** Version 9.12.0 (or compatible).
-    * *Note: TTS will run on CPU without these, but it will be very slow.*
+| Requirement | Version | Purpose | Notes |
+|-------------|---------|---------|-------|
+| **Unity** | `6000.0.42f1` or newer | Game engine | Install via Unity Hub |
+| **Git** | Latest | Version control | Git LFS recommended for large files |
+| **CUDA Toolkit** | 12.9 or compatible | GPU acceleration for TTS | ⚠️ Optional but **highly recommended** |
+| **cuDNN** | 9.12.0 or compatible | Deep learning library | ⚠️ Optional but **highly recommended** |
+
+> **⚡ Performance Note**: Without CUDA/cuDNN, TTS will run on CPU and be significantly slower (several seconds per voice line).
 
 ---
 
-### 1. Project & Core Dependencies Setup
+#### 1. Project & Core Dependencies Setup
 
-1.  **Clone the Repository**
-    Open your terminal and run the following command:
-    ```bash
-    git clone [https://github.com/GraduationProject-EchoSquad/EchoSquad.git](https://github.com/GraduationProject-EchoSquad/EchoSquad.git)
-    ```
+**Step 1: Clone the Repository**
+```bash
+git clone https://github.com/GraduationProject-EchoSquad/EchoSquad.git
+```
 
-2.  **Download ONNX Runtime (for TTS)**
-    * Download **`onnxruntime-win-x64-gpu-1.23.1.zip`**.
-    * Unzip the file.
-    * Copy all files from inside the `lib` folder into the project's `Assets/Plugins/` folder.
+**Step 2: Download ONNX Runtime (TTS Dependency)**
+1. Download `onnxruntime-win-x64-gpu-1.23.1.zip`
+2. Extract and copy all files from the `lib` folder
+3. Paste into `Assets/Plugins/` folder in your project
 
-3.  **Open the Project in Unity**
-    * Open **Unity Hub** and add the cloned project folder.
-    * When the project first opens, it will automatically download the **`LLM - StreamingAssets`**. Wait for this to complete.
-    * **Troubleshooting:** If you encounter LLM errors, try deleting the `llamacpp` folder from the project, restart the Unity Editor, and wait for the download to complete again.
-
----
-
-### 2. Manual Model Setup
-
-You must manually download and place the following models into the project.
-
-**A. TTS (Spark-TTS) Models**
-
-1.  Download the `SparkTTS` folder from this [Google Drive link](httpsManage cookies).
-2.  Copy the entire `SparkTTS` folder directly into `Assets/StreamingAssets/`.
-3.  (For more info, see the original [Spark-TTS-Unity repo](https://github.com/arghyasur1991/Spark-TTS-Unity?tab=readme-ov-file)).
-
-**B. LLM (Qwen3) Models**
-
-1.  **Base Model:** Inside the Unity Editor, find the "LLM Object" and use its interface to download and **"Load model"** for **`Qwen3-1.7b`**.
-2.  **LoRA Adapter:**
-    * Download `qwen3-1.7b-lora-adapter.gguf` from this [Google Drive link](https://drive.google.com/file/d/1dUdH4YhvF7zO9W-cXgWaVIiGbg1saS_Z/view?usp=sharing).
-    * In the "LLM Object", link this file using the **"Load LoRA"** option.
-
-**C. STT (Whisper) Model**
-
-1.  Go to the [whisper.cpp Hugging Face repository](https://huggingface.co/ggerganov/whisper.cpp/tree/main).
-2.  Download the **`ggml-large-v3-turbo-q8_0.bin`** file.
-3.  Place this `.bin` file inside the `Assets/StreamingAssets/` folder.
-4.  Link this model file within the relevant component in the Unity Editor.
-
-**D. UI Files**
-
-1.  Purchase and download the **"Shift - Complete Sci-fi UI"** asset from the Unity Asset Store:
-    * [https://assetstore.unity.com/packages/2d/gui/shift-complete-sci-fi-ui-157943](https://assetstore.unity.com/packages/2d/gui/shift-complete-sci-fi-ui-157943)
-2.  Import the downloaded asset package directly into the `Assets/ImportedAsset` folder within your project.
+**Step 3: Open Project in Unity**
+1. Open **Unity Hub** → Add cloned project folder
+2. Wait for automatic **LLM StreamingAssets** download
+3. ⚠️ **Troubleshooting**: If LLM errors occur:
+   - Delete `llamacpp` folder from project
+   - Restart Unity Editor
+   - Wait for re-download to complete
 
 ---
 
-### 3. Running the Project
+#### 2. Manual Model Setup
 
-Once all prerequisites are installed and all models are downloaded and placed in their correct folders, press the **Play** button (▶) in the Unity Editor to run the game.
-## How to Play
-[게임의 기본적인 조작법과 플레이 방법을 설명합니다.]
+> **Required Downloads**: The following models and assets must be manually downloaded and configured.
+
+| Component | File/Model | Download Source | Installation Path | Notes |
+|-----------|------------|-----------------|-------------------|-------|
+| **TTS (Spark-TTS)** | `SparkTTS` folder | [Google Drive](httpsManage cookies) | `Assets/StreamingAssets/` | See [Spark-TTS-Unity repo](https://github.com/arghyasur1991/Spark-TTS-Unity) for details |
+| **LLM (Qwen3)** | `Qwen3-1.7b` base model | Unity Editor (LLM Object) | Auto-downloaded | Use "Load model" option in LLM Object |
+| **LLM (LoRA)** | `qwen3-1.7b-lora-adapter.gguf` | [Google Drive](https://drive.google.com/file/d/1dUdH4YhvF7zO9W-cXgWaVIiGbg1saS_Z/view?usp=sharing) | Link via Unity Editor | Use "Load LoRA" option in LLM Object |
+| **STT (Whisper)** | `ggml-large-v3-turbo-q8_0.bin` | [Hugging Face](https://huggingface.co/ggerganov/whisper.cpp/tree/main) | `Assets/StreamingAssets/` | Link in relevant Unity component |
+| **UI Assets** | Shift - Complete Sci-fi UI | [Unity Asset Store](https://assetstore.unity.com/packages/2d/gui/shift-complete-sci-fi-ui-157943) | `Assets/ImportedAsset/` | Purchase required |
+
+---
+
+#### 3. Running the Project
+
+> **✅ Ready to Play**: Once all prerequisites, models, and assets are properly configured, press the **Play** button (▶) in the Unity Editor to launch the game.
+## 🎮How to Play
+### 🕹️ Controls
+| Action | Key/Input              | Description |
+|--------|------------------------|-------------|
+| **Movement** | `W` `A` `S` `D`        | Move forward, left, backward, right |
+| **Camera Rotation** | `Mouse Movement`       | Rotate camera view |
+| **Camera Zoom** | `Mouse Wheel`          | Scroll up to zoom in, down to zoom out |
+| **Jump** | `Spacebar`             | Jump |
+| **Shoot** | `Left Mouse Button`    | Fire weapon |
+| **Aiming** | `Right Mouse Button`   | Display red aiming line |
+| **Aim Up/Down** | `Q` / `E`              | Aim gun upward / downward |
+| **Voice Command** | `` ` `` (Backtick)     | Activate microphone |
+| **Shop** | `Z` (near center rune) | Open shop to purchase upgrades |
+
+### Shop Upgrades
+
+| Item | Applies To |
+|------|------------|
+| Fire rate increase | Player + AI |
+| Ammo refill | Player + AI |
+| Health restoration | Player + AI |
+| Max HP increase | Player + AI |
+
+### Victory & Defeat
+
+| Condition | Result |
+|-----------|--------|
+| **Mission Complete** | Survive all 5 waves with at least one unit alive |
+| **Mission Failed** | Both player and AI companion are eliminated |
 
 
-## Trailer
-Click on the image below to watch the game trailer.
+## 🎞️Trailer
 
-[![Echo Squad Trailer](https://img.youtube.com/vi/WveVS0yvggg/hqdefault.jpg)](https://www.youtube.com/watch?v=WveVS0yvggg)
+<div align="center">
+
+**▶️ Watch Voice-Controlled Combat in Action**
+
+[![EchoSquad Trailer](https://img.youtube.com/vi/mgJtWeqkY_k/hqdefault.jpg)](https://youtu.be/mgJtWeqkY_k)
+
+*Click to see how voice commands control your AI squad in real-time*
+
+</div>
 
 
-## System Overview
-[프로젝트의 기술적인 구조와 작동 원리에 대해 설명합니다.]
+## 💡System Overview
+
+<div align="center">
+  <img src="./images/system-diagram.png" alt="System Architecture Diagram" width="900">
+  <p><i>Full voice command pipeline running locally within Unity</i></p>
+</div>
+
+### Data Flow Pipeline
+
+| Stage | Component | Description |
+|-------|-----------|-------------|
+| **1. Voice Capture** | STT (Whisper) | Player speaks into microphone<br>↓<br>Whisper transcribes speech to text in real-time<br>↓<br>Natural language command extracted |
+| **2. Intent Recognition** | LLM (Qwen3 + LoRA) | Text processed by Qwen3 LLM with custom LoRA Adapter<br>↓<br>Model interprets player intent from command patterns<br>↓<br>Outputs structured JSON (AI action + dialogue response) |
+| **3. Action Execution** | FSM Controller | FSM parses JSON output<br>↓<br>Translates into in-game behaviors (move/attack/support)<br>↓<br>Triggers AI action and vocal response simultaneously |
+| **4. Voice Generation** | TTS (Spark-TTS) | AI dialogue text sent to Spark-TTS<br>↓<br>Common phrases pre-cached for instant playback<br>↓<br>Generated voice played through speakers |
+
+### Key Technical Features
+- **Local Processing**: All AI inference runs on the player's machine—no cloud dependency
+- **LoRA Fine-tuning**: Custom adapter trained on tactical commands for accurate intent recognition
+- **Voice Caching**: Pre-computed audio reduces TTS latency from seconds to milliseconds
+- **Modular Architecture**: Each component (STT/LLM/TTS) operates independently for maintainability
 
 
-## Reference
+## 📃Reference
 This project was developed using several key open-source libraries. We extend our gratitude to the original authors for their contributions to the community.
 
 * **LLM (Llama):** [LLMUnity](https://github.com/undreamai/LLMUnity)
@@ -117,11 +176,30 @@ This project was developed using several key open-source libraries. We extend ou
     * An efficient, allocation-free async/await integration for Unity, used to manage various asynchronous operations.
 
 
-## License
-[프로젝트의 라이선스 정보를 안내합니다.]
+## 💻License
+This project (`Echo Squad`) is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for more details.
+
+### Third-Party Licenses
+
+This project utilizes several open-source libraries. We are grateful to the authors for their work. Please find their respective licenses below.
+
+* **LLMUnity:** Licensed under the [MIT License](https://github.com/undreamai/LLMUnity/blob/main/LICENSE).
+* **whisper.unity:** Licensed under the [MIT License](https://github.com/Macoron/whisper.unity/blob/master/LICENSE).
+* **UniTask:** Licensed under the [MIT License](https://github.com/Cysharp/UniTask/blob/master/LICENSE).
+* **Spark-TTS:** The [Spark-TTS-Unity](https://github.com/arghyasur1991/Spark-TTS-Unity) library is a port of the original [Spark-TTS](https://github.com/SparkAudio/Spark-TTS) project, which is licensed under the [Apache 2.0 License](https://github.com/SparkAudio/Spark-TTS/blob/main/LICENSE).
+
+---
+
+**Apache 2.0 License (Spark-TTS) Notices:**
+
+In compliance with the Apache 2.0 License, we acknowledge the following notices from the original Spark-TTS project:
+
+> * Do not use this model for unauthorized voice cloning, impersonation, fraud, scams, deepfakes, or any illegal activities.
+> * Ensure compliance with local laws and regulations when using this model and uphold ethical standards.
+> * The developers assume no liability for any misuse of this model.
 
 
-## Team
+## 👥Team
 
 | Name | Role | GitHub |
 |------|------|:---|

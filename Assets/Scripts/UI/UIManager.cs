@@ -24,6 +24,8 @@ public class UIManager : Singleton<UIManager>
         Shop,
 
         //Popup
+        Setting,
+        Exit,
 
         //Object
         Countdown
@@ -46,6 +48,9 @@ public class UIManager : Singleton<UIManager>
         { EUIData.EndingClear, "Prefabs/UI/EndingUI_Clear.prefab" }, 
         { EUIData.EndingFail, "Prefabs/UI/EndingUI_Failed.prefab" }, 
         { EUIData.Shop, "Prefabs/UI/ShopUI.prefab" }, // ShopUI 프리팹 경로 추가
+        
+        { EUIData.Setting, "Prefabs/UI/SettingUI.prefab" },
+        { EUIData.Exit, "Prefabs/UI/ExitUI.prefab" },
         
 
         { EUIData.Countdown, "Prefabs/UI/CountdownText.prefab" }, // GameOverUI 프리팹 경로 추가

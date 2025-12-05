@@ -1200,6 +1200,51 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 76787241}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &78869725
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 78869726}
+  - component: {fileID: 78869727}
+  m_Layer: 0
+  m_Name: InputController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &78869726
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 78869725}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1706458700}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &78869727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 78869725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8510a136ee7eaa848ab9ba005bf7b88b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  exitButtonName: Escape
 --- !u!1001 &78916636
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25284,7 +25329,7 @@ GameObject:
   - component: {fileID: 959875182}
   - component: {fileID: 959875184}
   - component: {fileID: 959875183}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RuneStones_Shop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27171,8 +27216,8 @@ MonoBehaviour:
         z: 0
       Rotation:
         value:
-          x: 0.27733293
-          y: 0
+          x: 0.27733296
+          y: 9.720198e-10
           z: 0.07121054
           w: 0.9581312
     m_MetaData:
@@ -42102,7 +42147,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1695302980
 RectTransform:
   m_ObjectHideFlags: 0
@@ -42339,6 +42384,7 @@ Transform:
   - {fileID: 1857662647}
   - {fileID: 167257345}
   - {fileID: 346580769}
+  - {fileID: 78869726}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1708748001
@@ -45701,8 +45747,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waves:
-  - enemyTypes: []
-    spawnInterval: 5
+  - enemyTypes:
+    - enemyPrefab: {fileID: 8126421197936284830, guid: b336a4954404dc6439e969a5471bf3b3,
+        type: 3}
+      count: 2
+    - enemyPrefab: {fileID: 8126421197936284830, guid: 6b8dde80a6b9ad7499fb218bb9370228,
+        type: 3}
+      count: 3
+    - enemyPrefab: {fileID: 1510129015077551741, guid: 32aafcecb007f1f46a227de5e7b0bd14,
+        type: 3}
+      count: 2
+    - enemyPrefab: {fileID: 3711400394012360897, guid: 863c5c3d6ee701745a8c957724057315,
+        type: 3}
+      count: 3
+    spawnInterval: 1
     isBossWave: 1
     bossPrefab: {fileID: 6210077996157375181, guid: 76e60639135d81c4292b46b342bd14a1,
       type: 3}
@@ -49418,11 +49476,6 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 961382260589078851, guid: 7573003ec7d73c147b9ed14640735a39,
         type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 961382260589078851, guid: 7573003ec7d73c147b9ed14640735a39,
-        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -49476,59 +49529,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PF_RuneStone
       objectReference: {fileID: 0}
-    - target: {fileID: 5064046406931840045, guid: 7573003ec7d73c147b9ed14640735a39,
-        type: 3}
-      propertyPath: m_TagString
-      value: Rune
-      objectReference: {fileID: 0}
-    - target: {fileID: 8204769519439207838, guid: 7573003ec7d73c147b9ed14640735a39,
-        type: 3}
-      propertyPath: effectsColor.g
-      value: 0.5029412
-      objectReference: {fileID: 0}
-    - target: {fileID: 8204769519439207838, guid: 7573003ec7d73c147b9ed14640735a39,
-        type: 3}
-      propertyPath: effectsColor.r
-      value: 0.24999997
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2216516872509782719, guid: 7573003ec7d73c147b9ed14640735a39,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1959441783}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7573003ec7d73c147b9ed14640735a39, type: 3}
---- !u!1 &1959441782 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2216516872509782719, guid: 7573003ec7d73c147b9ed14640735a39,
-    type: 3}
-  m_PrefabInstance: {fileID: 1959441781}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1959441783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1959441782}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Version: 3
-  m_UsePipelineSettings: 1
-  m_AdditionalLightsShadowResolutionTier: 2
-  m_LightLayerMask: 1
-  m_RenderingLayers: 1
-  m_CustomShadowLayers: 0
-  m_ShadowLayerMask: 1
-  m_ShadowRenderingLayers: 1
-  m_LightCookieSize: {x: 1, y: 1}
-  m_LightCookieOffset: {x: 0, y: 0}
-  m_SoftShadowQuality: 0
 --- !u!1001 &1966119365
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -53673,11 +53678,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 959875182}
     m_Modifications:
-    - target: {fileID: 11588687112655885, guid: 03d681e8ef0b40f4d9188805e73eb0eb,
-        type: 3}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 2729236659533527566, guid: 03d681e8ef0b40f4d9188805e73eb0eb,
         type: 3}
       propertyPath: m_Name

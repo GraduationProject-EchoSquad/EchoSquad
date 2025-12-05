@@ -1,3 +1,4 @@
+using System;
 using LLMUnitySamples;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,6 +35,17 @@ namespace Whisper.Samples
 
             microphoneRecord.OnRecordStop += OnRecordStop;
             button.onClick.AddListener(OnButtonPressed);
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.BackQuote))
+            {
+                OnButtonPressed();
+            }else if (Input.GetKeyUp(KeyCode.BackQuote))
+            {
+                OnButtonPressed();
+            }
         }
 
         private void OnButtonPressed()

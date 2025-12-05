@@ -19,7 +19,7 @@ public class TitleUI : UIBase
             startButton.onClick.AddListener(() => OpenStartPanel().Forget());
 
         if (settingButton != null)
-            settingButton.onClick.AddListener(OpenSettingPanel);
+            settingButton.onClick.AddListener(() => OpenSettingPanel().Forget());
 
         if (exitButton != null)
             exitButton.onClick.AddListener(ExitGame);
@@ -36,19 +36,18 @@ public class TitleUI : UIBase
         startPanel.SetActive(true);*/
     }
 
-    void OpenSettingPanel()
+    async UniTaskVoid OpenSettingPanel()
     {
-        if (settingPanel != null)
-        {
-            settingPanel.SetActive(true);
-        }
+        SettingController ui = await UIManager.Instance.Show<SettingController>(UIManager.EUIData
+            .Setting);
+        
     }
 
     // ���� ����
     void ExitGame()
     {
-        //EditorApplication.isPlaying = false; // ����Ƽ ������ ���� ����
+        EditorApplication.isPlaying = false; // ����Ƽ ������ ���� ����
 
-        //Application.Quit();
+        Application.Quit();
     }
 }

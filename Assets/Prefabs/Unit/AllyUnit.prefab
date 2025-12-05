@@ -549,6 +549,8 @@ MonoBehaviour:
   accel: 8
   patrolRadius: 5
   patrolInterval: 5
+  minSafeDistance: 3
+  retreatDistance: 5
   maxDistance: 100
 --- !u!114 &605026252724606914
 MonoBehaviour:
@@ -565,9 +567,10 @@ MonoBehaviour:
   gun: {fileID: 7358001590930426008}
   excludeTarget:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4
   viewDistance: 10
   viewAngle: 120
+  autoTargetRange: 0
   eyeHeight: 0
 --- !u!114 &326972713833839956
 MonoBehaviour:
