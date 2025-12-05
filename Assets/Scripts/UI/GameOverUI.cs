@@ -33,7 +33,8 @@ public class GameOverUI : UIBase
 
     private async UniTaskVoid OnClickTitle()
     {
-        await SceneController.Instance.LoadSceneAsync(SceneController.ESceneData.Title,LoadSceneMode.Single);
+        await SceneController.Instance.LoadSceneAsync(SceneController.ESceneData.Start,LoadSceneMode.Single);
+        await SceneController.Instance.Test();
         gameObject.SetActive(false);
     }
 }

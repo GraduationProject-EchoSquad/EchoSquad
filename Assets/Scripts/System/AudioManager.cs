@@ -28,6 +28,7 @@ public class AudioManager : Singleton<AudioManager>
         if (existingUIAudio == null)
         {
             GameObject uiAudio = new GameObject("UI Audio");
+            uiAudio.transform.parent = this.transform;
             AudioSource audioSource = uiAudio.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
             audioSource.spatialBlend = 0f; // 2D 사운드

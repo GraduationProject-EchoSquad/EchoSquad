@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
@@ -8,6 +9,7 @@ public class SceneController : Singleton<SceneController>
 {
     public enum ESceneData
     {
+        Start,
         Title,
         Main,
         UI
@@ -15,11 +17,23 @@ public class SceneController : Singleton<SceneController>
 
     public Dictionary<ESceneData, string> SceneDict = new Dictionary<ESceneData, string>
     {
+        { ESceneData.Start , "StartScene"},
         { ESceneData.Title , "TitleScene"},
         { ESceneData.Main , "MainScene"},
         { ESceneData.UI , "UIScene"}
     };
-    
+
+    private async UniTaskVoid Start()
+    {
+        Test();
+    }
+
+    public async UniTask Test()
+    {
+        await LoadSceneAsync(ESceneData.Title);
+        await UIManager.Instance.Show<TitleUI>(UIManager.EUIData.Title);
+    }
+
     public async UniTask LoadSceneAsync(ESceneData eSceneData, LoadSceneMode mode = LoadSceneMode.Additive)
     {
         await SceneManager.LoadSceneAsync(SceneDict[eSceneData], mode);

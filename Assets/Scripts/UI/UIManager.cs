@@ -128,7 +128,7 @@ public class UIManager : Singleton<UIManager>
     private async UniTaskVoid PreloadGameUI()
     {
         // GameOverUI를 미리 로드하고 비활성화 상태로 둡니다.
-        (await GetUI<TitleUI>(EUIData.Title)).gameObject.SetActive(true);
+        await GetUI<TitleUI>(EUIData.Title);
         //await GetUI<GameOverUI>(EUIData.GameOver);
     }
 
