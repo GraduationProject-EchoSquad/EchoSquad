@@ -187,6 +187,8 @@ public class TeammateController : UnitController
                 homePosition = transform.position;
                 ChangeUnitState(EUnitState.Idle);
                 CameraManager.Instance.SetCinemachineTarget(null);
+                // 행동 완료 시 UI 숨김
+                teammateAI.OnActionCompleted();
             }
         } //전투 상태
         else if (unitState == EUnitState.Combat)
@@ -196,6 +198,8 @@ public class TeammateController : UnitController
             {
                 // 타겟을 잃으면 Idle 상태로 복귀
                 ChangeUnitState(EUnitState.Idle);
+                // 전투 완료 시 UI 숨김
+                teammateAI.OnActionCompleted();
                 return;
             }
 
@@ -217,9 +221,11 @@ public class TeammateController : UnitController
             if (followTarget == null)
             {
                 ChangeUnitState(EUnitState.Idle);
+                // 지원 완료 시 UI 숨김
+                teammateAI.OnActionCompleted();
                 return;
             }
-            
+
             FollowTarget();
 
         }
@@ -427,6 +433,8 @@ public class TeammateController : UnitController
                     followTarget = null;
                     stopTimer = 0f;
                     ChangeUnitState(EUnitState.Idle);
+                    // 행동 완료 시 UI 숨김
+                    teammateAI.OnActionCompleted();
                 }
             }
             else

@@ -9,9 +9,14 @@ public class TeammateAI : MonoBehaviour
     public string teammateNameKorean = "레나";
     [SerializeField] private TeammateController unitController;
 
+    // 현재 실행 중인 행동 타입 (UI 업데이트용)
+    private AIActionEnum currentAction = AIActionEnum.Move;
+
     public void ExecuteCommand(AIActionEnum action, Parameters param)
     {
         Debug.Log($"[{teammateName}] 명령 수신: {action} - {param}");
+
+        currentAction = action;
 
         // 예시로 동작 분기 (대소문자 구분 없이)
         if (action == AIActionEnum.Move)
@@ -29,9 +34,29 @@ public class TeammateAI : MonoBehaviour
         {
             string chatMessage = naturalVoice.Replace("+", " ");
             ChatManager.Instance?.AddMessage(teammateName, chatMessage);
+
+            // 새로운 동료 응답 UI 표시
+            AllyAnswerUIManager.Instance?.ShowAllyAnswer(teammateName, chatMessage, action);
         }
 
         DoVoice(naturalVoice);
+    }
+
+    /// <summary>
+    /// 행동 완료 시 호출 - UI 숨김
+    /// TeammateController에서 상태가 Idle로 변경될 때 호출됨
+    /// </summary>
+    public void OnActionCompleted()
+    {
+        AllyAnswerUIManager.Instance?.HideAllyAnswer(teammateName);
+    }
+
+    /// <summary>
+    /// 현재 실행 중인 행동 타입 반환
+    /// </summary>
+    public AIActionEnum GetCurrentAction()
+    {
+        return currentAction;
     }
 
     void Move(Parameters param)
