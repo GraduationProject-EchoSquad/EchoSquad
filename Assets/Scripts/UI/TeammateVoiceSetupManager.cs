@@ -100,7 +100,6 @@ public class TeammateVoiceSetupManager : Singleton<TeammateVoiceSetupManager>
         // Instantiate 직후 비활성화 (Shift UI 컴포넌트 초기화 문제 방지)
         ui = await UIManager.Instance.GetUI<AllyStatChoiceUI>(UIManager.EUIData
             .TeamVoiceSetUp); //Instantiate(uiPrefab, mainCanvas.transform);
-        ui.gameObject.SetActive(false);
 
         if (ui != null)
         {

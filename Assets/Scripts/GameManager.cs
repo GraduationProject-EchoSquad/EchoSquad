@@ -48,8 +48,7 @@ public class GameManager : Singleton<GameManager>
         //await TeammateVoiceSetupManager.Instance.ShowAndWaitForCompletion();
 
         // HUD Panel 숨김
-        HUDUI hudUI = await UIManager.Instance.GetUI<HUDUI>(UIManager.EUIData.HUD);
-        hudUI.gameObject.SetActive(true);
+        await UIManager.Instance.Show<HUDUI>(UIManager.EUIData.HUD);
 
         Debug.Log("[GameManager] Preparation 단계 완료 - 유닛 스폰");
         UnitManager.Instance.InitSpawnUnit();
@@ -113,13 +112,11 @@ public class GameManager : Singleton<GameManager>
         PubSubManager.Instance.Publish<OnGameEndData>(PubSubEvent.OnGameEnd, data => data.IsWin = isWin);
         if (isWin)
         {
-            GameOverUI GameOverUI = await UIManager.Instance.GetUI<GameOverUI>(UIManager.EUIData.EndingClear);
-            GameOverUI.gameObject.SetActive(true); //.ShowGameOverUI(isWin);    
+            await UIManager.Instance.Show<GameOverUI>(UIManager.EUIData.EndingClear);
         }
         else
         {
-            GameOverUI GameOverUI = await UIManager.Instance.GetUI<GameOverUI>(UIManager.EUIData.EndingFail);
-            GameOverUI.gameObject.SetActive(true); //.ShowGameOverUI(isWin); 
+            await UIManager.Instance.Show<GameOverUI>(UIManager.EUIData.EndingFail);
         }
     }
 

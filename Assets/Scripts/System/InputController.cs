@@ -7,15 +7,23 @@ public class InputController : Singleton<InputController>
     // Update is called once per frame
     void Update()
     {
+
+        if (Input.GetButtonDown(exitButtonName))
+        {
+            if (UIManager.Instance.HasPopupUI())
+            {
+                UIManager.Instance.HidePopupUI();
+            }
+            else
+            {
+                UIManager.Instance.Show<ExitUI>(UIManager.EUIData.Exit).Forget();
+            }
+        }
+        
         if (GameManager.Instance == null
             || GameManager.Instance.IsGameControllable() == false)
         {
             return;
-        }
-
-        if (Input.GetButtonDown(exitButtonName))
-        {
-            UIManager.Instance.Show<ExitUI>(UIManager.EUIData.Exit).Forget();
         }
     }
 }

@@ -10,60 +10,90 @@ public class UIManager : Singleton<UIManager>
 {
     [Header("Canvas")] [SerializeField] private Canvas mainCanvas; // Main UI Canvas
 
+    // UI 데이터의 종류 (이름)
     public enum EUIData
     {
         None,
-
-
-        //Panel
+    
+        // Panels
         Title,
         HUD,
         TeamVoiceSetUp,
+
+        // Popups
         EndingClear,
         EndingFail,
         Shop,
-
-        //Popup
         Setting,
         Exit,
 
-        //Object
+        // Standalone Objects
         Countdown
     }
 
+// UI의 카테고리 (종류)
     public enum EUIType
     {
         None,
-
         Panel,
-
-        Popup
+        Popup,
+        Object // 카운트다운과 같은 단일 오브젝트를 위한 타입 추가
     }
 
-    public static Dictionary<EUIData, string> UIMetaData = new Dictionary<EUIData, string>()
+    /// <summary>
+    /// 개별 UI 요소의 메타데이터를 저장하는 클래스입니다.
+    /// (struct 대신 class를 사용하고, 외부에서 수정 불가능하도록 readonly 프로퍼티로 만듭니다)
+    /// </summary>
+    public class UIMetadata
     {
-        { EUIData.Title, "Prefabs/UI/TitleUI.prefab" },
-        { EUIData.HUD, "Prefabs/UI/HUD.prefab" },
-        { EUIData.TeamVoiceSetUp, "Prefabs/UI/AllyStatChoiceUI.prefab" },
-        { EUIData.EndingClear, "Prefabs/UI/EndingUI_Clear.prefab" }, 
-        { EUIData.EndingFail, "Prefabs/UI/EndingUI_Failed.prefab" }, 
-        { EUIData.Shop, "Prefabs/UI/ShopUI.prefab" }, // ShopUI 프리팹 경로 추가
-        
-        { EUIData.Setting, "Prefabs/UI/SettingUI.prefab" },
-        { EUIData.Exit, "Prefabs/UI/ExitUI.prefab" },
-        
+        public string Path { get; }
+        public EUIType UIType { get; }
 
-        { EUIData.Countdown, "Prefabs/UI/CountdownText.prefab" }, // GameOverUI 프리팹 경로 추가
-    };
+        public UIMetadata(string path, EUIType uiType)
+        {
+            Path = path;
+            UIType = uiType;
+        }
+    }
 
-    public static Dictionary<EUIData, UIBase> UIDict = new Dictionary<EUIData, UIBase>();
+    /// <summary>
+    /// UI 메타데이터를 관리하는 중앙 저장소
+    /// </summary>
+    public static class UIDatabase
+    {
+        // --- 헬퍼 메서드: 가독성과 편의성을 극대화합니다 ---
+        private static UIMetadata Panel(string path) => new UIMetadata(path, EUIType.Panel);
+        private static UIMetadata Popup(string path) => new UIMetadata(path, EUIType.Popup);
+        private static UIMetadata Object(string path) => new UIMetadata(path, EUIType.Object);
+
+        // --- 최종 메타데이터 딕셔너리 ---
+        public static readonly Dictionary<EUIData, UIMetadata> UIMetaDataDict = new Dictionary<EUIData, UIMetadata>()
+        {
+            // 헬퍼 메서드를 사용하여 매우 직관적으로 데이터를 등록합니다.
+            { EUIData.Title,          Panel("Prefabs/UI/TitleUI.prefab") },
+            { EUIData.HUD,            Panel("Prefabs/UI/HUD.prefab") },
+            { EUIData.TeamVoiceSetUp, Panel("Prefabs/UI/AllyStatChoiceUI.prefab") },
+
+            { EUIData.EndingClear,    Popup("Prefabs/UI/EndingUI_.prefab") },
+            { EUIData.EndingFail,     Popup("Prefabs/UI/EndingUI_Failed.prefab") },
+            { EUIData.Shop,           Popup("Prefabs/UI/ShopUI.prefab") },
+            { EUIData.Setting,        Popup("Prefabs/UI/SettingUI.prefab") },
+            { EUIData.Exit,           Popup("Prefabs/UI/ExitUI.prefab") },
+
+            { EUIData.Countdown,      Object("Prefabs/UI/CountdownText.prefab") },
+        };
+    }
+
+    private Dictionary<EUIData, UIBase> UIDict = new Dictionary<EUIData, UIBase>();
+    private Stack<UIBase> PopupStack = new Stack<UIBase>();
 
     private async UniTask<T> LoadUI<T>(EUIData UIData) where T : UIBase
     {
-        T step = await ResourceController.Instance.GetAsync<T>(UIMetaData[UIData], mainCanvas.transform);
+        T step = await ResourceController.Instance.GetAsync<T>(UIDatabase.UIMetaDataDict[UIData].Path, mainCanvas.transform);
         //await UniTask.NextFrame();
 
         //step.gameObject.SetActive(true);
+        step.uiData = UIData;
 
         return step;
     }
@@ -87,19 +117,48 @@ public class UIManager : Singleton<UIManager>
     public async UniTask<T> Show<T>(EUIData UIData) where T : UIBase
     {
         T ui = await GetUI<T>(UIData);
-        ui.gameObject.SetActive(true);
+        if (ui != null && ui.gameObject.activeInHierarchy == false)
+        {
+            ui.gameObject.SetActive(true);
+            if (UIDatabase.UIMetaDataDict[UIData].UIType == EUIType.Popup)
+            {
+                PopupStack.Push(ui);
+            }
+        }
+
         return ui;
     }
 
     /// <summary>
     /// UI를 숨깁니다 (async)
     /// </summary>
-    public async UniTask Hide<T>(EUIData UIData) where T : UIBase
+    public void Hide(EUIData UIData)
     {
         if (UIDict.ContainsKey(UIData))
         {
             UIDict[UIData].gameObject.SetActive(false);
+            if (UIDatabase.UIMetaDataDict[UIData].UIType == EUIType.Popup)
+            {
+                PopupStack.Pop();
+            }
         }
+    }
+    
+    /// <summary>
+    /// Popui 끄기! ESC
+    /// </summary>
+    public void HidePopupUI()
+    {
+        if (PopupStack.Count > 0)
+        {
+            UIBase uiBase = PopupStack.Peek();
+            Hide(uiBase.uiData);
+        }
+    }
+
+    public bool HasPopupUI()
+    {
+        return PopupStack.Count > 0;
     }
 
     /// <summary>

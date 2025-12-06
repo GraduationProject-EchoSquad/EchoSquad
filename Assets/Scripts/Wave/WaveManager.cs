@@ -86,8 +86,7 @@ public class WaveManager : Singleton<WaveManager>
         {
             // --- 웨이브 시작 ---
             GameManager.Instance.SetGameState(GameManager.GameState.Wave);
-            CountdownUI countdownUI = await UIManager.Instance.GetUI<CountdownUI>(UIManager.EUIData.Countdown);
-            countdownUI.gameObject.SetActive(true);
+            CountdownUI countdownUI = await UIManager.Instance.Show<CountdownUI>(UIManager.EUIData.Countdown);
             await countdownUI.PlayCountdownText(currentWaveIndex);
             await RunWave();
 

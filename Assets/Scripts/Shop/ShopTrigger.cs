@@ -83,7 +83,7 @@ public class ShopTrigger : MonoBehaviour
                 var shopUI = UIManager.Instance.Get<ShopUI>(UIManager.EUIData.Shop);
                 if (shopUI != null && shopUI.gameObject.activeSelf)
                 {
-                    CloseShop().Forget();
+                    CloseShop();
                 }
             }
 
@@ -103,11 +103,11 @@ public class ShopTrigger : MonoBehaviour
         }
     }
 
-    private async UniTaskVoid CloseShop()
+    private void CloseShop()
     {
         if (UIManager.Instance != null)
         {
-            await UIManager.Instance.Hide<ShopUI>(UIManager.EUIData.Shop);
+            UIManager.Instance.Hide(UIManager.EUIData.Shop);
             Debug.Log("[ShopTrigger] 상점 UI를 닫았습니다.");
         }
     }
