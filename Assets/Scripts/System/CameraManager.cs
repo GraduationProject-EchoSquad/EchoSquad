@@ -20,11 +20,11 @@ public class CameraManager : Singleton<CameraManager>
 
     [Header("Camera Rotation")]
     public float fixedXRotation = 45f;
-    public float delayBeforeRotation = 0.1f;  // 회전 시작까지 대기 시간
+    public float delayBeforeRotation = 0.01f;  // 회전 시작까지 대기 시간
     public float rotationSpeed = 2f;        // 회전 속도
-    public float sameDirectionThreshold = 60f;  // 같은 방향으로 판단하는 각도 범위
-    public float behindAngleThreshold = 30f;    // 이 각도 이상 차이나면 회전 대상
-    public float rotationCooldown = 0.5f;       // 회전 후 쿨다운
+    public float sameDirectionThreshold = 120f;  // 같은 방향으로 판단하는 각도 범위
+    public float behindAngleThreshold = 45f;    // 이 각도 이상 차이나면 회전 대상
+    public float rotationCooldown = 0.3f;       // 회전 후 쿨다운
 
     private float currentYRotation = 0f;
     private float targetYRotation = 0f;

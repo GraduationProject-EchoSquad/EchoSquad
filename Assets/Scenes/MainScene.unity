@@ -9623,11 +9623,11 @@ MonoBehaviour:
   offset: {x: 0, y: 10, z: 0}
   smoothSpeed: 5
   fixedXRotation: 75
-  delayBeforeRotation: 2
+  delayBeforeRotation: 0.5
   rotationSpeed: 2
-  sameDirectionThreshold: 30
-  behindAngleThreshold: 30
-  rotationCooldown: 0.5
+  sameDirectionThreshold: 60
+  behindAngleThreshold: 45
+  rotationCooldown: 1
   commandMapCamera: {fileID: 299029840}
 --- !u!1001 &352484313
 PrefabInstance:
