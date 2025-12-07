@@ -17,6 +17,9 @@ public enum PubSubEvent
     OnItemPurchased,        // 아이템 구매 성공
     OnPurchaseFailed,       // 구매 실패
     OnUnitDeath,
+    
+    OnMicStart,
+    OnMicEnd,
 
     OnGameEnd
 }

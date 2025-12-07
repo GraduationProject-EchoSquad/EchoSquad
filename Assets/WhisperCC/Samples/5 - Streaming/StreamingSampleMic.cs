@@ -24,6 +24,7 @@ namespace Whisper.Samples
 
         private async void Start()
         {
+            microphoneRecord = MicrophoneManager.Instance.microphoneRecord;
             _stream = await whisper.CreateStream(microphoneRecord);
             if (_stream != null)
             {
@@ -35,6 +36,11 @@ namespace Whisper.Samples
 
             microphoneRecord.OnRecordStop += OnRecordStop;
             button.onClick.AddListener(OnButtonPressed);
+        }
+
+        private void OnDestroy()
+        {
+            microphoneRecord.OnRecordStop -= OnRecordStop;
         }
 
         private void Update()
@@ -54,10 +60,14 @@ namespace Whisper.Samples
             {
                 _stream.StartStream();
                 microphoneRecord.StartRecord();
+                PubSubManager.Instance.Publish(PubSubEvent.OnMicStart);
             }
             else
+            {
                 microphoneRecord.StopRecord();
-        
+                PubSubManager.Instance.Publish(PubSubEvent.OnMicEnd);
+            }
+
             buttonText.text = microphoneRecord.IsRecording ? "Stop" : "Record";
         }
     

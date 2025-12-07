@@ -91,6 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6bb30179cdd07d49ba8685353c47874, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiData: 0
   settingPanel: {fileID: 0}
   startPanel: {fileID: 0}
   startButton: {fileID: 0}

@@ -1,16 +1,17 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class SettingController : UIBase
 {
-    [Header("UI")]
-    public Slider master_Slider; 
+    [Header("UI")] public Slider master_Slider;
     public Slider effect_Slider;
     public Slider voice_Slider;
-    public Button closeButton; 
-    [Header("Defaults")]
-    [Range(0f, 1f)] public float defaultMaster = 1.0f;
+    public Dropdown micDropdown;
+    public Button closeButton;
+    [Header("Defaults")] [Range(0f, 1f)] public float defaultMaster = 1.0f;
     [Range(0f, 1f)] public float defaultEffect = 1.0f;
     [Range(0f, 1f)] public float defaultVoice = 1.0f;
 
@@ -32,6 +33,13 @@ public class SettingController : UIBase
         if (master_Slider) master_Slider.onValueChanged.AddListener(_masterSliderAction);
         if (effect_Slider) effect_Slider.onValueChanged.AddListener(_effectSliderAction);
         if (voice_Slider) effect_Slider.onValueChanged.AddListener(_voiceSliderAction);
+
+        if (micDropdown)
+        {
+            MicrophoneManager.Instance.SetDropDown(micDropdown);
+            LoadAndApply();
+            micDropdown.onValueChanged.AddListener((idx) => MicrophoneManager.Instance.SetMicrophoneRecordIndex(idx));
+        }
     }
 
     void OnEnable()
@@ -46,18 +54,25 @@ public class SettingController : UIBase
         if (master_Slider) master_Slider.onValueChanged.RemoveListener(_masterSliderAction);
         if (effect_Slider) effect_Slider.onValueChanged.RemoveListener(_effectSliderAction);
         if (voice_Slider) effect_Slider.onValueChanged.RemoveListener(_voiceSliderAction);
-        
+
         // 버튼 리스너도 제거합니다.
         if (closeButton) closeButton.onClick.RemoveListener(ClosePanel);
     }
 
     void LoadAndApply()
     {
-
         if (master_Slider) master_Slider.value = AudioManager.Instance.GetAudioVolume(EAudioMixerType.Master);
         if (effect_Slider) effect_Slider.value = AudioManager.Instance.GetAudioVolume(EAudioMixerType.SFX);
         if (voice_Slider) voice_Slider.value = AudioManager.Instance.GetAudioVolume(EAudioMixerType.Voice);
-
+        
+        List<string> options = MicrophoneManager.Instance.microphoneRecord.AvailableMicDevices.ToList();
+        string currentMic = MicrophoneManager.Instance.microphoneRecord.SelectedMicDevice;
+        int currentIndex = options.IndexOf(currentMic);
+        if (currentIndex != -1)
+        {
+            //기본값이 dropDown에 추가되므로 + 1
+            micDropdown.value = currentIndex + 1;
+        }
     }
 
     void OnSliderChanged(EAudioMixerType audioMixerType, float v)
@@ -83,4 +98,3 @@ public class SettingController : UIBase
     public float GetValueA() => master_Slider ? master_Slider.value : defaultMaster;
     public float GetValueB() => effect_Slider ? effect_Slider.value : defaultEffect;
 }
-

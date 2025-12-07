@@ -8708,7 +8708,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -14373,7 +14373,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &545184872
 RectTransform:
   m_ObjectHideFlags: 0
@@ -27260,8 +27260,8 @@ MonoBehaviour:
         z: 0
       Rotation:
         value:
-          x: 0.27733296
-          y: 9.720198e-10
+          x: 0.27733293
+          y: 0
           z: 0.07121054
           w: 0.9581312
     m_MetaData:
@@ -42286,7 +42286,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1695302980
 RectTransform:
   m_ObjectHideFlags: 0
@@ -54294,7 +54294,7 @@ MonoBehaviour:
   vadLastSec: 1.25
   vadThd: 1
   vadFreqThd: 100
-  vadIndicatorImage: {fileID: 0}
+  vadIndicatorImage: {fileID: 742946269}
   vadStop: 0
   dropVadPart: 1
   vadStopTime: 3
