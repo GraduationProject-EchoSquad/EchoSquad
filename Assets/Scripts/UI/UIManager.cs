@@ -26,6 +26,7 @@ public class UIManager : Singleton<UIManager>
         Shop,
         Setting,
         Exit,
+        Command,
 
         // Standalone Objects
         Countdown
@@ -79,6 +80,7 @@ public class UIManager : Singleton<UIManager>
             { EUIData.Shop,           Popup("Prefabs/UI/ShopUI.prefab") },
             { EUIData.Setting,        Popup("Prefabs/UI/SettingUI.prefab") },
             { EUIData.Exit,           Popup("Prefabs/UI/ExitUI.prefab") },
+            { EUIData.Command,        Popup("Prefabs/UI/CommandUI.prefab") },
 
             { EUIData.Countdown,      Object("Prefabs/UI/CountdownText.prefab") },
         };
@@ -140,7 +142,7 @@ public class UIManager : Singleton<UIManager>
         if (UIDict.ContainsKey(UIData))
         {
             UIDict[UIData].gameObject.SetActive(false);
-            if (UIDatabase.UIMetaDataDict[UIData].UIType == EUIType.Popup)
+            if (UIDatabase.UIMetaDataDict[UIData].UIType == EUIType.Popup && PopupStack.Count > 0)
             {
                 PopupStack.Pop();
             }

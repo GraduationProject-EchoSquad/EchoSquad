@@ -25,5 +25,24 @@ public class InputController : Singleton<InputController>
         {
             return;
         }
+
+        // C 키로 CommandUI 토글
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            ToggleCommandUI();
+        }
+    }
+
+    private void ToggleCommandUI()
+    {
+        var commandUI = UIManager.Instance.Get<CommandUI>(UIManager.EUIData.Command);
+        if (commandUI != null && commandUI.gameObject.activeInHierarchy)
+        {
+            UIManager.Instance.Hide(UIManager.EUIData.Command);
+        }
+        else
+        {
+            UIManager.Instance.Show<CommandUI>(UIManager.EUIData.Command).Forget();
+        }
     }
 }

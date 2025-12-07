@@ -481,13 +481,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d5685199714a2f4cbdbe1fbcb159c97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiData: 0
+  uiData: 2
   lifeText: {fileID: 824135604488611637}
   scoreText: {fileID: 791192528807776283}
   ammoText: {fileID: 790264975846201531}
   waveText: {fileID: 790358660814241113}
   enemyText: {fileID: 3947277161680893311}
   MicBG: {fileID: 523170298928835612}
+  commandButton: {fileID: 3214727719826260518}
 --- !u!114 &7322619605362938962
 MonoBehaviour:
   m_ObjectHideFlags: 0

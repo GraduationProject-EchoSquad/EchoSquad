@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,9 +11,14 @@ public class HUDUI : UIBase
     [SerializeField] private Text waveText;
     [SerializeField] private Text enemyText;
     [SerializeField] private Image MicBG;
+    [SerializeField] private Button commandButton;
 
     private void Start()
     {
+        if (commandButton)
+        {
+            commandButton.onClick.AddListener(OpenCommandUI);
+        }
         PubSubManager.Instance.Subscribe<OnLifeChangedData>(PubSubEvent.OnLifeChanged,
             data => UpdateLifeText(data.LiveCount));
         PubSubManager.Instance.Subscribe<OnWaveStartData>(PubSubEvent.OnWaveStart,
@@ -74,7 +80,20 @@ public class HUDUI : UIBase
             tempColor.a = 0.1f;
         }
 
-// 3. 수정된 색상을 다시 할당합니다.
+        // 3. 수정된 색상을 다시 할당합니다.
         MicBG.color = tempColor;
+    }
+
+    private void OpenCommandUI()
+    {
+        UIManager.Instance.Show<CommandUI>(UIManager.EUIData.Command).Forget();
+    }
+
+    private void OnDestroy()
+    {
+        if (commandButton)
+        {
+            commandButton.onClick.RemoveListener(OpenCommandUI);
+        }
     }
 }

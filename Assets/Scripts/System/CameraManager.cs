@@ -32,9 +32,12 @@ public class CameraManager : Singleton<CameraManager>
     private float stationaryTimer = 0f;
     private float cooldownTimer = 0f;
 
+    [Header("Command Mode (Map Overview)")]
+    public Camera commandMapCamera;  // 씬에 배치된 CommandMapCamera
+
     private void LateUpdate()
     {
-        if (target == null || mainCamera == null) return;
+        if (mainCamera == null || target == null) return;
 
         // 카메라 위치 따라가기
         Vector3 desiredPosition = target.position + RotateOffset(offset, currentYRotation);
@@ -104,5 +107,10 @@ public class CameraManager : Singleton<CameraManager>
         }
         Cinemachine.Follow = gameObject.transform;
         Cinemachine.gameObject.SetActive(true);
+    }
+
+    public Camera GetCommandMapCamera()
+    {
+        return commandMapCamera;
     }
 }
