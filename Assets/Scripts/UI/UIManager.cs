@@ -74,7 +74,7 @@ public class UIManager : Singleton<UIManager>
             { EUIData.HUD,            Panel("Prefabs/UI/HUD.prefab") },
             { EUIData.TeamVoiceSetUp, Panel("Prefabs/UI/AllyStatChoiceUI.prefab") },
 
-            { EUIData.EndingClear,    Popup("Prefabs/UI/EndingUI_.prefab") },
+            { EUIData.EndingClear,    Popup("Prefabs/UI/EndingUI_Clear.prefab") },
             { EUIData.EndingFail,     Popup("Prefabs/UI/EndingUI_Failed.prefab") },
             { EUIData.Shop,           Popup("Prefabs/UI/ShopUI.prefab") },
             { EUIData.Setting,        Popup("Prefabs/UI/SettingUI.prefab") },
