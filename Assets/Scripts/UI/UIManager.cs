@@ -93,7 +93,10 @@ public class UIManager : Singleton<UIManager>
         //await UniTask.NextFrame();
 
         //step.gameObject.SetActive(true);
-        step.uiData = UIData;
+        if (step != null)
+        {
+            step.uiData = UIData;
+        }
 
         return step;
     }

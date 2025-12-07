@@ -58,9 +58,16 @@ namespace LLMUnitySamples
 
         void Start()
         {
-            playerText.onSubmit.AddListener((message) => onInputFieldSubmit(message).Forget());
-            playerText.Select();
-            llmCharacter.grammarString = ""; // 자유 입력 모드
+            if (playerText)
+            {
+                playerText.onSubmit.AddListener((message) => onInputFieldSubmit(message).Forget());
+                playerText.Select();
+            }
+
+            if (llmCharacter)
+            {
+                llmCharacter.grammarString = ""; // 자유 입력 모드
+            }
         }
 
         //TODO 다른곳에 정리
@@ -560,8 +567,15 @@ namespace LLMUnitySamples
         /// <param name="message">플레이어가 입력한 명령어 텍스트입니다.</param>
         async UniTaskVoid onInputFieldSubmit(string message)
         {
-            playerText.interactable = false;
-            llmCharacter.grammarString = "";
+            if (playerText)
+            {
+                playerText.interactable = false;
+            }
+
+            if (llmCharacter)
+            {
+                llmCharacter.grammarString = "";
+            }
 
             // 원본 메시지 저장 (Whisper 원문 - 채팅 표시용)
             string originalMessage = message;
@@ -600,8 +614,10 @@ namespace LLMUnitySamples
             catch (System.Exception e)
             {
                 Debug.LogError($"[JSON PARSE ERROR] {e.Message}\n[Raw JSON] {json}");
-                AIText.text = "⚠️ 명령 해석 실패! (JSON 오류)";
-                playerText.interactable = true;
+                if(AIText)
+                    AIText.text = "⚠️ 명령 해석 실패! (JSON 오류)";
+                if(playerText)
+                    playerText.interactable = true;
                 return;
             }
 
@@ -619,7 +635,8 @@ namespace LLMUnitySamples
             if (cmd == null || cmd.command_units == null)
             {
                 Debug.LogWarning($"[DoCommand] Invalid command or null command_units. Action: {cmd?.action}");
-                playerText.interactable = true;
+                if(playerText)
+                    playerText.interactable = true;
                 return;
             }
 
@@ -644,8 +661,8 @@ namespace LLMUnitySamples
                     ai.ExecuteCommand(cmd.action, cmd.Parameters);
                 }
             }
-
-            playerText.interactable = true;
+            if(playerText)
+                playerText.interactable = true;
         }
 
         /// 외부에서 텍스트 명령 전달 가능 (Whisper에서 호출)

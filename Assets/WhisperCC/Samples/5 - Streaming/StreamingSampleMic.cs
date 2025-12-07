@@ -35,7 +35,10 @@ namespace Whisper.Samples
             }
 
             microphoneRecord.OnRecordStop += OnRecordStop;
-            button.onClick.AddListener(OnButtonPressed);
+            if (button)
+            {
+                button.onClick.AddListener(OnButtonPressed);
+            }
         }
 
         private void OnDestroy()
@@ -68,18 +71,27 @@ namespace Whisper.Samples
                 PubSubManager.Instance.Publish(PubSubEvent.OnMicEnd);
             }
 
-            buttonText.text = microphoneRecord.IsRecording ? "Stop" : "Record";
+            if (buttonText)
+            {
+                buttonText.text = microphoneRecord.IsRecording ? "Stop" : "Record";
+            }
         }
     
         private void OnRecordStop(AudioChunk recordedAudio)
         {
-            buttonText.text = "Record";
+            if (buttonText)
+            {
+                buttonText.text = "Record";
+            }
         }
     
         private void OnResult(string result)
         {
-            text.text = result;
-            
+            if (text)
+            {
+                text.text = result;
+            }
+
             //UiUtils.ScrollDown(scroll);
         }
         

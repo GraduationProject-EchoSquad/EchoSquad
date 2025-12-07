@@ -49,7 +49,12 @@ public class ResourceController : Singleton<ResourceController>
         }
 
         GameObject prefab = handle.Result;
-        if (prefab == null) return null;
+        if (prefab == null)
+        {
+            Debug.LogError($"[UIManager] UI 로드 실패! '{assetPath}'에 해당하는 프리팹을 경로 '{assetPath}'에서 찾을 수 없거나, 해당 프리팹에 '{typeof(T).Name}' 컴포넌트가 없습니다. 경로와 프리팹 설정을 확인하세요.");
+
+            return null;
+        }
 
         // 3. 프리팹으로 새 인스턴스 생성
         GameObject newInstance = Instantiate(prefab, parent);
