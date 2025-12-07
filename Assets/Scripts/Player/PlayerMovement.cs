@@ -22,12 +22,28 @@ public class PlayerMovement : UnitMovement
 
     protected override void FixedUpdate()
     {
-        if (currentSpeed > 0.2f || playerInput.fire || playerShooter.GetAimState() == UnitShooter.AimState.HipFire)
-            Rotate(followCam.transform.eulerAngles.y);
-
+        RotateTowardsCursor();
         Move(playerInput.moveInput);
+    }
 
+    private void RotateTowardsCursor()
+    {
+        // 플레이어 높이의 가상 평면
+        Plane groundPlane = new Plane(Vector3.up, transform.position);
+        Ray ray = followCam.ScreenPointToRay(Input.mousePosition);
 
+        if (groundPlane.Raycast(ray, out float distance))
+        {
+            Vector3 hitPoint = ray.GetPoint(distance);
+            Vector3 direction = hitPoint - transform.position;
+            direction.y = 0;
+
+            if (direction.sqrMagnitude > 0.1f)
+            {
+                float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+                Rotate(targetAngle);
+            }
+        }
     }
 
     protected override void Update()
@@ -40,7 +56,16 @@ public class PlayerMovement : UnitMovement
     public void Move(Vector2 moveInput)
     {
         var targetSpeed = speed * moveInput.magnitude;
-        var moveDirection = Vector3.Normalize(transform.forward * moveInput.y + transform.right * moveInput.x);
+
+        // 카메라 기준으로 이동
+        Vector3 camForward = followCam.transform.forward;
+        Vector3 camRight = followCam.transform.right;
+        camForward.y = 0;
+        camRight.y = 0;
+        camForward.Normalize();
+        camRight.Normalize();
+
+        var moveDirection = Vector3.Normalize(camForward * moveInput.y + camRight * moveInput.x);
 
         var smoothTime = characterController.isGrounded ? speedSmoothTime : speedSmoothTime / airControlPercent;
 

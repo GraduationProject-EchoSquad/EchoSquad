@@ -28,7 +28,6 @@ public class GameManager : Singleton<GameManager>
         SetGameState(GameState.Start);
 
         Cursor.lockState = CursorLockMode.Confined;
-        Cursor.visible = true;
         isTest = false;
     }
 
@@ -60,8 +59,6 @@ public class GameManager : Singleton<GameManager>
         SetGameState(GameState.Wave);
         Debug.Log("[GameManager] Wave 단계 시작 - WaveManager에 위임");
 
-        // 전투 시작 시 커서 설정 (Confined로 UI 클릭 가능하게)
-        Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
 
         PlayTimeManager.Instance.StartTimer();

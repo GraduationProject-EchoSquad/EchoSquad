@@ -4658,6 +4658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e58b6e338abad489966d4d1b0d0a83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiData: 0
   TitleButton: {fileID: 2954682763501233180}
   WaveText: {fileID: 2762422091427015909}
   PlayTimeText: {fileID: 3284281576955378973}
@@ -5003,6 +5004,7 @@ GameObject:
   - component: {fileID: 479810195792126233}
   - component: {fileID: 614031461758977131}
   - component: {fileID: 3774971269241872354}
+  - component: {fileID: 4178622135542118216}
   m_Layer: 5
   m_Name: Yes
   m_TagString: Untagged
@@ -5147,6 +5149,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   virtualCursor: {fileID: 0}
+--- !u!114 &4178622135542118216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7896303516391595627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be46522d6d7a4e341bdcaa9c2342d0f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8194369233907677741
 GameObject:
   m_ObjectHideFlags: 0

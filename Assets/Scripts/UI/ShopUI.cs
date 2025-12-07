@@ -114,7 +114,7 @@ public class ShopUI : UIBase
         button.onClick.AddListener(() => OnItemPurchaseClicked(item));
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         // 현재 돈 업데이트
         if (CurrencyManager.Instance != null)
@@ -128,16 +128,14 @@ public class ShopUI : UIBase
         // 버튼 상태 업데이트
         UpdateAllButtonStates();
 
-        // Shop 열릴 때 커서 표시
-        Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
 
     private void OnDisable()
     {
         // Shop 닫힐 때 커서 복원 (Confined로 복원)
-        Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
+        CustomCursor.Instance?.Show();
     }
 
     private void OnDestroy()

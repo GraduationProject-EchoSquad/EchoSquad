@@ -18,7 +18,7 @@ public class GameOverUI : UIBase
         TitleButton.onClick.AddListener(() => OnClickTitle());
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         WaveText.text = WaveManager.Instance.currentWaveIndex.ToString();
         PlayTimeText.text = PlayTimeManager.Instance.GetPlayTimeDisplay();

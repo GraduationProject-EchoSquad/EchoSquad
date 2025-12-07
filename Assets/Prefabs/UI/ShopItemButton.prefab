@@ -524,6 +524,7 @@ GameObject:
   - component: {fileID: 1875246553685651641}
   - component: {fileID: 3151650362910516542}
   - component: {fileID: 4186308635105255108}
+  - component: {fileID: 6700022312159290647}
   m_Layer: 5
   m_Name: ShopItemButton
   m_TagString: Untagged
@@ -657,6 +658,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6700022312159290647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2318227622262471116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be46522d6d7a4e341bdcaa9c2342d0f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2804508406787780172
 GameObject:
   m_ObjectHideFlags: 0
@@ -1349,7 +1362,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 150, y: -239.57501}
+  m_AnchoredPosition: {x: 150, y: -297}
   m_SizeDelta: {x: 250, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9030905553673770699
@@ -2131,7 +2144,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 150, y: -295.135}
+  m_AnchoredPosition: {x: 150, y: -313}
   m_SizeDelta: {x: 250, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6678385882505498666

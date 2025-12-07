@@ -20,8 +20,6 @@ public class PlayerController : UnitController
         playerAudioPlayer = GetComponent<AudioSource>();
         playerHealth = LivingEntity as PlayerHealth;
 
-        Cursor.visible = false;
-        
         SetLifeRemains(3);
     }
 
@@ -45,8 +43,6 @@ public class PlayerController : UnitController
             PubSubManager.Instance.Publish<OnPlayerDeathData>(PubSubEvent.OnPlayerDeath, data => {});
             //GameManager.Instance.EndGame(false);
         }*/
-
-        Cursor.visible = true;
     }
 
     public void SetLifeRemains(int NewLifeRemains)
@@ -66,8 +62,6 @@ public class PlayerController : UnitController
         playerShooter.enabled = true;
 
         playerShooter.gun.SetAmmoRemain(120);
-
-        Cursor.visible = false;
     }
 
 

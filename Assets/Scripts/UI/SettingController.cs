@@ -44,7 +44,6 @@ public class SettingController : UIBase
 
     void OnEnable()
     {
-        // �г��� ���� ������ �ֽ� ���尪 �ε� �� UI �ݿ�
         LoadAndApply();
     }
 

@@ -65,6 +65,9 @@ public class UnitManager : Singleton<UnitManager>
         playerUnit = SpawnUnit(PlayerUnitPrefab, new Vector3(-20, 0, -8), PlayerUnitPrefab.transform.rotation,
             UnitController.EUnitTeamType.Allay);
 
+        // 카메라 타겟 설정
+        CameraManager.Instance.SetTarget(playerUnit.transform);
+
         // 각 동료 유닛을 해당하는 Variant 프리팹으로 생성
         int i = 0;
         foreach (var teammateName in teammateNameDic.Keys)

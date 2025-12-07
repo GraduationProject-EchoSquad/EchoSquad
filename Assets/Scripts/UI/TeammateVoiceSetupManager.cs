@@ -140,9 +140,7 @@ public class TeammateVoiceSetupManager : Singleton<TeammateVoiceSetupManager>
             Debug.LogError("[TeammateVoiceSetupManager] uiController is null!");
         }
 
-        // 커서 표시 (음성 설정을 위해)
         Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
 
         Debug.Log("[TeammateVoiceSetupManager] AllyStatChoiceUI shown");
     }
@@ -156,9 +154,7 @@ public class TeammateVoiceSetupManager : Singleton<TeammateVoiceSetupManager>
             Debug.Log("[TeammateVoiceSetupManager] AllyStatChoiceUI destroyed");
         }
 
-        // 커서 다시 숨김 (게임플레이를 위해)
         Cursor.lockState = CursorLockMode.Confined;
-        Cursor.visible = false;
     }
 
     private async void OnConfirmButtonClicked()
