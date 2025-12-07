@@ -82,7 +82,7 @@ public class WaveManager : Singleton<WaveManager>
     {
         currentWaveIndex = 1;
         
-        while (currentWaveIndex < MaxWaveIndex)
+        while (currentWaveIndex <= MaxWaveIndex)
         {
             // --- 웨이브 시작 ---
             GameManager.Instance.SetGameState(GameManager.GameState.Wave);
@@ -100,7 +100,7 @@ public class WaveManager : Singleton<WaveManager>
             currentWaveIndex++;
             
             // --- 휴식 시간 시작 ---
-            if (currentWaveIndex < MaxWaveIndex)
+            if (currentWaveIndex <= MaxWaveIndex)
             {
                 GameManager.Instance.SetGameState(GameManager.GameState.Break);
                 await BreakTime();

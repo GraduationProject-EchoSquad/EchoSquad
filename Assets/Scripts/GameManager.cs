@@ -89,6 +89,7 @@ public class GameManager : Singleton<GameManager>
     }
 
 
+    /*
     // 점수를 추가하고 UI 갱신
     public void AddScore(int newScore)
     {
@@ -101,7 +102,7 @@ public class GameManager : Singleton<GameManager>
             PubSubManager.Instance.Publish<OnScoreUpdatedData>(PubSubEvent.OnScoreUpdated, data => data.Score = score);
             //UIManager.Instance.UpdateScoreText(score);
         }
-    }
+    }*/
 
     // 게임 오버 처리
     public async UniTaskVoid EndGame(bool isWin)

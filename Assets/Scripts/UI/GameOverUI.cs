@@ -22,7 +22,7 @@ public class GameOverUI : UIBase
     {
         WaveText.text = WaveManager.Instance.currentWaveIndex.ToString();
         PlayTimeText.text = PlayTimeManager.Instance.GetPlayTimeDisplay();
-        ScoreText.text = GameManager.Instance.score.ToString();
+        ScoreText.text = CurrencyManager.Instance.Score.ToString();
     }
 
     /*public void ShowGameOverUI(bool isWin)

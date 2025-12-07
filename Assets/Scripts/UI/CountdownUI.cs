@@ -38,7 +38,7 @@ public class CountdownUI : UIBase
         }
 
         // (2) "Wave {번호}" 표시 (currentWaveIndex가 0부터 시작하므로 +1)
-        int waveNumber = currentWaveIndex + 1;
+        int waveNumber = currentWaveIndex;
         countdownText.text = $"<link=wave+fadein+movein>Wave {waveNumber}</link>";
         if (countdownEffect != null)
         {
