@@ -79,7 +79,7 @@ public class UIManager : Singleton<UIManager>
             { EUIData.EndingFail,     Popup("Prefabs/UI/EndingUI_Failed.prefab") },
             { EUIData.Shop,           Popup("Prefabs/UI/ShopUI.prefab") },
             { EUIData.Setting,        Popup("Prefabs/UI/SettingUI.prefab") },
-            { EUIData.Exit,           Popup("Prefabs/UI/ExitUI.prefab") },
+            { EUIData.Exit,           Popup("Prefabs/UI/Exit.prefab") },
             { EUIData.Command,        Popup("Prefabs/UI/CommandUI.prefab") },
 
             { EUIData.Countdown,      Object("Prefabs/UI/CountdownText.prefab") },
@@ -88,18 +88,16 @@ public class UIManager : Singleton<UIManager>
 
     private Dictionary<EUIData, UIBase> UIDict = new Dictionary<EUIData, UIBase>();
     private Stack<UIBase> PopupStack = new Stack<UIBase>();
+    private HashSet<EUIData> _loadingUI = new HashSet<EUIData>();  // 로딩 중인 UI 추적
 
     private async UniTask<T> LoadUI<T>(EUIData UIData) where T : UIBase
     {
         T step = await ResourceController.Instance.GetAsync<T>(UIDatabase.UIMetaDataDict[UIData].Path, mainCanvas.transform);
-        //await UniTask.NextFrame();
-
-        //step.gameObject.SetActive(true);
         if (step != null)
         {
             step.uiData = UIData;
+            step.gameObject.SetActive(false);
         }
-
         return step;
     }
     
@@ -110,9 +108,6 @@ public class UIManager : Singleton<UIManager>
             T loadedUI = await LoadUI<T>(UIData);
             UIDict.Add(UIData, loadedUI);
         }
-
-        //UIDict[UIData].gameObject.SetActive(true);
-
         return (T)UIDict[UIData];
     }
 
@@ -121,17 +116,30 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public async UniTask<T> Show<T>(EUIData UIData) where T : UIBase
     {
-        T ui = await GetUI<T>(UIData);
-        if (ui != null && ui.gameObject.activeInHierarchy == false)
+        // 이미 로딩 중이면 중복 호출 방지
+        if (_loadingUI.Contains(UIData))
         {
-            ui.gameObject.SetActive(true);
-            if (UIDatabase.UIMetaDataDict[UIData].UIType == EUIType.Popup)
-            {
-                PopupStack.Push(ui);
-            }
+            return null;
         }
 
-        return ui;
+        _loadingUI.Add(UIData);
+        try
+        {
+            T ui = await GetUI<T>(UIData);
+            if (ui != null && ui.gameObject.activeInHierarchy == false)
+            {
+                ui.gameObject.SetActive(true);
+                if (UIDatabase.UIMetaDataDict[UIData].UIType == EUIType.Popup)
+                {
+                    PopupStack.Push(ui);
+                }
+            }
+            return ui;
+        }
+        finally
+        {
+            _loadingUI.Remove(UIData);
+        }
     }
 
     /// <summary>

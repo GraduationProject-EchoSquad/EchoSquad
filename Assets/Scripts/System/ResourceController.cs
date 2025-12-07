@@ -30,7 +30,6 @@ public class ResourceController : Singleton<ResourceController>
             GameObject instance = queue.Dequeue();
             instance.transform.SetParent(parent);
             instance.SetActive(true);
-            Debug.Log($"[Pool] 오브젝트 재사용: {assetPath}");
             return instance.GetComponent<T>();
         }
 
