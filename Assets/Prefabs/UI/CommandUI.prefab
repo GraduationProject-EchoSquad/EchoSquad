@@ -4466,7 +4466,7 @@ Animator:
   m_GameObject: {fileID: 2150466919487950294}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7bfa92f5cdd1fa64c946b4c6d3e68a17, type: 2}
+  m_Controller: {fileID: 9100000, guid: ffb036dffbd002b428557c9febd196a8, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 2
   m_ApplyRootMotion: 0
@@ -4979,7 +4979,7 @@ Animator:
   m_GameObject: {fileID: 2252449764747936093}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7bfa92f5cdd1fa64c946b4c6d3e68a17, type: 2}
+  m_Controller: {fileID: 9100000, guid: ffb036dffbd002b428557c9febd196a8, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 2
   m_ApplyRootMotion: 0
@@ -8463,7 +8463,7 @@ Animator:
   m_GameObject: {fileID: 4362055514191784958}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7bfa92f5cdd1fa64c946b4c6d3e68a17, type: 2}
+  m_Controller: {fileID: 9100000, guid: ffb036dffbd002b428557c9febd196a8, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 2
   m_ApplyRootMotion: 0
@@ -9177,7 +9177,7 @@ Animator:
   m_GameObject: {fileID: 4664341725291776461}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7bfa92f5cdd1fa64c946b4c6d3e68a17, type: 2}
+  m_Controller: {fileID: 9100000, guid: ffb036dffbd002b428557c9febd196a8, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 2
   m_ApplyRootMotion: 0
@@ -15832,19 +15832,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: ExitGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &2185587100143657082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15891,7 +15879,7 @@ Animator:
   m_GameObject: {fileID: 8642726806384691233}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7bfa92f5cdd1fa64c946b4c6d3e68a17, type: 2}
+  m_Controller: {fileID: 9100000, guid: ffb036dffbd002b428557c9febd196a8, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 2
   m_ApplyRootMotion: 0
@@ -17346,7 +17334,7 @@ Animator:
   m_GameObject: {fileID: 9215087497942163792}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7bfa92f5cdd1fa64c946b4c6d3e68a17, type: 2}
+  m_Controller: {fileID: 9100000, guid: ffb036dffbd002b428557c9febd196a8, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 2
   m_ApplyRootMotion: 0
@@ -17941,6 +17929,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SelectButton
       objectReference: {fileID: 0}
+    - target: {fileID: 95960211853666426, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: ffb036dffbd002b428557c9febd196a8, type: 2}
     - target: {fileID: 114059537788190568, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
         type: 3}
       propertyPath: m_text
@@ -18151,6 +18144,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SelectButton
       objectReference: {fileID: 0}
+    - target: {fileID: 95960211853666426, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: ffb036dffbd002b428557c9febd196a8, type: 2}
     - target: {fileID: 114059537788190568, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
         type: 3}
       propertyPath: m_text
@@ -18361,6 +18359,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SelectButton
       objectReference: {fileID: 0}
+    - target: {fileID: 95960211853666426, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: ffb036dffbd002b428557c9febd196a8, type: 2}
     - target: {fileID: 114059537788190568, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
         type: 3}
       propertyPath: m_text
@@ -19415,6 +19418,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SelectButton
       objectReference: {fileID: 0}
+    - target: {fileID: 95960211853666426, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: ffb036dffbd002b428557c9febd196a8, type: 2}
     - target: {fileID: 114059537788190568, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
         type: 3}
       propertyPath: m_text
@@ -19630,6 +19638,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SelectButton
       objectReference: {fileID: 0}
+    - target: {fileID: 95960211853666426, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: ffb036dffbd002b428557c9febd196a8, type: 2}
     - target: {fileID: 114059537788190568, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
         type: 3}
       propertyPath: m_text
@@ -20084,6 +20097,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SelectButton
       objectReference: {fileID: 0}
+    - target: {fileID: 95960211853666426, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: ffb036dffbd002b428557c9febd196a8, type: 2}
     - target: {fileID: 114059537788190568, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
         type: 3}
       propertyPath: m_text
@@ -20294,6 +20312,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SelectButton
       objectReference: {fileID: 0}
+    - target: {fileID: 95960211853666426, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: ffb036dffbd002b428557c9febd196a8, type: 2}
     - target: {fileID: 114059537788190568, guid: e667a8f81bf8ebb4e8e15073ee7d697d,
         type: 3}
       propertyPath: m_text
