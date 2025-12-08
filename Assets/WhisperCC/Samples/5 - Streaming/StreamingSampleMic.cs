@@ -51,9 +51,6 @@ namespace Whisper.Samples
             if (Input.GetKeyDown(KeyCode.BackQuote))
             {
                 OnButtonPressed();
-            }else if (Input.GetKeyUp(KeyCode.BackQuote))
-            {
-                OnButtonPressed();
             }
         }
 

@@ -10,6 +10,7 @@ public class HUDUI : UIBase
     [SerializeField] private Text ammoText;
     [SerializeField] private Text waveText;
     [SerializeField] private Text enemyText;
+    [SerializeField] private Toggle MicToggle;
     [SerializeField] private Image MicBG;
     [SerializeField] private Button commandButton;
 
@@ -18,6 +19,10 @@ public class HUDUI : UIBase
         if (commandButton)
         {
             commandButton.onClick.AddListener(OpenCommandUI);
+        }
+        if (MicToggle)
+        {
+            MicToggle.onValueChanged.AddListener(ChangeMicBG);
         }
         PubSubManager.Instance.Subscribe<OnLifeChangedData>(PubSubEvent.OnLifeChanged,
             data => UpdateLifeText(data.LiveCount));
