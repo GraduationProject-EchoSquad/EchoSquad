@@ -278,6 +278,12 @@ public class EnemyController : UnitController
         isAttacking = false;
         agent.enabled = false;
 
+        // 콜라이더 비활성화 (죽은 몬스터가 이동을 막지 않도록)
+        foreach (var col in GetComponentsInChildren<Collider>())
+        {
+            col.enabled = false;
+        }
+
         // HandAlien의 경우 모든 Bool 파라미터 리셋
         if (enemyType == EnemyType.HandAlien)
         {
