@@ -224,7 +224,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultCursor: {fileID: 2800000, guid: b8e78032f8af0954784d1fe9e5a09187, type: 3}
   hoverCursor: {fileID: 2800000, guid: 8c89ed5746a4faa48bb97701cc2f2e35, type: 3}
-  hotspot: {x: 0, y: 0}
+  hotspot: {x: 256, y: 256}
 --- !u!1001 &2493755359414738135
 PrefabInstance:
   m_ObjectHideFlags: 0
