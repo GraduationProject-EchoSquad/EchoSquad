@@ -48,7 +48,8 @@ public class GameManager : Singleton<GameManager>
 
         // HUD Panel 숨김
         await UIManager.Instance.Show<HUDUI>(UIManager.EUIData.HUD);
-
+        UnitManager.Instance.Reset();
+        
         Debug.Log("[GameManager] Preparation 단계 완료 - 유닛 스폰");
         UnitManager.Instance.InitSpawnUnit();
 

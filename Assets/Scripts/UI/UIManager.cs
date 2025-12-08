@@ -168,6 +168,15 @@ public class UIManager : Singleton<UIManager>
             Hide(uiBase.uiData);
         }
     }
+    
+    public void HideAllPopupUI()
+    {
+        while (PopupStack.Count != 0)
+        {
+            UIBase uiBase = PopupStack.Peek();
+            Hide(uiBase.uiData);
+        }
+    }
 
     public bool HasPopupUI()
     {

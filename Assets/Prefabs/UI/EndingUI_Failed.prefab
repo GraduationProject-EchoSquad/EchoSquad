@@ -502,6 +502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e58b6e338abad489966d4d1b0d0a83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiData: 0
   TitleButton: {fileID: 540610034753032685}
   WaveText: {fileID: 2572573084563622388}
   PlayTimeText: {fileID: 5775700894355034390}

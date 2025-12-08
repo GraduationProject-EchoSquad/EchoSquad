@@ -37,6 +37,10 @@ public class UnitMovement : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
+        if (unitShooter.unit.IsDead())
+        {
+            return;
+        }
         if (unitShooter.GetAimTargetUnit() != null)
         {
             Vector3 direction = (unitShooter.GetAimTargetUnit().transform.position - transform.position).normalized;

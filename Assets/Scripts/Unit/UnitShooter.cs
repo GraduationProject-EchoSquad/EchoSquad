@@ -63,6 +63,10 @@ public class UnitShooter : MonoBehaviour
 
     private void Update()
     {
+        if (unit.IsDead())
+        {
+            return;
+        }
         UpdateAimTarget();
         Shoot();
         gun.DrawPreviewLine();

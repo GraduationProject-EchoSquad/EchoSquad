@@ -25,10 +25,10 @@ public class SceneController : Singleton<SceneController>
 
     private async UniTaskVoid Start()
     {
-        Test();
+        LoadTitle();
     }
 
-    public async UniTask Test()
+    public async UniTask LoadTitle()
     {
         await LoadSceneAsync(ESceneData.Title);
         await UIManager.Instance.Show<TitleUI>(UIManager.EUIData.Title);

@@ -37,9 +37,9 @@ public class Gun : MonoBehaviour
 
     public void SetAmmoRemain(int NewAmmoRemain)
     {
-        ammoRemain = NewAmmoRemain;
         if (gunHolder is PlayerShooter)
         {
+            ammoRemain = NewAmmoRemain;
             // UI 매니저의 탄약 텍스트에 탄창의 탄약과 남은 전체 탄약을 표시
             PubSubManager.Instance.Publish<OnAmmoUpdatedData>(PubSubEvent.OnAmmoUpdated, data =>
             {

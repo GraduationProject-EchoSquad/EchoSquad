@@ -14,6 +14,11 @@ public class TeammateAI : MonoBehaviour
 
     public void ExecuteCommand(AIActionEnum action, Parameters param)
     {
+        if (unitController.IsDead())
+        {
+            return;
+        }
+        
         Debug.Log($"[{teammateName}] 명령 수신: {action} - {param}");
 
         currentAction = action;

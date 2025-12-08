@@ -43,11 +43,6 @@ public class UnitManager : Singleton<UnitManager>
 
     private void Awake()
     {
-        foreach (UnitController.EUnitTeamType unitTeamType in Enum.GetValues(typeof(UnitController.EUnitTeamType)))
-        {
-            unitTeamTypeDict.Add(unitTeamType, new List<UnitController>());
-        }
-
         // 동료 프리팹 딕셔너리 초기화
         teammatePrefabDict.Add("Lena", lenaUnitPrefab);
         teammatePrefabDict.Add("James", jamesUnitPrefab);
@@ -57,6 +52,21 @@ public class UnitManager : Singleton<UnitManager>
         teammateVoiceProfileDict.Add("Lena", lenaVoiceProfile);
         teammateVoiceProfileDict.Add("James", jamesVoiceProfile);
         teammateVoiceProfileDict.Add("Sara", saraVoiceProfile);
+        Reset();
+    }
+
+    public void Reset()
+    {
+        UnitList.Clear();
+        
+        unitTeamTypeDict.Clear();
+        foreach (UnitController.EUnitTeamType unitTeamType in Enum.GetValues(typeof(UnitController.EUnitTeamType)))
+        {
+            unitTeamTypeDict.Add(unitTeamType, new List<UnitController>());
+        }
+        
+        teammateUnitDict.Clear();
+        playerUnit = null;
     }
 
     public void InitSpawnUnit()
@@ -115,9 +125,14 @@ public class UnitManager : Singleton<UnitManager>
 
     public void DeleteUnit(UnitController unitController)
     {
+        if (unitController == null)
+        {
+            return;
+        }
         UnitList.Remove(unitController);
+        
         unitTeamTypeDict[unitController.GetUnitTeamType()].Remove(unitController);
-
+        
         Destroy(unitController.gameObject);
     }
 
