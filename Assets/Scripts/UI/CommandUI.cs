@@ -30,6 +30,12 @@ public class CommandUI : UIBase
     [SerializeField] private GameObject followSaraCard;
     [SerializeField] private GameObject followPlayerCard;
 
+    [Header("Attack Panel (Inside Attack Panel)")]
+    [SerializeField] private AttackButtonUI attackNearestButton;
+    [SerializeField] private AttackButtonUI attackEnemyButtonPrefab; // 동적 생성을 위한 버튼 프리팹
+    [SerializeField] private Transform attackEnemyButtonContainer; // 동적으로 생성된 버튼들의 부모
+
+
     [Header("Follow Target Buttons")]
     [SerializeField] private Button followLenaButton;
     [SerializeField] private Button followJamesButton;
@@ -53,12 +59,15 @@ public class CommandUI : UIBase
     private CommandType selectedCommand = CommandType.None;
     private string selectedTeammate = null;
     private string followTargetName = null;
+    private string selectedAttackTarget = null;
     private bool hasMoveDestination = false;
 
     private Dictionary<string, Button> teammateButtons = new Dictionary<string, Button>();
     private Dictionary<string, Button> followTargetButtons = new Dictionary<string, Button>();
     private Dictionary<string, GameObject> followTargetCards = new Dictionary<string, GameObject>();
     private Dictionary<string, Button> districtButtons = new Dictionary<string, Button>();
+    private Dictionary<string, Button> attackTargetButtons = new Dictionary<string, Button>();
+    private List<AttackButtonUI> dynamicAttackButtons = new List<AttackButtonUI>(); // 동적으로 생성된 버튼 추적
 
     // 하이라이트 색상
     private Color normalColor = Color.white;
@@ -159,6 +168,13 @@ public class CommandUI : UIBase
             districtButtonC.onClick.AddListener(() => SelectDistrict("C"));
             districtButtons["C"] = districtButtonC;
         }
+
+        // Attack target buttons
+        if (attackNearestButton)
+        {
+            attackNearestButton.gameObject.SetActive(true);
+            attackNearestButton.button.onClick.AddListener(() => SelectAttackTarget("nearestTarget"));
+        }
     }
 
     private void OnEnable()
@@ -173,6 +189,7 @@ public class CommandUI : UIBase
         selectedCommand = CommandType.None;
         selectedTeammate = null;
         followTargetName = null;
+        selectedAttackTarget = null;
         hasMoveDestination = false;
         selectedDistrict = null;
 
@@ -183,6 +200,9 @@ public class CommandUI : UIBase
 
         // 한 프레임 뒤에 UI 업데이트 (Animator 준비 대기)
         StartCoroutine(DelayedUpdateUI());
+
+        // 공격 패널 버튼 동적 생성
+        UpdateAttackPanelButtons();
 
         Cursor.lockState = CursorLockMode.None;
     }
@@ -225,6 +245,7 @@ public class CommandUI : UIBase
         selectedCommand = CommandType.None;
         selectedTeammate = null;
         followTargetName = null;
+        selectedAttackTarget = null;
         hasMoveDestination = false;
         selectedDistrict = null;
 
@@ -240,6 +261,7 @@ public class CommandUI : UIBase
     {
         selectedCommand = command;
         followTargetName = null;
+        selectedAttackTarget = null;
         hasMoveDestination = false;
         UpdateUI();
     }
@@ -253,6 +275,12 @@ public class CommandUI : UIBase
     private void SelectFollowTarget(string targetName)
     {
         followTargetName = targetName;
+        UpdateUI();
+    }
+    
+    private void SelectAttackTarget(string targetName)
+    {
+        selectedAttackTarget = targetName;
         UpdateUI();
     }
 
@@ -336,6 +364,12 @@ public class CommandUI : UIBase
             UpdateFollowTargetButtons();
         }
 
+        // Attack panel: 버튼 하이라이트
+        if (selectedCommand == CommandType.Attack)
+        {
+            UpdateAttackTargetButtonsHighlight();
+        }
+
         // Go Ahead button state
         UpdateGoAheadButton();
     }
@@ -365,6 +399,60 @@ public class CommandUI : UIBase
         }
     }
 
+    private void UpdateAttackPanelButtons()
+    {
+        // 기존 동적 버튼들 제거
+        foreach (var buttonObj in dynamicAttackButtons)
+        {
+            Destroy(buttonObj.gameObject);
+        }
+        dynamicAttackButtons.Clear();
+        attackTargetButtons.Clear();
+
+        // "Nearest" 버튼은 항상 존재하므로 딕셔너리에 추가
+        if (attackNearestButton)
+        {
+            attackTargetButtons["nearestTarget"] = attackNearestButton.button;
+        }
+
+        if (WaveManager.Instance == null || attackEnemyButtonPrefab == null || attackEnemyButtonContainer == null) return;
+
+        // 현재 웨이브에 존재하는 적 타입 가져오기
+        Wave currentWave = WaveManager.Instance.GetCurrentWave();
+        if (currentWave == null) return;
+
+        var enemyTypesInWave = new HashSet<string>();
+        foreach (var enemyInfo in currentWave.enemyTypes)
+        {
+            enemyTypesInWave.Add(enemyInfo.enemyPrefab.GetComponent<EnemyController>().enemyType.ToString());
+        }
+
+        if (currentWave.isBossWave)
+        {
+            enemyTypesInWave.Add(currentWave.bossPrefab.GetComponent<EnemyController>().enemyType.ToString());
+        }
+
+        // 각 적 타입에 대한 버튼 생성
+        foreach (string enemyType in enemyTypesInWave)
+        {
+            AttackButtonUI newButtonObj = Instantiate(attackEnemyButtonPrefab, attackEnemyButtonContainer);
+            dynamicAttackButtons.Add(newButtonObj);
+            newButtonObj.SetTarget(enemyType);
+            newButtonObj.gameObject.SetActive(true);
+            string capturedEnemyType = enemyType; // 클로저 문제 방지
+            newButtonObj.button.onClick.AddListener(() => SelectAttackTarget(capturedEnemyType));
+            attackTargetButtons[capturedEnemyType] = newButtonObj.button;
+        }
+    }
+
+    private void UpdateAttackTargetButtonsHighlight()
+    {
+        foreach (var kvp in attackTargetButtons)
+        {
+            HighlightButton(kvp.Value, kvp.Key == selectedAttackTarget);
+        }
+    }
+
     private void UpdateGoAheadButton()
     {
         if (goAheadButton == null) return;
@@ -383,6 +471,8 @@ public class CommandUI : UIBase
                     canExecute = !string.IsNullOrEmpty(followTargetName);
                     break;
                 case CommandType.Attack:
+                    canExecute = !string.IsNullOrEmpty(selectedAttackTarget);
+                    break;
                 case CommandType.Support:
                     canExecute = true;
                     break;
@@ -437,7 +527,7 @@ public class CommandUI : UIBase
 
             case CommandType.Attack:
                 action = AIActionEnum.Combat;
-                param.engage_enemy = "nearestTarget";
+                param.engage_enemy = selectedAttackTarget;
                 param.voice = "Engaging+enemy";
                 break;
 
@@ -477,4 +567,3 @@ public class CommandUI : UIBase
         }
     }
 }
-

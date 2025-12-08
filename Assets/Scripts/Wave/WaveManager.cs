@@ -110,13 +110,23 @@ public class WaveManager : Singleton<WaveManager>
         //승리
         return true;
     }
+    
+    // 현재 진행 중인 웨이브 정보를 반환하는 메서드
+    public Wave GetCurrentWave()
+    {
+        if (currentWaveIndex > 0 && currentWaveIndex <= waves.Length)
+        {
+            return waves[currentWaveIndex - 1];
+        }
+        return null;
+    }
 
     private async UniTask RunWave()
     {
         waveCompletionSource = new UniTaskCompletionSource<bool>();
 
 
-        Wave wave = waves[currentWaveIndex - 1];
+        Wave wave = GetCurrentWave();
         SetEnemiesRemaining(wave.GetTotalEnemyCount());
 
         PubSubManager.Instance.Publish<OnWaveStartData>(PubSubEvent.OnWaveStart, data =>
@@ -247,7 +257,7 @@ public class WaveManager : Singleton<WaveManager>
             }
             
             // 웨이브가 아직 진행 중이라면 웨이브 종료 처리
-            if (!waveCompletionSource.Task.Status.IsCompleted())
+            if (waveCompletionSource != null && !waveCompletionSource.Task.Status.IsCompleted())
                 waveCompletionSource.TrySetResult(false); // 웨이브 실패로 종료
         }
     }
