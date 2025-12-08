@@ -32,7 +32,7 @@ public class SettingController : UIBase
         // 3. 변수에 저장된 액션을 리스너로 등록합니다.
         if (master_Slider) master_Slider.onValueChanged.AddListener(_masterSliderAction);
         if (effect_Slider) effect_Slider.onValueChanged.AddListener(_effectSliderAction);
-        if (voice_Slider) effect_Slider.onValueChanged.AddListener(_voiceSliderAction);
+        if (voice_Slider) voice_Slider.onValueChanged.AddListener(_voiceSliderAction);
 
         if (micDropdown)
         {
@@ -52,7 +52,7 @@ public class SettingController : UIBase
         // 4. 등록할 때 사용했던 '바로 그 변수'를 사용하여 리스너를 정확히 제거합니다.
         if (master_Slider) master_Slider.onValueChanged.RemoveListener(_masterSliderAction);
         if (effect_Slider) effect_Slider.onValueChanged.RemoveListener(_effectSliderAction);
-        if (voice_Slider) effect_Slider.onValueChanged.RemoveListener(_voiceSliderAction);
+        if (voice_Slider) voice_Slider.onValueChanged.RemoveListener(_voiceSliderAction);
 
         // 버튼 리스너도 제거합니다.
         if (closeButton) closeButton.onClick.RemoveListener(ClosePanel);
