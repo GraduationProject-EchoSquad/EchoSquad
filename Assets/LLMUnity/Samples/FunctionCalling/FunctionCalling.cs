@@ -115,6 +115,7 @@ namespace LLMUnitySamples
                 { "boss", "Boss" },
                 { "both", "Boss" },
                 { "force", "Boss" },
+                { "pause", "Boss" },
 
                 // 동료 이름 오인식
                 { "lina", "Lena" },

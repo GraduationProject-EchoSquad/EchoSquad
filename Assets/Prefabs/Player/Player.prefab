@@ -570,7 +570,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 192
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: 639456b0937d9d045be0e7ef443d4f11, type: 2}
+  m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -937,6 +937,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPickupClip: {fileID: 8300000, guid: 0107881485be049089ce7a8ca3ed5089, type: 3}
   lifeRemains: 3
+  miniMapCamera: {fileID: 8987889321093883989}
 --- !u!114 &6473060208959168881
 MonoBehaviour:
   m_ObjectHideFlags: 0

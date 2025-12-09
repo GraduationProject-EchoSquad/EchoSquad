@@ -277,7 +277,7 @@ public class TeammateController : UnitController
     {
         // 주변의 모든 적들을 체크
         var enemies = UnitManager.Instance.GetUnitTeamTypeList(GetOppositeTeamType());
-        Debug.Log($"[{teammateAI.teammateName}] 적 수: {enemies.Count}");
+        //Debug.Log($"[{teammateAI.teammateName}] 적 수: {enemies.Count}");
 
         UnitController nearestEnemy = null;
         float nearestDistance = Mathf.Infinity;
@@ -296,13 +296,13 @@ public class TeammateController : UnitController
 
         if (nearestEnemy != null)
         {
-            Debug.Log($"[{teammateAI.teammateName}] 가장 가까운 적 거리: {nearestDistance:F2}m (안전거리: {minSafeDistance}m)");
+            //Debug.Log($"[{teammateAI.teammateName}] 가장 가까운 적 거리: {nearestDistance:F2}m (안전거리: {minSafeDistance}m)");
         }
 
         // 가장 가까운 적이 최소 안전거리보다 가까우면 후퇴
         if (nearestEnemy != null && nearestDistance < minSafeDistance)
         {
-            Debug.Log($"[{teammateAI.teammateName}] 후퇴 시작!");
+            //Debug.Log($"[{teammateAI.teammateName}] 후퇴 시작!");
 
             // 적의 반대방향으로 후퇴
             Vector3 directionAwayFromEnemy = (transform.position - nearestEnemy.transform.position).normalized;
@@ -313,7 +313,7 @@ public class TeammateController : UnitController
             if (NavMesh.SamplePosition(retreatPosition, out hit, retreatDistance, NavMesh.AllAreas))
             {
                 navMeshAgent.SetDestination(hit.position);
-                Debug.Log($"[{teammateAI.teammateName}] 후퇴 목적지 설정 완료");
+                //Debug.Log($"[{teammateAI.teammateName}] 후퇴 목적지 설정 완료");
             }
             else
             {

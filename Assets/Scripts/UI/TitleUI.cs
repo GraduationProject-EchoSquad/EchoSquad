@@ -46,7 +46,9 @@ public class TitleUI : UIBase
     // ���� ����
     void ExitGame()
     {
+        #if UNITY_EDITOR
         EditorApplication.isPlaying = false; // ����Ƽ ������ ���� ����
+        #endif
 
         Application.Quit();
     }

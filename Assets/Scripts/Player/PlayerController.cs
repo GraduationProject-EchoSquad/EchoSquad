@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.AI;
 
 public class PlayerController : UnitController
@@ -10,6 +11,9 @@ public class PlayerController : UnitController
     private PlayerHealth playerHealth;
     private PlayerMovement playerMovement;
     private PlayerShooter playerShooter;
+    
+    [SerializeField]
+    private Camera miniMapCamera;  // 씬에 배치된 CommandMapCamera
 
     // Start is called before the first frame update
     protected override void Start()
@@ -20,7 +24,14 @@ public class PlayerController : UnitController
         playerAudioPlayer = GetComponent<AudioSource>();
         playerHealth = LivingEntity as PlayerHealth;
 
+        SetMiniMapTexture().Forget();
+
         SetLifeRemains(3);
+    }
+
+    private async UniTaskVoid SetMiniMapTexture()
+    {
+        miniMapCamera.targetTexture = await Addressables.LoadAssetAsync<RenderTexture>("RenderTextures/MiniMapRenderTexture.renderTexture").ToUniTask();
     }
 
     public override async UniTaskVoid HandleDeath()

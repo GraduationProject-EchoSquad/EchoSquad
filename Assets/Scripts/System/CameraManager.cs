@@ -1,5 +1,8 @@
+using System;
+using Cysharp.Threading.Tasks;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 public class CameraManager : Singleton<CameraManager>
 {
@@ -34,6 +37,11 @@ public class CameraManager : Singleton<CameraManager>
 
     [Header("Command Mode (Map Overview)")]
     public Camera commandMapCamera;  // 씬에 배치된 CommandMapCamera
+
+    private async UniTaskVoid Start()
+    {
+        commandMapCamera.targetTexture = await Addressables.LoadAssetAsync<RenderTexture>("RenderTextures/CommandMiniMapRenderTexture.renderTexture").ToUniTask();
+    }
 
     private void LateUpdate()
     {

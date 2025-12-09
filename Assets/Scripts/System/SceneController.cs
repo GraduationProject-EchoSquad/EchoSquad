@@ -30,6 +30,7 @@ public class SceneController : Singleton<SceneController>
 
     public async UniTask LoadTitle()
     {
+        await UIManager.Instance.PreloadGameUI();
         await LoadSceneAsync(ESceneData.Title);
         await UIManager.Instance.Show<TitleUI>(UIManager.EUIData.Title);
     }
@@ -46,5 +47,7 @@ public class SceneController : Singleton<SceneController>
 
         // Skybox 적용
         DynamicGI.UpdateEnvironment();
+        
+        Debug.Log($"씬 불러오기 성공! {eSceneData.ToString()}");
     } 
 }

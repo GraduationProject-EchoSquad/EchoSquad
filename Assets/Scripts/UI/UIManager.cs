@@ -203,10 +203,10 @@ public class UIManager : Singleton<UIManager>
         //CreateUIAudioIfNeeded();
         
         // 게임 시작 시 필요한 UI 미리 로드
-        PreloadGameUI().Forget();
+        //PreloadGameUI().Forget();
     }
 
-    private async UniTaskVoid PreloadGameUI()
+    public async UniTask PreloadGameUI()
     {
         // GameOverUI를 미리 로드하고 비활성화 상태로 둡니다.
         await GetUI<TitleUI>(EUIData.Title);
