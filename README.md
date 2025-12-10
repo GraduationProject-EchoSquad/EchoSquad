@@ -37,7 +37,16 @@
 ## ⚙️Installation
 
 ### For Players (Game Release)
-> 🚧 **Coming Soon**: A standalone executable version of Echo Squad for end-users is currently in development. Stay tuned for future releases!
+You can download and play the latest version of Echo Squad via the link below:
+
+[**Download Echo Squad**](https://drive.google.com/file/d/1_cw3ewD08a3SXxY4SvCK4GBGqOxvEoBh/view?usp=drive_link)
+
+**How to Play:**
+1. Download the zip file from the link above.
+2. Unzip the downloaded archive.
+3. Run `EchoSquad.exe` to start the game.
+
+---
 
 ### For Developers (Unity Project Setup)
 This guide will walk you through setting up the Echo Squad project source code on your local machine.
@@ -107,6 +116,7 @@ git clone https://github.com/GraduationProject-EchoSquad/EchoSquad.git
 | **Shoot** | `Left Mouse Button`    | Fire weapon |
 | **Aiming** | `Right Mouse Button`   | Display red aiming line |
 | **Aim Up/Down** | `Q` / `E`              | Aim gun upward / downward |
+| **Squad Command** | `C`                    | Open Squad Command UI |
 | **Voice Command** | `` ` `` (Backtick)     | Activate microphone |
 | **Shop** | `Z` (near center rune) | Open shop to purchase upgrades |
 
@@ -133,7 +143,7 @@ git clone https://github.com/GraduationProject-EchoSquad/EchoSquad.git
 
 **▶️ Watch Voice-Controlled Combat in Action**
 
-[![EchoSquad Trailer](https://img.youtube.com/vi/mgJtWeqkY_k/hqdefault.jpg)](https://youtu.be/mgJtWeqkY_k)
+[![EchoSquad Trailer](https://img.youtube.com/vi/flzgq3ys1ds/hqdefault.jpg)](https://youtu.be/flzgq3ys1ds)
 
 *Click to see how voice commands control your AI squad in real-time*
 
