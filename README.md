@@ -143,7 +143,7 @@ git clone https://github.com/GraduationProject-EchoSquad/EchoSquad.git
 
 **▶️ Watch Voice-Controlled Combat in Action**
 
-[![EchoSquad Trailer](https://img.youtube.com/vi/fWHQ9E-PhHM/hqdefault.jpg)](https://youtu.be/fWHQ9E-PhHM)
+[![EchoSquad Trailer](https://img.youtube.com/vi/flzgq3ys1ds/hqdefault.jpg)](https://youtu.be/flzgq3ys1ds)
 
 *Click to see how voice commands control your AI squad in real-time*
 
