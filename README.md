@@ -50,6 +50,24 @@ You can download and play the latest version of Echo Squad via the link below:
 2. Unzip the downloaded archive.
 3. Run `EchoSquad.exe` to start the game.
 
+## 🕹️ Gameplay Guide
+
+### 1. Setup & Start
+At the **Title Screen**, click the **Setting** button to configure your input device (Microphone). Once set, click **Play** to start the mission.
+
+![Title Screen](/images/start-ui.jpg)  
+*(Settings UI)* ![Settings UI](/images/setting-ui.jpg)
+
+### 2. Interface (HUD)
+Upon entering the game, you will see the **Main HUD** displaying your status and objectives.
+
+![Main HUD](/images/main-UI.jpg)
+
+### 3. Squad Command
+Press the **Command Button** to open the **Squad Command UI**. From here, you can issue voice or manual orders to your AI teammates.
+
+![Squad Command UI](/images/command-move-ui.jpg)
+
 ---
 
 ### For Developers (Unity Project Setup)
