@@ -54,7 +54,7 @@ public class WaveManager : Singleton<WaveManager>
     public float timeBetweenWaves = 5f;
 
     public int currentWaveIndex { get; private set; }
-    private int MaxWaveIndex = 2;
+    private int MaxWaveIndex = 1;
     public int enemiesRemaining;
 
     private UniTaskCompletionSource<bool> waveCompletionSource;
@@ -80,10 +80,12 @@ public class WaveManager : Singleton<WaveManager>
     // GameManager에서 호출하는 웨이브 시작 메서드
     public async UniTask<bool> StartWaves()
     {
-        currentWaveIndex = 1;
+        currentWaveIndex = 0;
         
-        while (currentWaveIndex <= MaxWaveIndex)
+        while (currentWaveIndex < MaxWaveIndex)
         {
+            currentWaveIndex++;
+            
             // --- 웨이브 시작 ---
             GameManager.Instance.SetGameState(GameManager.GameState.Wave);
             CountdownUI countdownUI = await UIManager.Instance.Show<CountdownUI>(UIManager.EUIData.Countdown);
@@ -97,15 +99,16 @@ public class WaveManager : Singleton<WaveManager>
                 //break; // 게임 루프 종료
             }
 
-            currentWaveIndex++;
             
             // --- 휴식 시간 시작 ---
-            if (currentWaveIndex <= MaxWaveIndex)
+            if (currentWaveIndex < MaxWaveIndex)
             {
                 GameManager.Instance.SetGameState(GameManager.GameState.Break);
                 await BreakTime();
             }
         }
+        
+        await UniTask.WaitForSeconds(3f);
 
         //승리
         return true;

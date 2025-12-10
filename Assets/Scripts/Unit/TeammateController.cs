@@ -213,7 +213,10 @@ public class TeammateController : UnitController
                     navMeshAgent.ResetPath();
                     transform.LookAt(target.transform.position);
                 }
-                // 시야에 없으면 그냥 제자리에서 대기 (추적하지 않음)
+                else
+                {
+                    navMeshAgent.SetDestination(target.transform.position);
+                }
             }
         }
         else if (unitState == EUnitState.Supprot)

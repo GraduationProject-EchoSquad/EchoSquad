@@ -33,12 +33,12 @@ public class PlayerHealth : LivingEntity
             return false;
 
         // 데미지 이펙트나 사운드
-        EffectManager.Instance.PlayHitEffect(
+        /*EffectManager.Instance.PlayHitEffect(
             damageMessage.hitPoint,
             damageMessage.hitNormal,
             transform,
             EffectManager.EffectType.Flesh
-        );
+        );*/
         playerAudioPlayer.PlayOneShot(hitClip);
 
         UpdateUI();

@@ -81,7 +81,7 @@ public class Gun : MonoBehaviour
     {
         // 사용할 컴포넌트들의 참조를 가져오기
         gunAudioPlayer = GetComponent<AudioSource>();
-        gunAudioPlayer.volume = 0.3f; // 총소리 볼륨 30%로 감소
+        gunAudioPlayer.volume = 0.1f; // 총소리 볼륨 30%로 감소
         bulletLineRenderer = GetComponent<LineRenderer>();
 
         // 사용할 점을 두개로 변경

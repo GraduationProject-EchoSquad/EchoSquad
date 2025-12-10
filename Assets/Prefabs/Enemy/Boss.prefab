@@ -14365,7 +14365,7 @@ MonoBehaviour:
   healthSlider: {fileID: 7198534770498182131}
   nameText: {fileID: 1387998876216483701}
   UnitController: {fileID: 0}
-  startingHealth: 2000
+  startingHealth: 4000
 --- !u!195 &947967523614153412
 NavMeshAgent:
   m_ObjectHideFlags: 0
