@@ -37,15 +37,7 @@
 ## ⚙️Installation
 
 ### For Players (Game Release)
-#### Prerequisites
-Before you begin, ensure you have the following tools and software installed on your system.
-
-| Requirement | Version | Purpose | Notes |
-|-------------|---------|---------|-------|
-| **CUDA Toolkit** | 12.9 or compatible | GPU acceleration for TTS | ⚠️ Optional but **highly recommended** |
-| **cuDNN** | 9.12.0 or compatible | Deep learning library | ⚠️ Optional but **highly recommended** |
-
-> **⚡ Performance Note**: Without CUDA/cuDNN, AI will run on CPU and be significantly slower.
+> **⚡ Performance Note**: Without NVIDIA GPU, AI will run on CPU and be significantly slower.
 
 
 #### Download
