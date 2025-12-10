@@ -37,6 +37,18 @@
 ## ⚙️Installation
 
 ### For Players (Game Release)
+#### Prerequisites
+Before you begin, ensure you have the following tools and software installed on your system.
+
+| Requirement | Version | Purpose | Notes |
+|-------------|---------|---------|-------|
+| **CUDA Toolkit** | 12.9 or compatible | GPU acceleration for TTS | ⚠️ Optional but **highly recommended** |
+| **cuDNN** | 9.12.0 or compatible | Deep learning library | ⚠️ Optional but **highly recommended** |
+
+> **⚡ Performance Note**: Without CUDA/cuDNN, AI will run on CPU and be significantly slower.
+
+
+#### Download
 You can download and play the latest version of Echo Squad via the link below:
 
 [**Download Echo Squad**](https://drive.google.com/file/d/1_cw3ewD08a3SXxY4SvCK4GBGqOxvEoBh/view?usp=drive_link)
@@ -55,14 +67,14 @@ This guide will walk you through setting up the Echo Squad project source code o
 
 Before you begin, ensure you have the following tools and software installed on your system.
 
-| Requirement | Version | Purpose | Notes |
-|-------------|---------|---------|-------|
-| **Unity** | `6000.0.42f1` or newer | Game engine | Install via Unity Hub |
-| **Git** | Latest | Version control | Git LFS recommended for large files |
-| **CUDA Toolkit** | 12.9 or compatible | GPU acceleration for TTS | ⚠️ Optional but **highly recommended** |
-| **cuDNN** | 9.12.0 or compatible | Deep learning library | ⚠️ Optional but **highly recommended** |
+| Requirement | Version | Purpose                 | Notes |
+|-------------|---------|-------------------------|-------|
+| **Unity** | `6000.0.42f1` or newer | Game engine             | Install via Unity Hub |
+| **Git** | Latest | Version control         | Git LFS recommended for large files |
+| **CUDA Toolkit** | 12.9 or compatible | GPU acceleration for AI | ⚠️ Optional but **highly recommended** |
+| **cuDNN** | 9.12.0 or compatible | Deep learning library   | ⚠️ Optional but **highly recommended** |
 
-> **⚡ Performance Note**: Without CUDA/cuDNN, TTS will run on CPU and be significantly slower (several seconds per voice line).
+> **⚡ Performance Note**: Without CUDA/cuDNN, AI will run on CPU and be significantly slower.
 
 ---
 
