@@ -55,8 +55,8 @@ You can download and play the latest version of Echo Squad via the link below:
 ### 1. Setup & Start
 At the **Title Screen**, click the **Setting** button to configure your input device (Microphone). Once set, click **Play** to start the mission.
 
-![Title Screen](/images/start-ui.jpg)  
-*(Settings UI)* ![Settings UI](/images/setting-ui.jpg)
+![Title Screen](/images/start-UI.jpg)  
+*(Settings UI)* ![Settings UI](/images/setting-UI.jpg)
 
 ### 2. Interface (HUD)
 Upon entering the game, you will see the **Main HUD** displaying your status and objectives.
