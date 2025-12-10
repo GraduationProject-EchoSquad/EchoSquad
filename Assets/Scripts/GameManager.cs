@@ -44,7 +44,7 @@ public class GameManager : Singleton<GameManager>
         SetGameState(GameState.Preparation);
         Debug.Log("[GameManager] Preparation 단계 시작");
 
-        //await TeammateVoiceSetupManager.Instance.ShowAndWaitForCompletion();
+        await TeammateVoiceSetupManager.Instance.ShowAndWaitForCompletion();
 
         // HUD Panel 숨김
         await UIManager.Instance.Show<HUDUI>(UIManager.EUIData.HUD);
