@@ -55,13 +55,17 @@ You can download and play the latest version of Echo Squad via the link below:
 ### 1. Setup & Start
 At the **Title Screen**, click the **Setting** button to configure your input device (Microphone). Once set, click **Play** to start the mission.
 
-![Title Screen](/images/start-UI.jpg)  
 *(Settings UI)* ![Settings UI](/images/setting-UI.jpg)
 
 ### 2. Interface (HUD)
 Upon entering the game, you will see the **Main HUD** displaying your status and objectives.
 
-![Main HUD](/images/main-UI.jpg)
+![Main HUD](/images/example.jpg)
+1.  **Minimap:** Shows the surrounding area and objectives.
+2.  **Teammate Dialogue:** Displays text subtitles for AI teammate voice lines.
+3.  **Status Panel:** Indicates current wave progression, remaining enemies, and your ammunition count.
+4.  **Command & Mic Buttons:** Click the **Command** button to open the Order UI, or toggle the **Mic** button to enable/disable voice input.
+5.  **Player Voice-to-Text:** Displays transcription of your spoken voice commands.
 
 ### 3. Squad Command
 Press the **Command Button** to open the **Squad Command UI**. From here, you can issue voice or manual orders to your AI teammates.
