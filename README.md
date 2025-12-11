@@ -1,6 +1,15 @@
 # EchoSquad
 
 <div align="center">
+
+![Unity](https://img.shields.io/badge/Unity-6000.0.42f1-000000?style=flat&logo=unity&logoColor=white)
+![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=flat&logo=windows&logoColor=white)
+![AI](https://img.shields.io/badge/AI-Local%20LLM-FF6F00?style=flat&logo=openai&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat)
+
+</div>
+
+<div align="center">
   <img src="./images/gameplay-demo_boss.gif" alt="Boss Battle" width="800">
   <p><i>Boss monster appears - Face the ultimate challenge</i></p>
 
@@ -8,33 +17,41 @@
 
   <img src="./images/gameplay-demo_move.gif" alt="Voice Command Movement" width="800">
   <p><i>Command your AI companion to move using voice controls</i></p>
+
+<br>
+
+[📥 **Download**](https://drive.google.com/file/d/1_cw3ewD08a3SXxY4SvCK4GBGqOxvEoBh/view?usp=drive_link) &nbsp;•&nbsp; [🎬 **Watch Trailer**](https://youtu.be/flzgq3ys1ds) &nbsp;•&nbsp; [📖 **Documentation**](#installation)
+
 </div>
 
 
-## 📌Table of Contents
-- [Highlights](#highlights)
-- [Installation](#installation)
-- [How to Play](#how-to-play)
-- [Trailer](#trailer)
-- [System Overview](#system-overview)
-- [Reference](#reference)
-- [License](#license)
-- [Team](#team)
+## 📌 Table of Contents
+
+- [⭐ Highlights](#highlights)
+- [⚙️ Installation](#installation)
+- [🎮 How to Play](#how-to-play)
+- [🎞️ Trailer](#trailer)
+- [💡 System Overview](#system-overview)
+- [📃 Reference](#reference)
+- [💻 License](#license)
+- [👥 Team](#team)
 
 
-## ⭐Highlights
+## ⭐ Highlights
 
 **Echo Squad** is a TPS defense game where voice becomes your tactical weapon.
 
-- **Voice-Controlled AI Companions**: Command your squad in real-time using natural speech
-- **Local AI Processing**: STT, LLM, and TTS run entirely on your machine—no internet required
-- **Strategic Defense Gameplay**: Survive 5 waves of enemies with intelligent AI teammates
-- **Custom LoRA Training**: Fine-tuned language model specialized for tactical commands
+| | Feature | Description |
+|:--:|---------|-------------|
+| 🎙️ | **Voice-Controlled AI** | Command your squad in real-time using natural speech |
+| 🔒 | **Local AI Processing** | STT, LLM, and TTS run entirely on your machine—no internet required |
+| ⚔️ | **Strategic Defense** | Survive 5 waves of enemies with intelligent AI teammates |
+| 🧠 | **Custom LoRA Training** | Fine-tuned language model specialized for tactical commands |
 
 > 📚 **Academic Project**: Developed as a graduation project for Konkuk University, focusing on AI-driven companion interaction as the core gameplay mechanic.
 
 
-## ⚙️Installation
+## ⚙️ Installation
 
 ### For Players (Game Release)
 > **⚡ Performance Note**: Without NVIDIA GPU, AI will run on CPU and be significantly slower.
@@ -50,14 +67,15 @@ You can download and play the latest version of Echo Squad via the link below:
 2. Unzip the downloaded archive.
 3. Run `EchoSquad.exe` to start the game.
 
-## 🕹️ Gameplay Guide
+#### 🕹️ In-Game Guide
 
-### 1. Setup & Start
+**1. Setup & Start**
 At the **Title Screen**, click the **Setting** button to configure your input device (Microphone). Once set, click **Play** to start the mission.
 
 *(Settings UI)* ![Settings UI](/images/setting-UI.jpg)
 
-### 2. Interface (HUD)
+**2. Interface (HUD)**
+
 Upon entering the game, you will see the **Main HUD** displaying your status and objectives.
 
 ![Main HUD](/images/example.jpg)
@@ -70,7 +88,8 @@ Upon entering the game, you will see the **Main HUD** displaying your status and
 | 4 | **Command & Mic Buttons** | Click **Command** to open the Order UI, or toggle **Mic** to enable/disable voice input |
 | 5 | **Player Voice-to-Text** | Displays transcription of your spoken voice commands |
 
-### 3. Squad Command
+**3. Squad Command**
+
 Press the **Command Button** to open the **Squad Command UI**. From here, you can issue voice or manual orders to your AI teammates.
 
 ![Squad Command UI](/images/command-move-ui.jpg)
@@ -123,7 +142,7 @@ git clone https://github.com/GraduationProject-EchoSquad/EchoSquad.git
 
 | Component | File/Model | Download Source | Installation Path | Notes |
 |-----------|------------|-----------------|-------------------|-------|
-| **TTS (Spark-TTS)** | `SparkTTS` folder | [Google Drive](httpsManage cookies) | `Assets/StreamingAssets/` | See [Spark-TTS-Unity repo](https://github.com/arghyasur1991/Spark-TTS-Unity) for details |
+| **TTS (Spark-TTS)** | `SparkTTS` folder | [Google Drive](https://drive.google.com/file/d/1YXj81ApcEasY17a8Zj9RqTpvn4s1UKk7/view?usp=sharing) | `Assets/StreamingAssets/` | See [Spark-TTS-Unity repo](https://github.com/arghyasur1991/Spark-TTS-Unity) for details |
 | **LLM (Qwen3)** | `Qwen3-1.7b` base model | Unity Editor (LLM Object) | Auto-downloaded | Use "Load model" option in LLM Object |
 | **LLM (LoRA)** | `qwen3-1.7b-lora-adapter.gguf` | [Google Drive](https://drive.google.com/file/d/1dUdH4YhvF7zO9W-cXgWaVIiGbg1saS_Z/view?usp=sharing) | Link via Unity Editor | Use "Load LoRA" option in LLM Object |
 | **STT (Whisper)** | `ggml-large-v3-turbo-q8_0.bin` | [Hugging Face](https://huggingface.co/ggerganov/whisper.cpp/tree/main) | `Assets/StreamingAssets/` | Link in relevant Unity component |
@@ -134,7 +153,7 @@ git clone https://github.com/GraduationProject-EchoSquad/EchoSquad.git
 #### 3. Running the Project
 
 > **✅ Ready to Play**: Once all prerequisites, models, and assets are properly configured, press the **Play** button (▶) in the Unity Editor to launch the game.
-## 🎮How to Play
+## 🎮 How to Play
 ### 🕹️ Controls
 | Action | Key/Input              | Description |
 |--------|------------------------|-------------|
@@ -166,7 +185,7 @@ git clone https://github.com/GraduationProject-EchoSquad/EchoSquad.git
 | **Mission Failed** | Both player and AI companion are eliminated |
 
 
-## 🎞️Trailer
+## 🎞️ Trailer
 
 <div align="center">
 
@@ -179,7 +198,7 @@ git clone https://github.com/GraduationProject-EchoSquad/EchoSquad.git
 </div>
 
 
-## 💡System Overview
+## 💡 System Overview
 
 <div align="center">
   <img src="./images/system-diagram.png" alt="System Architecture Diagram" width="900">
@@ -188,21 +207,28 @@ git clone https://github.com/GraduationProject-EchoSquad/EchoSquad.git
 
 ### Data Flow Pipeline
 
-| Stage | Component | Description |
-|-------|-----------|-------------|
-| **1. Voice Capture** | STT (Whisper) | Player speaks into microphone<br>↓<br>Whisper transcribes speech to text in real-time<br>↓<br>Natural language command extracted |
-| **2. Intent Recognition** | LLM (Qwen3 + LoRA) | Text processed by Qwen3 LLM with custom LoRA Adapter<br>↓<br>Model interprets player intent from command patterns<br>↓<br>Outputs structured JSON (AI action + dialogue response) |
-| **3. Action Execution** | FSM Controller | FSM parses JSON output<br>↓<br>Translates into in-game behaviors (move/attack/support)<br>↓<br>Triggers AI action and vocal response simultaneously |
-| **4. Voice Generation** | TTS (Spark-TTS) | AI dialogue text sent to Spark-TTS<br>↓<br>Common phrases pre-cached for instant playback<br>↓<br>Generated voice played through speakers |
+```
+🎙️ Voice Input  →  🧠 AI Processing  →  🎮 Game Action  →  🔊 Voice Output
+```
+
+| Stage | Component | Input | Output |
+|:-----:|-----------|-------|--------|
+| **1** | **STT** (Whisper) | Player voice | Transcribed text |
+| **2** | **LLM** (Qwen3 + LoRA) | Text command | JSON (action + dialogue) |
+| **3** | **FSM** Controller | JSON data | In-game behavior |
+| **4** | **TTS** (Spark-TTS) | Dialogue text | AI voice response |
 
 ### Key Technical Features
-- **Local Processing**: All AI inference runs on the player's machine—no cloud dependency
-- **LoRA Fine-tuning**: Custom adapter trained on tactical commands for accurate intent recognition
-- **Voice Caching**: Pre-computed audio reduces TTS latency from seconds to milliseconds
-- **Modular Architecture**: Each component (STT/LLM/TTS) operates independently for maintainability
+
+| | Feature | Benefit |
+|:--:|---------|---------|
+| 🔒 | **Local Processing** | All AI runs on-device—no cloud dependency |
+| 🎯 | **LoRA Fine-tuning** | Custom adapter for accurate tactical command recognition |
+| ⚡ | **Voice Caching** | Pre-computed audio reduces TTS latency to milliseconds |
+| 🧩 | **Modular Architecture** | Each component (STT/LLM/TTS) operates independently |
 
 
-## 📃Reference
+## 📃 Reference
 This project was developed using several key open-source libraries. We extend our gratitude to the original authors for their contributions to the community.
 
 * **LLM (Llama):** [LLMUnity](https://github.com/undreamai/LLMUnity)
@@ -215,7 +241,7 @@ This project was developed using several key open-source libraries. We extend ou
     * An efficient, allocation-free async/await integration for Unity, used to manage various asynchronous operations.
 
 
-## 💻License
+## 💻 License
 This project (`Echo Squad`) is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for more details.
 
 ### Third-Party Licenses
@@ -238,7 +264,7 @@ In compliance with the Apache 2.0 License, we acknowledge the following notices 
 > * The developers assume no liability for any misuse of this model.
 
 
-## 👥Team
+## 👥 Team
 
 | Name | Role | GitHub |
 |------|------|:---|
