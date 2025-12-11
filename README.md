@@ -61,11 +61,14 @@ At the **Title Screen**, click the **Setting** button to configure your input de
 Upon entering the game, you will see the **Main HUD** displaying your status and objectives.
 
 ![Main HUD](/images/example.jpg)
-1.  **Minimap:** Shows the surrounding area and objectives.
-2.  **Teammate Dialogue:** Displays text subtitles for AI teammate voice lines.
-3.  **Status Panel:** Indicates current wave progression, remaining enemies, and your ammunition count.
-4.  **Command & Mic Buttons:** Click the **Command** button to open the Order UI, or toggle the **Mic** button to enable/disable voice input.
-5.  **Player Voice-to-Text:** Displays transcription of your spoken voice commands.
+
+| # | UI Element | Description |
+|:-:|------------|-------------|
+| 1 | **Minimap** | Shows the surrounding area and objectives |
+| 2 | **Teammate Dialogue** | Displays text subtitles for AI teammate voice lines |
+| 3 | **Status Panel** | Indicates current wave progression, remaining enemies, and ammunition count |
+| 4 | **Command & Mic Buttons** | Click **Command** to open the Order UI, or toggle **Mic** to enable/disable voice input |
+| 5 | **Player Voice-to-Text** | Displays transcription of your spoken voice commands |
 
 ### 3. Squad Command
 Press the **Command Button** to open the **Squad Command UI**. From here, you can issue voice or manual orders to your AI teammates.
