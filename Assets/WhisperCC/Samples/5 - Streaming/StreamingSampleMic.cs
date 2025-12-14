@@ -21,6 +21,8 @@ namespace Whisper.Samples
         public Text text;
         //public ScrollRect scroll;
         private WhisperStream _stream;
+        private float _stopRecordingTime;
+        private float _lastSegmentUpdateTime;
 
         private async void Start()
         {
@@ -60,10 +62,12 @@ namespace Whisper.Samples
             {
                 _stream.StartStream();
                 microphoneRecord.StartRecord();
+                _stopRecordingTime = 0f;
                 PubSubManager.Instance.Publish(PubSubEvent.OnMicStart);
             }
             else
             {
+                _stopRecordingTime = Time.realtimeSinceStartup;
                 microphoneRecord.StopRecord();
                 PubSubManager.Instance.Publish(PubSubEvent.OnMicEnd);
             }
@@ -94,12 +98,27 @@ namespace Whisper.Samples
         
         private void OnSegmentUpdated(WhisperResult segment)
         {
+            _lastSegmentUpdateTime = Time.realtimeSinceStartup;
             print($"Segment updated: {segment.Result}");
         }
         
         private void OnSegmentFinished(WhisperResult segment)
         {
             print($"Segment finished: {segment.Result}");
+            
+            if (_lastSegmentUpdateTime > 0f)
+            {
+                float stabilization = (Time.realtimeSinceStartup - _lastSegmentUpdateTime) * 1000f;
+                print($"[STT Stabilization Time]: {stabilization:F1} ms");
+                _lastSegmentUpdateTime = 0f;
+            }
+            
+            if (_stopRecordingTime > 0f)
+            {
+                float elapsed = (Time.realtimeSinceStartup - _stopRecordingTime) * 1000f;
+                print($"[STT Response Time]: {elapsed:F1} ms");
+                _stopRecordingTime = 0f;
+            }
 
             // 빈 메시지나 침묵(점만 있는 경우) 필터링
             if (IsValidCommand(segment.Result))

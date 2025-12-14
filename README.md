@@ -20,7 +20,7 @@
 
 <br>
 
-[📥 **Download**](https://drive.google.com/file/d/1_cw3ewD08a3SXxY4SvCK4GBGqOxvEoBh/view?usp=drive_link) &nbsp;•&nbsp; [🎬 **Watch Trailer**](https://youtu.be/flzgq3ys1ds) &nbsp;•&nbsp; [📖 **Documentation**](#installation)
+[📥 **Download**](https://drive.google.com/file/d/1XMFaUW3AuvzHpDtQNVule3vXu8tUUokJ/view?usp=drive_link) &nbsp;•&nbsp; [🎬 **Watch Trailer**](https://youtu.be/flzgq3ys1ds) &nbsp;•&nbsp; [📖 **Documentation**](#installation)
 
 </div>
 
@@ -81,7 +81,7 @@ Before running the game, you must install the following:
 #### Download
 You can download and play the latest version of Echo Squad via the link below:
 
-[**Download Echo Squad**](https://drive.google.com/file/d/1_cw3ewD08a3SXxY4SvCK4GBGqOxvEoBh/view?usp=drive_link)
+[**Download Echo Squad**](https://drive.google.com/file/d/1XMFaUW3AuvzHpDtQNVule3vXu8tUUokJ/view?usp=drive_link)
 
 **How to Play:**
 1. Download the zip file from the link above.
