@@ -65,18 +65,7 @@
 | **GPU** | NVIDIA GTX 1060 (6GB VRAM) | NVIDIA RTX 3060 (8GB+ VRAM) |
 | **Storage** | 10 GB | SSD 10 GB |
 
-> ⚠️ **NVIDIA GPU Required**: This game uses AI-powered voice interaction (STT/TTS) that **requires CUDA-compatible NVIDIA GPU**. AMD/Intel GPUs are not supported.
-
-#### Prerequisites (Required)
-
-Before running the game, you must install the following:
-
-| Requirement | Version | Download |
-|-------------|---------|----------|
-| **CUDA Toolkit** | 12.x | [NVIDIA CUDA Downloads](https://developer.nvidia.com/cuda-downloads) |
-| **cuDNN** | 9.x | [NVIDIA cuDNN Downloads](https://developer.nvidia.com/cudnn) (NVIDIA account required) |
-
-> 💡 **Tip**: After installing CUDA and cuDNN, restart your computer before running the game.
+> ⚠️ **NVIDIA GPU Required**: This game uses AI-powered voice interaction (STT/TTS) that **requires NVIDIA GPU**. AMD/Intel GPUs are not supported. Make sure your [NVIDIA drivers](https://www.nvidia.com/download/index.aspx) are up to date.
 
 #### Download
 You can download and play the latest version of Echo Squad via the link below:
@@ -128,10 +117,9 @@ Before you begin, ensure you have the following tools and software installed on 
 |-------------|---------|-------------------------|-------|
 | **Unity** | `6000.0.42f1` or newer | Game engine             | Install via Unity Hub |
 | **Git** | Latest | Version control         | Git LFS recommended for large files |
-| **CUDA Toolkit** | 12.9 or compatible | GPU acceleration for AI | ⚠️ **Required** for STT/TTS |
-| **cuDNN** | 9.12.0 or compatible | Deep learning library   | ⚠️ **Required** for STT/TTS |
+| **NVIDIA GPU** | - | Required for AI features | CUDA runtime is bundled with the build |
 
-> ⚠️ **Important**: CUDA and cuDNN are **required** for voice features (STT/TTS). Without them, voice input/output will not work. Only the LLM component can fall back to CPU.
+> 💡 **Note**: CUDA/cuDNN installation is **not required**. All necessary CUDA libraries are included in the build.
 
 ---
 
