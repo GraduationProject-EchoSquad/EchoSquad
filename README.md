@@ -117,9 +117,10 @@ Before you begin, ensure you have the following tools and software installed on 
 |-------------|---------|-------------------------|-------|
 | **Unity** | `6000.0.42f1` or newer | Game engine             | Install via Unity Hub |
 | **Git** | Latest | Version control         | Git LFS recommended for large files |
-| **NVIDIA GPU** | - | Required for AI features | CUDA runtime is bundled with the build |
+| **CUDA Toolkit** | 12.9 or compatible | GPU acceleration for AI | [Download](https://developer.nvidia.com/cuda-downloads) |
+| **cuDNN** | 9.12.0 or compatible | Deep learning library | [Download](https://developer.nvidia.com/cudnn) (NVIDIA account required) |
 
-> 💡 **Note**: CUDA/cuDNN installation is **not required**. All necessary CUDA libraries are included in the build.
+> ⚠️ **Important**: CUDA and cuDNN are required for running the project in Unity Editor. The built game includes these libraries, but development requires local installation.
 
 ---
 
