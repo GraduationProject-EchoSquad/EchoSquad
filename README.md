@@ -54,8 +54,29 @@
 ## ⚙️ Installation
 
 ### For Players (Game Release)
-> **⚡ Performance Note**: Without NVIDIA GPU, AI will run on CPU and be significantly slower.
 
+#### System Requirements
+
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| **OS** | Windows 10 (64-bit) | Windows 10/11 (64-bit) |
+| **CPU** | Intel Core i5 / AMD Ryzen 5 | Intel Core i7 / AMD Ryzen 7 |
+| **RAM** | 16 GB | 32 GB |
+| **GPU** | NVIDIA GTX 1060 (6GB VRAM) | NVIDIA RTX 3060 (8GB+ VRAM) |
+| **Storage** | 10 GB | SSD 10 GB |
+
+> ⚠️ **NVIDIA GPU Required**: This game uses AI-powered voice interaction (STT/TTS) that **requires CUDA-compatible NVIDIA GPU**. AMD/Intel GPUs are not supported.
+
+#### Prerequisites (Required)
+
+Before running the game, you must install the following:
+
+| Requirement | Version | Download |
+|-------------|---------|----------|
+| **CUDA Toolkit** | 12.x | [NVIDIA CUDA Downloads](https://developer.nvidia.com/cuda-downloads) |
+| **cuDNN** | 9.x | [NVIDIA cuDNN Downloads](https://developer.nvidia.com/cudnn) (NVIDIA account required) |
+
+> 💡 **Tip**: After installing CUDA and cuDNN, restart your computer before running the game.
 
 #### Download
 You can download and play the latest version of Echo Squad via the link below:
@@ -107,10 +128,10 @@ Before you begin, ensure you have the following tools and software installed on 
 |-------------|---------|-------------------------|-------|
 | **Unity** | `6000.0.42f1` or newer | Game engine             | Install via Unity Hub |
 | **Git** | Latest | Version control         | Git LFS recommended for large files |
-| **CUDA Toolkit** | 12.9 or compatible | GPU acceleration for AI | ⚠️ Optional but **highly recommended** |
-| **cuDNN** | 9.12.0 or compatible | Deep learning library   | ⚠️ Optional but **highly recommended** |
+| **CUDA Toolkit** | 12.9 or compatible | GPU acceleration for AI | ⚠️ **Required** for STT/TTS |
+| **cuDNN** | 9.12.0 or compatible | Deep learning library   | ⚠️ **Required** for STT/TTS |
 
-> **⚡ Performance Note**: Without CUDA/cuDNN, AI will run on CPU and be significantly slower.
+> ⚠️ **Important**: CUDA and cuDNN are **required** for voice features (STT/TTS). Without them, voice input/output will not work. Only the LLM component can fall back to CPU.
 
 ---
 
